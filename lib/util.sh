@@ -213,7 +213,7 @@ init_common(){
 
     [[ -z ${log_dir} ]] && log_dir='/var/log/garuda-tools'
 
-    [[ -z ${build_mirror} ]] && build_mirror='https://mirror.rackspace.com'
+    [[ -z ${build_mirror} ]] && build_mirror='https://mirrors.kernel.org'
 
     [[ -z ${tmp_dir} ]] && tmp_dir='/tmp/garuda-tools'
 }
@@ -225,7 +225,7 @@ init_buildtree(){
 
     [[ -z ${repo_tree[@]} ]] && repo_tree=('core' 'extra' 'community' 'multilib')
 
-    [[ -z ${host_tree} ]] && host_tree='https://github.com/garuda'
+    [[ -z ${host_tree} ]] && host_tree='https://gitlab.com/garuda-linux'
 
     [[ -z ${host_tree_abs} ]] && host_tree_abs='https://projects.archlinux.org/git/svntogit'
 }
