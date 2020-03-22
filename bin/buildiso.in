@@ -1,0 +1,211 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+DATADIR='@datadir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+import ${LIBDIR}/util.sh
+
+show_profile(){
+    prepare_profile "$1"
+    msg2 "iso_file: %s" "${iso_file}"
+    msg2 "iso_label: %s" "${iso_label}"
+    if ${verbose}; then
+        msg2 "autologin: %s" "${autologin}"
+        msg2 "nonfree_mhwd: %s" "${nonfree_mhwd}"
+        msg2 "plymouth_boot: %s" "${plymouth_boot}"
+        ${plymouth_boot} && msg2 "plymouth_theme: %s" "${plymouth_theme}"
+
+
+        [[ ${target_arch} == 'x86_64' ]] && msg2 "multilib: %s" "${multilib}"
+
+        msg2 "extra: %s" "${extra}"
+        msg2 "permalink: %s" "${permalink}"
+
+        msg2 "netinstall: %s" "${netinstall}"
+        msg2 "chrootcfg: %s" "${chrootcfg}"
+        ${netinstall} && msg2 "netgroups: %s" "$(get_yaml)"
+        msg2 "geoip: %s" "${geoip}"
+        msg2 "oem_used: %s" "${oem_used}"
+
+        msg2 "efi_boot_loader: %s" "${efi_boot_loader}"
+        msg2 "custom_boot_args: %s" "${custom_boot_args}"
+
+        msg2 "hostname: %s" "${hostname}"
+        msg2 "username: %s" "${username}"
+        msg2 "password: %s" "${password}"
+        msg2 "login_shell: %s" "${login_shell}"
+        msg2 "addgroups: %s" "${addgroups}"
+        [[ -n ${smb_workgroup} ]] && msg2 "smb_workgroup: %s" "${smb_workgroup}"
+
+        msg2 "enable_systemd: %s" "${enable_systemd[*]}"
+        msg2 "enable_systemd_live: %s" "${enable_systemd_live[*]}"
+        [[ -n ${disable_systemd[*]} ]] && msg2 "disable_systemd: %s" "${disable_systemd[*]}"
+
+        msg2 "strict_snaps: %s" "${strict_snaps}"
+        msg2 "classic_snaps: %s" "${classic_snaps}"
+        msg2 "snap_channel: %s" "${snap_channel}"
+    fi
+    reset_profile
+}
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "PROFILE:"
+    msg2 "gitlab brach: %s" "${branch}"
+    msg2 "build_lists: %s" "$(show_build_lists ${list_dir_iso})"
+    msg2 "build_list_iso: %s" "${build_list_iso}"
+    msg2 "is_build_list: %s" "${is_build_list}"
+
+    msg "OPTIONS:"
+    msg2 "arch: %s" "${target_arch}"
+    msg2 "branch: %s" "${target_branch}"
+    msg2 "kernel: %s" "${kernel}"
+    [[ -n ${gpgkey} ]] && msg2 "gpgkey: %s" "${gpgkey}"
+
+    msg "ARGS:"
+    msg2 "clean_first: %s" "${clean_first}"
+    msg2 "images_only: %s" "${images_only}"
+    msg2 "iso_only: %s" "${iso_only}"
+    msg2 "persist: %s" "${persist}"
+    msg2 "extra: %s" "${full_iso}"
+    msg2 "permalink: %s" "${permalink}"
+
+    msg "DIST SETTINGS:"
+    msg2 "dist_name: %s" "${dist_name}"
+    msg2 "dist_release: %s" "${dist_release}"
+    msg2 "dist_codename: %s" "${dist_codename}"
+
+    msg "ISO INFO:"
+    msg2 "iso_compression: %s" "${iso_compression}"
+
+    msg "BUILD QUEUE:"
+    run show_profile "${build_list_iso}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+
+# to force old way to have buildiso run in iso-profiles dir
+# run_dir=$(pwd)
+
+load_run_dir "${profile_repo}"
+
+clean_first=true
+pretend=false
+images_only=false
+iso_only=false
+verbose=false
+persist=false
+initialize=false
+permalink=false
+
+usage() {
+    echo "Usage: ${0##*/} [options]"
+    echo "    -a <arch>          Arch [default: ${target_arch}]"
+    echo "    -b <branch>        Branch [default: ${target_branch}]"
+    echo '    -c                 Disable clean work dir'
+    echo '    -d <comp>          Compression used for build ISO: gzip, lzma, lz4, lzo, xz, zstd'
+    echo "                       [default: ${iso_compression}]"
+    echo '    -f                 Build full ISO (extra=true)'
+    echo '    -g <key>           The gpg key for sfs signing'
+    echo "                       [default: ${gpgkey}]"
+    echo "    -i                 Initialize iso-profiles repo [default: ${branch}]"
+    echo '    -k <name>          Kernel to use'
+    echo "                       [default: ${kernel}]"
+    echo '    -l                 Create permalink'
+    echo '    -m                 Set SquashFS image mode to persistence'
+    echo "    -p <profile>       Buildset or profile [default: ${build_list_iso}]"
+    echo '    -q                 Query settings and pretend build'
+    echo '    -r <dir>           Chroots directory'
+    echo "                       [default: ${chroots_iso}]"
+    echo '    -t <dir>           Target directory'
+    echo "                       [default: ${cache_dir_iso}]"
+    echo '    -v                 Verbose output to log file, show profile detail (-q)'
+    echo '    -x                 Build images only'
+    echo '    -z                 Generate iso only'
+    echo '                       Requires pre built images (-x)'
+    echo '    -h                 This help'
+    echo ''
+    echo ''
+    exit $1
+}
+
+orig_argv=("$@")
+
+opts='p:a:b:r:t:k:g:d:cfzxmvqhil'
+
+while getopts "${opts}" arg; do
+    case "${arg}" in
+     	i) initialize=true ;;
+        a) target_arch="$OPTARG" ;;
+        b) target_branch="$OPTARG" ;;
+        c) clean_first=false ;;
+        f) full_iso=true ;;
+        d) iso_compression="$OPTARG" ;;
+        g) gpgkey="$OPTARG" ;;
+        k) kernel="$OPTARG" ;;
+        m) persist=true ;;
+        p) build_list_iso="$OPTARG" ;;
+        q) pretend=true ;;
+        r) chroots_iso="$OPTARG" ;;
+        t) cache_dir_iso="$OPTARG" ;;
+        v) verbose=true ;;
+        x) images_only=true ;;
+        z) iso_only=true ;;
+        l) permalink=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument '${arg}'"; usage 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+if ${initialize}; then
+	msg "Initialize iso profiles ${branch}"
+	init_profiles
+	msg2 "Done: iso profiles are stored in /usr/share/garuda-tools/iso-profiles"
+	exit 1
+fi
+
+timer_start=$(get_timer)
+
+check_root "$0" "${orig_argv[@]}"
+
+prepare_dir "${log_dir}"
+
+user_own "${log_dir}"
+
+prepare_dir "${tmp_dir}"
+
+eval_build_list "${list_dir_iso}" "${build_list_iso}"
+
+import ${LIBDIR}/util-iso.sh
+import ${LIBDIR}/util-iso-mount.sh
+
+check_requirements
+
+for sig in TERM HUP QUIT; do
+    trap "trap_exit $sig \"$(gettext "%s signal caught. Exiting...")\" \"$sig\"" "$sig"
+done
+trap 'trap_exit INT "$(gettext "Aborted by user! Exiting...")"' INT
+trap 'trap_exit USR1 "$(gettext "An unknown error has occurred. Exiting...")"' ERR
+
+${pretend} && display_settings && exit 1
+
+run build "${build_list_iso}"

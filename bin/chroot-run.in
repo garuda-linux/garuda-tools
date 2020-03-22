@@ -1,0 +1,142 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-mount.sh
+
+working_dir=''
+keep_mirrors=false
+
+usage() {
+    echo "Usage: ${0##*/} [options] working-dir [run arguments]"
+    echo "A wrapper around chroot. Provides support for pacman."
+    echo
+    echo ' options:'
+    echo '    -C <file>     Location of a pacman config file'
+    echo '    -M <file>     Location of a makepkg config file'
+    echo '    -S <file>     Location of a pacman-mirrors config file'
+    echo '    -c <dir>      Set pacman cache'
+    echo '    -r <list>     Bind mountargs ro'
+    echo '    -w <list>     Bind mountargs rw'
+    echo '                  List format [src1:target1,...,srcN:targetN]'
+    echo '    -B            Use custom  build mirror'
+    echo '    -K            Keep mirrorlist (-B)'
+    echo '    -h            This message'
+    exit 1
+}
+
+orig_argv=("$@")
+
+opts='hKC:M:S:c:r:w:B:'
+
+while getopts ${opts} arg; do
+    case "${arg}" in
+        C) pac_conf="$OPTARG" ;;
+        M) makepkg_conf="$OPTARG" ;;
+        S) mirrors_conf="$OPTARG" ;;
+        c) cache_dir="$OPTARG" ;;
+        r) mountargs_ro="$OPTARG" ;;
+        w) mountargs_rw="$OPTARG" ;;
+        B) build_mirror="$OPTARG" ;;
+        K) keep_mirrors=true ;;
+        h|?) usage ;;
+        *) error "invalid argument '$arg'"; usage ;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+(( $# < 1 )) && die 'You must specify a directory.'
+check_root "$0" "${orig_argv[@]}"
+
+working_dir=$(readlink -f "$1")
+shift 1
+
+[[ -z $working_dir ]] && die 'Please specify a working directory.'
+
+if [[ -z $cache_dir ]]; then
+    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+else
+    cache_dirs=("$cache_dir")
+fi
+
+copy_hostconf () {
+    cp -a /etc/pacman.d/gnupg "$1/etc/pacman.d"
+
+    [[ -n $pac_conf ]] && cp $pac_conf "$1/etc/pacman.conf"
+
+    [[ -n $makepkg_conf ]] && cp $makepkg_conf "$1/etc/makepkg.conf"
+    [[ -n $mirrors_conf ]] && cp ${mirrors_conf} "$1/etc/pacman-mirrors.conf"
+
+    if [[ -n ${build_mirror} ]]; then
+        build_mirror=${build_mirror}'/$repo/os/$arch'
+        if ${keep_mirrors}; then
+            set_branch "$1" "$(get_branch $1)"
+        else
+            echo "Server = ${build_mirror}" > "$1/etc/pacman.d/mirrorlist"
+        fi
+    else
+        set_branch "$1" "$(get_branch $1)"
+    fi
+
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" -i "$1/etc/pacman.conf"
+}
+
+chroot_extra_umount() {
+    chroot_mount "/etc/resolv.conf" "$1/etc/resolv.conf" -B
+    chroot_mount "${cache_dirs[0]}" "$1${cache_dirs[0]}" -B
+
+    for cache_dir in ${cache_dirs[@]:1}; do
+        chroot_mount "$cache_dir" "$1${cache_dir}" -Br
+    done
+
+    if [[ -n ${mountargs_ro[@]} ]]; then
+        local IFS=','
+        for m in ${mountargs_ro[@]}; do
+            chroot_mount "${m%%:*}" "$1${m##*:}" -Br
+        done
+        unset IFS
+    fi
+
+    if [[ -n ${mountargs_rw[@]} ]]; then
+        local IFS=','
+        for m in ${mountargs_rw[@]}; do
+            chroot_mount "${m%%:*}" "$1${m##*:}" -B
+        done
+        unset IFS
+    fi
+}
+
+umask 0022
+
+# Sanity check
+if [[ ! -f "$working_dir/.garuda-tools" ]]; then
+    die "'%s' does not appear to be a garuda chroot." "$working_dir"
+elif [[ $(cat "$working_dir/.garuda-tools") != $version ]]; then
+    die "chroot '%s' is not at version %s. Please rebuild." "$working_dir" "$version"
+fi
+
+chroot_api_mount "${working_dir}" || die "failed to setup API filesystems in chroot %s" "${working_dir}"
+
+chroot_extra_umount "${working_dir}"
+
+copy_hostconf "${working_dir}"
+
+eval $(grep '^CARCH=' "$working_dir/etc/makepkg.conf")
+
+${CARCH:+setarch "$CARCH"} chroot "${working_dir}" "$@"
+
+kill_chroot_process "${working_dir}"

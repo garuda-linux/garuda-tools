@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+
+working_dir=''
+build_locales=false
+keep_mirrors=false
+keep_flag=''
+
+usage() {
+    echo "Usage: ${0##*/} [options] working-dir package-list..."
+    echo ' options:'
+    echo '    -C <file>     Location of a pacman config file'
+    echo '    -M <file>     Location of a makepkg config file'
+    echo '    -S <file>     Location of a pacman-mirrors config file'
+    echo '    -c <dir>      Set pacman cache'
+    echo '    -L            Use build locale.gen en/de'
+    echo '    -B            Use custom build mirror'
+    echo '    -K            Keep mirrorlist (-B)'
+    echo '    -x            copy pacman.conf'
+    echo '    -h            This message'
+    exit 1
+}
+
+orig_argv=("$@")
+
+opts='hLKC:M:S:c:B:'
+
+while getopts ${opts} arg; do
+    case "${arg}" in
+        C) pac_conf="$OPTARG" ;;
+        M) makepkg_conf="$OPTARG" ;;
+        S) mirrors_conf="$OPTARG" ;;
+        c) cache_dir="$OPTARG" ;;
+        L) build_locales=true ;;
+        B) build_mirror="$OPTARG" ;;
+        K) keep_mirrors=true; keep_flag='-K' ;;
+        h|?) usage ;;
+        *) error "invalid argument '$arg'"; usage ;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+(( $# < 2 )) && die 'You must specify a directory and one or more packages.'
+
+check_root "$0" "${orig_argv[@]}"
+
+working_dir="$(readlink -f $1)"
+shift 1
+
+[[ -z $working_dir ]] && die 'Please specify a working directory.'
+
+if [[ -z $cache_dir ]]; then
+    cache_dirs=($(pacman -v $cache_conf 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+else
+    cache_dirs=(${cache_dir})
+fi
+
+umask 0022
+
+#[[ -e $working_dir ]] && die "Working directory '%s' already exists" "$working_dir"
+
+#mkdir -p "$working_dir"
+
+[[ ! -d $working_dir ]] && mkdir -p "$working_dir"
+
+lock 9 "${working_dir}.lock" "Locking chroot"
+
+if is_btrfs "$working_dir"; then
+    rmdir "$working_dir"
+    if ! btrfs subvolume create "$working_dir"; then
+        die "Couldn't create subvolume for '%s'" "$working_dir"
+    fi
+    chmod 0755 "$working_dir"
+fi
+
+# Workaround when creating a chroot in a branch different of the host
+if [[ -n $pac_conf ]] && [[ -n $mirrors_conf ]] && [[ -n ${build_mirror} ]]; then
+    url=${build_mirror}'/$repo/os/$arch'
+    [[ ${build_mirror} = *ftp*repo.garuda.org* ]] && show_mirror=repo.garuda.org'/$repo/$arch' || show_mirror=$url
+    info "mirror: %s" "$show_mirror"
+    pac_base="$working_dir/pacman-basestrap.conf"
+    sed "s#Include = /etc/pacman.d/mirrorlist#Server = ${url}#g" $pac_conf > $pac_base
+
+    basestrap -GMcd ${pac_base:+-C "$pac_base"} "$working_dir" \
+    "${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
+
+    [[ -f "$pac_base" ]] && rm "$pac_base"
+else
+    basestrap -GMcd ${pac_conf:+-C "$pac_conf"} "$working_dir" \
+    "${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
+fi
+
+echo "$version" > "$working_dir/.garuda-tools"
+
+if ${build_locales}; then
+    info "Using build locales ..."
+    mv "$working_dir/etc/locale.gen" "$working_dir/etc/locale.gen.bak"
+    mv "$working_dir/etc/locale.conf" "$working_dir/etc/locale.conf.bak"
+    printf '%s.UTF-8 UTF-8\n' en_US > "$working_dir/etc/locale.gen"
+    printf 'LANG=%s.UTF-8\n' en_US > "$working_dir/etc/locale.conf"
+    printf 'LC_MESSAGES=C\n' >> "$working_dir/etc/locale.conf"
+fi
+
+chroot_args=(${pac_conf:+-C "$pac_conf"} ${makepkg_conf:+-M "$makepkg_conf"} ${mirrors_conf:+-S "$mirrors_conf"} ${build_mirror:+-B "$build_mirror"} ${cache_dir:+-c "$cache_dir"} ${keep_flag})
+
+exec chroot-run \
+    ${chroot_args[*]} \
+    "$working_dir" locale-gen
+

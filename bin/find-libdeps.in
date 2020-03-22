@@ -1,0 +1,87 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util-pkg.sh
+
+set -e
+shopt -s extglob
+
+IGNORE_INTERNAL=0
+
+if [[ $1 = "--ignore-internal" ]]; then
+    IGNORE_INTERNAL=1
+    shift
+fi
+
+script_mode=${0##*/find-lib}
+
+case $script_mode in
+    deps|provides) true;;
+    *) die "Unknown mode %s" "$script_mode" ;;
+esac
+
+if [[ -z $1 ]]; then
+    echo "${0##*/} [options] <package file|extracted package dir>"
+    echo "Options:"
+    echo "    --ignore-internal      ignore internal libraries"
+    exit 1
+fi
+
+if [[ -d $1 ]]; then
+    pushd $1 >/dev/null
+else
+    WORKDIR=$(mktemp -d --tmpdir "${0##*/}.XXXXXXXXXX")
+
+    case ${script_mode} in
+        deps) bsdtar -C "$WORKDIR" -xf "$1";;
+        provides) bsdtar -C "$WORKDIR" -xf "$1" --include="*.so*";;
+    esac
+
+    pushd "$WORKDIR" >/dev/null
+fi
+
+case $script_mode in
+    deps) find_args=(-perm -u+x);;
+    provides) find_args=(-name *.so*);;
+esac
+
+find $PWD -type f "${find_args[@]}" | while read filename; do
+    if [[ $script_mode = "provides" ]]; then
+        # ignore if we don't have a shared object
+        if ! LC_ALL=C readelf -h "$filename" 2>/dev/null | grep -q '.*Type:.*DYN (Shared object file).*'; then
+            continue
+        fi
+    fi
+
+    # get architecture of the file; if soarch is empty it's not an ELF binary
+    soarch=$(LC_ALL=C readelf -h "$filename" 2>/dev/null | sed -n 's/.*Class.*ELF\(32\|64\)/\1/p')
+    [[ -n $soarch ]] || continue
+
+    if [[ $script_mode = "provides" ]]; then
+        # get the string binaries link to: libfoo.so.1.2 -> libfoo.so.1
+        sofile=$(LC_ALL=C readelf -d "$filename" 2>/dev/null | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p')
+        [[ -z $sofile ]] && sofile="${filename##*/}"
+        process_sofile "${sofile}" "${soarch}"
+    elif [[ $script_mode = "deps" ]]; then
+        # process all libraries needed by the binary
+        for sofile in $(LC_ALL=C readelf -d "$filename" 2>/dev/null | sed -nr 's/.*Shared library: \[(.*)\].*/\1/p'); do
+            process_sofile "${sofile}" "${soarch}"
+        done
+    fi
+done
+
+popd >/dev/null

@@ -1,0 +1,132 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-publish.sh
+
+show_profile(){
+    prepare_transfer "$1" "${hidden}"
+    info "Profile: [$1]"
+    msg2 "project: %s" "${project}"
+    msg2 "src_dir: ${src_dir}"
+    msg2 "remote dir: ${url}/${target_dir}"
+}
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "PROFILE:"
+    msg2 "build_lists: %s" "$(show_build_lists ${list_dir_iso})"
+    msg2 "build_list_iso: %s" "${build_list_iso}"
+    msg2 "is_build_list: %s" "${is_build_list}"
+
+    msg "OPTIONS:"
+    [[ -z ${limit} ]] && msg2 "bandwidth limit: no" || msg2 "bandwidth limit: %s kB/s" "${limit}"
+    msg2 "dist_release: %s" "${dist_release}"
+
+    msg "ARGS:"
+    msg2 "update: %s" "${update}"
+    msg2 "verbose: %s" "${verbose}"
+    msg2 "signiso: %s" "${sign}"
+    msg2 "torrent: %s" "${torrent}"
+    msg2 "shell_upload: %s" "${shell_upload}"
+    msg2 "upd_homepage: %s" "${upd_homepage}"
+
+    if ${torrent}; then
+        msg2 "tracker_url: %s" "${tracker_url}"
+        msg2 "piece_size: %s" "${piece_size}"
+        msg2 "torrent_meta: %s" "${torrent_meta}"
+    fi
+
+    msg "REMOTE:"
+    msg2 "account: %s" "${account}"
+    msg2 "host: %s" "${host}"
+    msg2 "alt_storage: %s" "${alt_storage}"
+    msg2 "ssh_agent: %s" "${ssh_agent}"
+
+    msg "UPLOAD QUEUE:"
+    run show_profile "${build_list_iso}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+
+run_dir=${cache_dir_iso}
+
+hidden=false
+pretend=false
+torrent=false
+update=false
+verbose=false
+sign=false
+alt_storage=false
+shell_upload=false
+upd_homepage=false
+
+rsync_args=(-aP -e ssh)
+
+usage() {
+    echo "Usage: ${0##*/} [options]"
+    echo '    -a                 Use alternate storage server'
+    echo '    -d                 Use hidden remote directory'
+    echo '    -h                 This help'
+    echo "    -l                 Limit bandwidth in kB/s [default: ${limit}]"
+    echo "    -p                 Source folder to upload [default: ${build_list_iso}]"
+    echo '    -q                 Query settings and pretend upload'
+    echo '    -s                 Sign ISO and create checksums'
+    echo '    -t                 Create ISO torrent'
+    echo '    -u                 Update remote directory'
+    echo '    -v                 Verbose output'
+    echo '    -w                 Update download page on garuda.org'
+    echo '    -z                 Upload permalinks (shell.osdn.net)'
+    echo ''
+    echo ''
+    exit $1
+}
+
+opts='adhl:p:qstuvwz'
+
+while getopts "${opts}" arg; do
+    case "${arg}" in
+        a) alt_storage=true ;;
+        d) hidden=true ;;
+        l) limit="$OPTARG"; rsync_args+=(--bwlimit=${limit}) ;;
+        p) build_list_iso="$OPTARG" ;;
+        q) pretend=true; rsync_args+=(-n) ;;
+        s) sign=true ;;
+        t) torrent=true ;;
+        u) update=true; rsync_args+=(-u) ;;
+        v) verbose=true; rsync_args+=(-v --stats) ;;
+        w) upd_homepage=true; shell_upload=true ;;
+        z) shell_upload=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument '${arg}'"; usage 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+timer_start=$(get_timer)
+
+eval_build_list "${list_dir_iso}" "${build_list_iso}"
+
+${pretend} && display_settings && exit 1
+
+run sync_dir "${build_list_iso}"

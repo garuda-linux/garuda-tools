@@ -1,0 +1,140 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+DATADIR='@datadir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-yaml.sh
+
+show_profile(){
+    prepare_check "$1"
+    msg2 "yaml_dir: %s" "${yaml_dir}"
+    msg2 "nonfree_mhwd: %s" "${nonfree_mhwd}"
+    msg2 "autologin: %s" "${autologin}"
+    msg2 "nonfree_mhwd: %s" "${nonfree_mhwd}"
+    msg2 "plymouth_boot: %s" "${plymouth_boot}"
+    ${plymouth_boot} && msg2 "plymouth_theme: %s" "${plymouth_theme}"
+
+
+    [[ ${target_arch} == 'x86_64' ]] && msg2 "multilib: %s" "${multilib}"
+
+    msg2 "extra: %s" "${extra}"
+
+    msg2 "netinstall: %s" "${netinstall}"
+    msg2 "chrootcfg: %s" "${chrootcfg}"
+    ${netinstall} && msg2 "netgroups: %s" "$(get_yaml)"
+    msg2 "geoip: %s" "${geoip}"
+
+    msg2 "efi_boot_loader: %s" "${efi_boot_loader}"
+
+    msg2 "hostname: %s" "${hostname}"
+    msg2 "username: %s" "${username}"
+    msg2 "password: %s" "${password}"
+    msg2 "login_shell: %s" "${login_shell}"
+    msg2 "addgroups: %s" "${addgroups}"
+
+    msg2 "enable_systemd: %s" "${enable_systemd[*]}"
+    msg2 "enable_systemd_live: %s" "${enable_systemd_live[*]}"
+    [[ -n ${disable_systemd[*]} ]] && msg2 "disable_systemd: %s" "${disable_systemd[*]}"
+
+    reset_profile
+    unset yaml_dir
+}
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "PROFILE:"
+    msg2 "build_lists: %s" "$(show_build_lists ${list_dir_iso})"
+    msg2 "build_list_iso: %s" "${build_list_iso}"
+    msg2 "is_build_list: %s" "${is_build_list}"
+
+    msg "OPTIONS:"
+    msg2 "arch: %s" "${target_arch}"
+    msg2 "kernel: %s" "${kernel}"
+
+    msg "ARGS:"
+    msg2 "validate: %s" "${validate}"
+    msg2 "calamares: %s" "${calamares}"
+    msg2 "group: %s" "${group}"
+
+    msg "CHECK QUEUE:"
+    run show_profile "${build_list_iso}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+
+# to force old way to have buildiso run in iso-profiles dir
+# run_dir=$(pwd)
+
+load_run_dir "${profile_repo}"
+
+calamares=false
+pretend=false
+group=false
+validate=false
+cache_dir_netinstall="${cache_dir}/netinstall"
+
+usage() {
+    echo "Usage: ${0##*/} [options]"
+    echo "    -a <arch>          Arch [default: ${target_arch}]"
+    echo '    -c                 Check also calamares yaml files generated for the profile'
+    echo '    -g                 Enable pacman group accepted for -p'
+    echo '    -h                 This help'
+    echo "    -k <name>          Kernel to use[default: ${kernel}]"
+    echo "    -p <profile>       Buildset or profile [default: ${build_list_iso}]"
+    echo '    -q                 Query settings'
+    echo '    -v                 Validate by schema'
+    echo ''
+    echo ''
+    exit $1
+}
+
+orig_argv=("$@")
+
+opts='p:a:i:k:gcvqh'
+
+while getopts "${opts}" arg; do
+    case "${arg}" in
+        a) target_arch="$OPTARG" ;;
+        c) calamares=true ;;
+        g) group=true ;;
+        k) kernel="$OPTARG" ;;
+        p) build_list_iso="$OPTARG" ;;
+        q) pretend=true ;;
+        v) validate=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument '${arg}'"; usage 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+check_root "$0" "${orig_argv[@]}"
+
+prepare_dir "${tmp_dir}"
+
+eval_build_list "${list_dir_iso}" "${build_list_iso}"
+
+${pretend} && display_settings && exit 1
+
+${group} && write_pacman_group_yaml "${build_list_iso}" && exit 0
+
+run make_profile_yaml "${build_list_iso}"

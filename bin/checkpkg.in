@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util-pkg.sh
+
+shopt -s extglob
+
+load_vars "$HOME/.makepkg.conf"
+load_vars /etc/makepkg.conf
+
+if [[ ! -f PKGBUILD ]]; then
+    die 'This must be run in the directory of a built package.'
+fi
+
+. ./PKGBUILD
+if [[ $arch == 'any' ]]; then
+    CARCH='any'
+fi
+
+STARTDIR=$(pwd)
+TEMPDIR=$(mktemp -d --tmpdir checkpkg-script.XXXX)
+
+for _pkgname in "${pkgname[@]}"; do
+    target_pkgver=$(get_full_version "$_pkgname")
+    if ! pkgfile=$(find_cached_package "$_pkgname" "$target_pkgver" "$CARCH"); then
+        die 'tarball not found for package: %s' "${_pkgname}-$target_pkgver"
+    fi
+
+    ln -s "$pkgfile" "$TEMPDIR"
+
+    pkgurl=$(pacman -Spdd --print-format '%l' --noconfirm "$_pkgname")
+
+    if [[ $? -ne 0 ]]; then
+        die "Couldn't download previous package for %s." "$_pkgname"
+    fi
+
+    oldpkg=${pkgurl##*://*/}
+
+    if [[ ${oldpkg##*/} = ${pkgfile##*/} ]]; then
+        die "The built package (%s) is the one in the repo right now!" "$_pkgname"
+    fi
+
+    if [[ $pkgurl = file://* ]]; then
+        ln -s "${pkgurl#file://}" "$TEMPDIR/$oldpkg"
+    elif [[ -f "$PKGDEST/$oldpkg" ]]; then
+        ln -s "$PKGDEST/$oldpkg" "$TEMPDIR/$oldpkg"
+    elif [[ -f "$STARTDIR/$oldpkg" ]]; then
+        ln -s "$STARTDIR/$oldpkg" "$TEMPDIR/$oldpkg"
+    else
+        curl -fsLC - --retry 3 --retry-delay 3 -o "$TEMPDIR/$oldpkg" "$pkgurl"
+    fi
+
+    bsdtar tf "$TEMPDIR/$oldpkg" | sort > "$TEMPDIR/filelist-$_pkgname-old"
+    bsdtar tf "$pkgfile" | sort > "$TEMPDIR/filelist-$_pkgname"
+
+    sdiff -s "$TEMPDIR/filelist-$_pkgname-old" "$TEMPDIR/filelist-$_pkgname"
+
+    find-libprovides "$TEMPDIR/$oldpkg" 2>/dev/null | sort > "$TEMPDIR/libraries-$_pkgname-old"
+    find-libprovides "$pkgfile" 2>/dev/null | sort > "$TEMPDIR/libraries-$_pkgname"
+    if ! diff_output="$(sdiff -s "$TEMPDIR/libraries-$_pkgname-old" "$TEMPDIR/libraries-$_pkgname")"; then
+        msg "Sonames differ in %s!" "$_pkgname"
+        echo "$diff_output"
+    else
+        msg "No soname differences for %s" "$_pkgname."
+    fi
+done

@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+LIBDIR='@libdir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-pkgtree.sh
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "ARGS:"
+  # msg2 "sync: %s" "${sync}"
+    msg2 "abs: %s" "${abs}"
+    msg2 "clean: %s" "${clean}"
+
+    msg "PATHS:"
+    msg2 "tree_dir: %s" "${tree_dir}"
+    msg2 "repo_tree: %s" "${repo_tree[*]}"
+    msg2 "host_tree: %s" "${host_tree}"
+    msg2 "host_tree_abs: %s" "${host_tree_abs}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+
+#sync=false
+pretend=false
+abs=false
+clean=false
+
+usage() {
+    echo "Usage: ${0##*/} [options]"
+   #echo "    -s            Sync garuda tree"
+    echo "    -a            Sync arch abs"
+    echo '    -c            Clean package tree'
+    echo '    -q            Query settings'
+    echo '    -h            This help'
+    echo ''
+    echo ''
+    exit $1
+}
+
+orig_argv=("$@")
+
+opts='acqh'
+
+while getopts "${opts}" arg; do
+    case "${arg}" in
+        a) abs=true ;;
+        c) clean=true ;;
+        q) pretend=true ;;
+       #s) sync=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument '${arg}'"; usage 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+check_root "$0" "${orig_argv[@]}"
+
+prepare_dir "${tree_dir_abs}"
+
+${pretend} && display_settings && exit 1
+
+${clean} && clean_dir "${tree_dir}"
+
+#${sync} && sync_tree_garuda
+
+${abs} && sync_tree_abs

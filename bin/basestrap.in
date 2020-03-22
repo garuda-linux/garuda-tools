@@ -1,0 +1,109 @@
+#!/bin/bash
+
+#
+# Assumptions:
+#  1) User has partitioned, formatted, and mounted partitions on /mnt
+#  2) Network is functional
+#  3) Arguments passed to the script are valid pacman targets
+#  4) A valid mirror appears in /etc/pacman.d/mirrorlist
+#
+
+version=@version@
+
+shopt -s extglob
+
+DATADIR='@datadir@'
+LIBDIR='@libdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-mount.sh
+
+newroot=/mnt
+
+hostcache=false
+copykeyring=true
+copymirrorlist=true
+
+usage() {
+    echo "usage: ${0##*/} [options] root [packages...]"
+    echo " -C config      Use an alternate config file for pacman"
+    echo " -c             Use the package cache on the host, rather than the target"
+    echo " -d             Allow installation to a non-mountpoint directory"
+    echo " -G             Avoid copying the host's pacman keyring to the target"
+    echo " -i             Avoid auto-confirmation of package selections"
+    echo " -M             Avoid copying the host's mirrorlist to the target"
+    echo " -h             Print this help message"
+    echo ''
+    echo ' basestrap installs packages to the specified new root directory.'
+    echo ' If no packages are given, basestrap defaults to the "base" group.'
+    echo ''
+    echo ''
+    exit $1
+}
+
+# if [[ -z $1 || $1 = @(-h|--help) ]]; then
+#   usage
+#   exit $(( $# ? 0 : 1 ))
+# fi
+#
+
+orig_argv=("$@")
+
+opts=':C:cdGiM'
+
+while getopts ${opts} arg; do
+    case "${arg}" in
+        c) hostcache=true ;;
+        C) pacman_config=$OPTARG ;;
+        d) directory=true ;;
+        G) copykeyring=false ;;
+        i) interactive=true ;;
+        M) copymirrorlist=false ;;
+        :) echo "invalid argument ${arg}:$OPTARG"; usage 1;;
+        ?) usage 0 ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
+check_root "$0" "${orig_argv[@]}"
+
+(( $# )) || die "No root directory specified"
+newroot=$1; shift
+pacman_args=("${@:-base}")
+
+${hostcache} && pacman_args+=(--cachedir="$newroot/var/cache/pacman/pkg")
+
+${interactive} && pacman_args+=(--noconfirm)
+
+[[ -n $pacman_config ]] && pacman_args+=(--config="$pacman_config")
+
+[[ -d $newroot ]] || die "%s is not a directory" "$newroot"
+
+if ! mountpoint -q "$newroot" && ! ${directory}; then
+die '%s is not a mountpoint!' "$newroot"
+fi
+
+# create obligatory directories
+create_min_fs "$newroot"
+
+# mount API filesystems
+chroot_api_mount "$newroot" || die "failed to setup API filesystems in new root"
+
+msg2 'Installing packages to %s' "$newroot"
+if ! pacman -r "$newroot" -Sy "${pacman_args[@]}"; then
+    die 'Failed to install packages to new root'
+fi
+
+# kill chroot process if needed (TODO: check if needed at all)
+kill_chroot_process "$newroot"
+
+if ${copykeyring}; then
+    copy_keyring "$newroot"
+fi
+
+if ${copymirrorlist}; then
+    copy_mirrorlist "$newroot"
+fi
+

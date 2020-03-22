@@ -1,0 +1,299 @@
+<?xml version='1.0'?> <!--*-nxml-*-->
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<!--
+This file is part of garuda-tools.
+
+Copyright 2015 garuda Developers
+
+garuda-tools is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+garuda-tools is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with systemd; If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<refentry id="profile.conf" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <refentryinfo>
+        <title>profile.conf-+</title>
+        <productname>garuda-tools</productname>
+
+        <authorgroup>
+        <author>
+            <contrib></contrib>
+            <firstname></firstname>
+            <surname></surname>
+            <email></email>
+        </author>
+        </authorgroup>
+    </refentryinfo>
+
+    <refmeta>
+        <refentrytitle>garuda-tools.conf</refentrytitle>
+        <manvolnum>5</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+        <refname>garuda-tools.conf</refname>
+        <refpurpose>general configuration file for garuda-tools</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+        <para><filename>garuda-tools.conf</filename></para>
+    </refsynopsisdiv>
+
+    <refsect1>
+        <title>Description</title>
+
+        <para>garuda-tools.conf is a general configuration file for all garuda-tools binaries. </para>
+
+        <para>By default all the options in the file are commented, with a value equal to the
+        default value. To change it just uncomment and put the desired value.</para>
+
+    </refsect1>
+
+    <refsect1>
+        <title>General options for all tools</title>
+
+        <para>The following options are understood and used for various tools:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><varname>target_branch=</varname></term>
+
+                <listitem><para>Takes <option>stable</option> (the default),
+                <option>testing</option> or <option>unstable</option>. It defines
+                against which repository will be used when compilling packages
+                with buildpkg.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>target_arch=</varname></term>
+
+                <listitem><para>Takes <option>i686</option> or <option>x86_64</option>.
+                By default it will try to autodetect the current architecture.
+                It defines in witch architecture the packages will be built with
+                buildpkg.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>cache_dir=</varname></term>
+
+                <listitem><para>Cache dir where buildpkg and buildise will cache
+                packages. Default is "/var/cache/garuda-tools".
+                </para></listitem>
+            </varlistentry>
+
+
+            <varlistentry>
+                <term><varname>chroots_dir=</varname></term>
+
+                <listitem><para>Build dir where buildpkg or buildiso chroot
+                environment will be created. Default is "/var/lib/garuda-tools".
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>log_dir=</varname></term>
+
+                <listitem><para>Log dir where buildiso log the build process. Default is  "/var/log/garuda-tools".
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>build_mirror=</varname></term>
+
+                <listitem><para>Default mirror to be used when building
+                packages.
+                </para></listitem>
+            </varlistentry>
+
+        </variablelist>
+    </refsect1>
+
+    <refsect1>
+        <title>Options for buildtree</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><varname>repo_tree=</varname></term>
+
+                <listitem><para>garuda package tree. Default is
+                "('core' 'extra' 'community' 'multilib')".
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>host_tree=</varname></term>
+
+                <listitem><para>Host tree. Default is "https://github.com/garuda".
+                </para></listitem>
+            </varlistentry>
+
+
+            <varlistentry>
+                <term><varname>host_tree_abs=</varname></term>
+
+                <listitem><para>Host tree for abs. Default is
+                "https://projects.archlinux.org/git/svntogit".
+                </para></listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+
+    <refsect1>
+        <title>Options for buildpkg</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><varname>build_list_pkg=</varname></term>
+
+                <listitem><para>Default list for buildpkg without the .list
+                extension.
+                </para></listitem>
+            </varlistentry>
+
+        </variablelist>
+    </refsect1>
+
+    <refsect1>
+        <title>Options for buildiso</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+        <varlistentry>
+            <term><varname>build_list_iso=</varname></term>
+
+            <listitem><para>Default list for buildiso without the .list
+            extension.
+            </para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><varname>dist_release=</varname></term>
+
+            <listitem><para>Release version of the distribution.
+            </para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <!-- TODO: We should tell where exactly this is used -->
+            <term><varname>dist_branding=</varname></term>
+
+            <listitem><para>Branding of the distribution.
+            </para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><varname>gpgkey=</varname></term>
+
+            <listitem><para>If the gpgkey is supplied, the sfs images on iso will be signed.
+                    If the key is left empty or commented, signing will be skipped.
+                    </para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+            <term><varname>kernel=</varname></term>
+
+            <listitem><para>Takes a string corresponding to a
+            garuda kernel package (ex: linux318 for linux 3.18).
+            </para></listitem>
+        </varlistentry>
+
+        </variablelist>
+    </refsect1>
+
+        <refsect1>
+        <title>Options for deployiso</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><varname>account=</varname></term>
+
+                <listitem><para>Default user to be used for upload.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>ssh_agent=true|false</varname></term>
+
+                <listitem><para>When set true, the ssh-agent will be used to store
+                the passphrase.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>alt_storage=true|false</varname></term>
+
+                <listitem><para>When set true deployiso will upload to OSDN's
+                alternative server. Under some circumstances and depending on your
+                location the connection might be more stable.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>project=</varname></term>
+
+                <listitem><para>Default OSDN project name to be used for upload.
+                    If unset, 'garuda' or 'garuda-community' will be determined
+                    automatically based on profile.
+                </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>limit=</varname></term>
+
+                <listitem><para>Default upload bandwidth limit in kb/s.
+                </para></listitem>
+            </varlistentry>
+
+             <varlistentry>
+            <term><varname>tracker_url=</varname></term>
+
+            <listitem><para>Default tracker announce for the torrent.
+                    The tracker url can also contain comma separated urls.
+                    </para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><varname>piece_size=</varname></term>
+
+                <listitem><para>Default priece size for the torrent in 2^n.
+                        </para></listitem>
+            </varlistentry>
+
+        </variablelist>
+    </refsect1>
+
+    <refsect1>
+        <title>See Also</title>
+        <para>
+            <citerefentry project='garuda-tools'><refentrytitle>profiles.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>buildiso</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>deployiso</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>buildtree</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>buildpkg</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+        </para>
+    </refsect1>
+
+</refentry>
+
+

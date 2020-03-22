@@ -1,0 +1,147 @@
+<?xml version='1.0'?> <!--*-nxml-*-->
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<!--
+This file is part of garuda-tools.
+
+Copyright 2015 garuda Developers
+
+garuda-tools is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+garuda-tools is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with systemd; If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<refentry id="buildpkg" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <refentryinfo>
+        <title>buildpkg-+</title>
+        <productname>garuda-tools</productname>
+        <authorgroup>
+            <author>
+                <contrib></contrib>
+                <firstname></firstname>
+                <surname></surname>
+                <email></email>
+            </author>
+        </authorgroup>
+    </refentryinfo>
+
+    <refmeta>
+        <refentrytitle>buildpkg</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+        <refname>buildpkg</refname>
+        <refpurpose>buildpkg is used to build packages in a clean chroot. </refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>buildpkg</command>
+            <arg choice="opt" rep="repeat">OPTIONS</arg>
+        </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+        <title>Description</title>
+
+        <para><command>buildpkg</command> is used to build a particular package or a set of packages. </para>
+
+        <para>With buildpkg you can build packages in a clean chroot environment.</para>
+
+    </refsect1>
+
+    <refsect1>
+        <title>Options</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><option>-p PROFILE...</option></term>
+
+                <listitem><para>Name of the build list or name of the directory
+                you will build. It needs to cantain a existing build list or a
+                folder with a valid PKGBUILD.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-a i686|x86_64|multilib|arm|armv6h|armv7h|aarch64</option></term>
+
+                <listitem><para>Architecture that the iso will be built. Can be i686, x86_64 or multilib.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-b stable|testing|unstable</option></term>
+
+                <listitem><para>Branch to build against..</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-r DIR</option></term>
+
+                <listitem><para>Root working directory where the package will be built.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-i PKG</option></term>
+
+                <listitem><para>Install a package into the working copy of the chroot.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-c</option></term>
+
+                <listitem><para>Recreate chroot.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-w</option></term>
+
+                <listitem><para>Clean up cache and sources.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-n</option></term>
+
+                <listitem><para>Install built package in chroot and run namcap check.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-s</option></term>
+
+                <listitem><para>Sign package.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-q</option></term>
+
+                <listitem><para>Query settings and pretend build.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-h</option></term>
+
+                <listitem><para>Help.</para></listitem>
+            </varlistentry>
+        </variablelist>
+
+    </refsect1>
+
+    <refsect1>
+        <title>See Also</title>
+        <para>
+            <citerefentry project='garuda-tools'><refentrytitle>garuda-tools.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+        </para>
+    </refsect1>
+</refentry>

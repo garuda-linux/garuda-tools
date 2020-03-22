@@ -1,0 +1,84 @@
+# vim: set ft=sh:
+
+find_dev_by_path () {
+    local path="${1}"
+    local tmp_mnt=/tmp_mnt
+    local _mnt
+    local a d
+    local device
+
+    [[ "$path" ]] || return 1
+
+    mkdir -p "${tmp_mnt}"
+
+    for a in 1 2 3; do
+        for d in $(awk '{ print "/dev/"$4 }' /proc/partitions); do
+
+            # If the device is already mounted, it shouldn't be
+            # unmounted after the check.
+
+            grep -q "^$d " /proc/mounts && {
+                _mnt=$(grep "^$d " /proc/mounts | cut -d ' ' -f 2)
+                unmount=
+            } || {
+                mount -r -t auto "${d}" "${tmp_mnt}" 2> /dev/null || continue
+                _mnt="${tmp_mnt}"
+                unmount=true
+            }
+
+            # File exists in $d. Save $d on $device.
+
+            [[ -f "${_mnt}/${path}" ]] && device="${d}"
+            [[ "${unmount}" ]] && umount "${tmp_mnt}" 2> /dev/null || true
+            [[ "${device}" ]] && {
+                echo "${device}"
+                return
+            }
+
+        done
+        sleep 1
+    done
+    return 1
+}
+
+run_hook () {
+    [[ -z "${img_flags}" ]] && img_flags="defaults"
+    if [[ "${img_loop}" ]]; then
+        img_dev=$(find_dev_by_path "${img_loop}")
+
+        if [[ -z "${img_dev}" ]]; then
+            [[ -b "/dev/disk/by-label/${img_label}" ]] &&
+                img_dev="/dev/disk/by-label/${img_label}"
+        fi
+
+        mount_handler="miso_loop_mount_handler"
+    fi
+}
+
+miso_loop_mount_handler () {
+    newroot="${1}"
+
+    local _dev_loop
+
+    msg ":: Setup a loop device from ${img_loop} located at device ${img_dev}"
+    _mnt_dev "${img_dev}" "/run/miso/img_dev" "-r" "${img_flags}"
+    if [[ "${copytoram}" != "y" ]]; then
+        echo $(readlink -f ${img_dev}) >> /run/miso/used_block_devices
+    fi
+
+    if _dev_loop=$(losetup --find --show --read-only "/run/miso/img_dev/${img_loop}"); then
+        misodevice="${_dev_loop}"
+    else
+        echo "ERROR: Setting loopback device for file '/run/miso/img_dev/${img_loop}'"
+        launch_interactive_shell
+    fi
+
+    miso_mount_handler ${newroot}
+
+    if [[ "${copytoram}" == "y" ]]; then
+        losetup -d ${_dev_loop} 2>/dev/null
+        umount /run/miso/img_dev
+    else
+        echo $(readlink -f ${img_dev}) >> /run/miso/used_block_devices
+    fi
+}

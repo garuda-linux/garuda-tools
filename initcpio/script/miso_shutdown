@@ -1,0 +1,38 @@
+#!/bin/ash
+
+# /oldroot depends on things inside /oldroot/run/miso...
+mkdir /oldrun
+mount -n --move /oldroot/run /oldrun
+
+# Unmount all mounts now.
+#umount $(mount | awk '$3 ~/^\/oldroot/ {print $3}' | sort -r)
+umount $(mount | awk '$3 ~/^\/oldroot/ {if($3 != "/run/miso/bootmnt") print $3}' | sort -r)
+
+# Remove all dm-snapshot devices.
+dmsetup remove_all
+
+# Remove all loopback devices.
+for _lup in $(grep ^/dev/loop /oldrun/miso/used_block_devices | tac); do
+    if ! losetup -d ${_lup} 2> /dev/null; then
+        umount -d ${_lup}
+    fi
+done
+
+# Unmount the space used to store *.cow.
+umount /oldrun/miso/cowspace
+
+# Unmount boot device if needed (no copytoram=y used)
+if [[ ! -d /oldrun/miso/copytoram ]]; then
+    if [[ -d /oldrun/miso/img_dev ]]; then
+        umount /oldrun/miso/img_dev
+    else
+        umount /oldrun/miso/bootmnt
+    fi
+fi
+
+# reboot / poweroff / halt, depending on the argument passed by init
+# if something invalid is passed, we halt
+case "$1" in
+  reboot|poweroff|halt) "$1" -f ;;
+  *) halt -f;;
+esac

@@ -1,0 +1,147 @@
+<?xml version='1.0'?> <!--*-nxml-*-->
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<!--
+This file is part of garuda-tools.
+
+Copyright 2015 garuda Developers
+
+garuda-tools is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+garuda-tools is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with systemd; If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<refentry id="deployiso" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <refentryinfo>
+        <title>deployiso-+</title>
+        <productname>garuda-tools</productname>
+
+        <authorgroup>
+            <author>
+                <contrib></contrib>
+                <firstname></firstname>
+                <surname></surname>
+                <email></email>
+            </author>
+        </authorgroup>
+    </refentryinfo>
+
+    <refmeta>
+        <refentrytitle>deployiso</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+        <refname>deployiso</refname>
+        <refpurpose>deployiso is used to upload a particular ISO or a set of ISOs. </refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>deployiso</command>
+            <arg choice="opt" rep="repeat">OPTIONS</arg>
+        </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+        <title>Description</title>
+
+        <para><command>deployiso</command> is used to upload a particular ISO or a set of ISOs. </para>
+
+        <para>deployiso is a script to upload a specific iso or a buiildset to SF.</para>
+
+    </refsect1>
+
+    <refsect1>
+        <title>Options</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><option>-d</option></term>
+
+                <listitem><para>Use hidden remote directory.
+                The target directory name will be prefaced with a dot.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-h</option></term>
+
+                <listitem><para>Help.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-l</option></term>
+
+                <listitem><para>Limit bandwidth in kB/s.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-p PROFILE...</option></term>
+
+                <listitem><para>Name of the build list or name of the directory
+                you will upload.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-q</option></term>
+
+                <listitem><para>Query settings and pretend upload.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-s</option></term>
+
+                <listitem><para>Sign ISO and create checksums before uploading.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-t</option></term>
+
+                <listitem><para>Create a torrent from iso file.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-u</option></term>
+
+                <listitem><para>Update remote iso.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-v</option></term>
+
+                <listitem><para>Verbose output.</para></listitem>
+            </varlistentry>
+        </variablelist>
+
+    </refsect1>
+
+    <!--<refsect1>
+        <title>Exit status</title>
+
+        <para>On success, 0 is returned, a non-zero failure code
+        otherwise.</para>
+    </refsect1>
+    -->
+
+    <refsect1>
+        <title>See Also</title>
+        <para>
+            <citerefentry project='garuda-tools'><refentrytitle>garuda-tools.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>profiles.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+        </para>
+    </refsect1>
+
+</refentry>

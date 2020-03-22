@@ -1,0 +1,139 @@
+<?xml version='1.0'?> <!--*-nxml-*-->
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<!--
+This file is part of garuda-tools.
+
+Copyright 2015 garuda Developers
+
+garuda-tools is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+garuda-tools is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with systemd; If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<refentry id="check-yaml" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <refentryinfo>
+        <title>check-yaml-+</title>
+        <productname>garuda-tools</productname>
+
+        <authorgroup>
+            <author>
+                <contrib></contrib>
+                <firstname></firstname>
+                <surname></surname>
+                <email></email>
+            </author>
+        </authorgroup>
+    </refentryinfo>
+
+    <refmeta>
+        <refentrytitle>check-yaml</refentrytitle>
+        <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+        <refname>check-yaml</refname>
+        <refpurpose>check-yaml is used to generate and validate yaml files used by calamares. </refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>check-yaml</command>
+            <arg choice="opt" rep="repeat">OPTIONS</arg>
+        </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+        <title>Description</title>
+
+        <para><command>check-yaml</command> is used to generate and validate yaml files used by calamares.</para>
+
+        <para>check-yaml is a script to generate and validate yaml files by yaml schemas. Buildiso generates these files also, but check-yaml is a standalone version without the need to build the entire iso.</para>
+
+    </refsect1>
+
+    <refsect1>
+        <title>Options</title>
+
+        <para>The following options are understood:</para>
+
+        <variablelist>
+            <varlistentry>
+                <term><option>-p PROFILE...</option></term>
+
+                <listitem><para>Name of the build list or name of the directory.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-a i686|x86_64</option></term>
+
+                <listitem><para>Architecture that the yaml will be created for. Can be i686 or x86_64.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-k linuxXXX</option></term>
+
+                <listitem><para>The kernel the yaml will be created for.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-c</option></term>
+
+                <listitem><para>Create calamares yaml conf files.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-g</option></term>
+
+                <listitem><para>Generate a packman group netgroup yaml file.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-v</option></term>
+
+                <listitem><para>Validate the yaml file by yaml schema.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-q</option></term>
+
+                <listitem><para>Query settings.</para></listitem>
+            </varlistentry>
+
+            <varlistentry>
+                <term><option>-h</option></term>
+
+                <listitem><para>Help.</para></listitem>
+            </varlistentry>
+        </variablelist>
+
+    </refsect1>
+
+    <!--<refsect1>
+        <title>Exit status</title>
+
+        <para>On success, 0 is returned, a non-zero failure code
+        otherwise.</para>
+    </refsect1>
+    -->
+
+    <refsect1>
+        <title>See Also</title>
+        <para>
+            <citerefentry project='garuda-tools'><refentrytitle>garuda-tools.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+            <citerefentry project='garuda-tools'><refentrytitle>profiles.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+        </para>
+    </refsect1>
+
+</refentry>

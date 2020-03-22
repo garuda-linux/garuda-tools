@@ -1,0 +1,156 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+shopt -s nullglob
+
+LIBDIR='@libdir@'
+DATADIR='@datadir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-pkg.sh
+import ${LIBDIR}/util-pkg-chroot.sh
+
+show_pkg(){
+    check_build "$1"
+    cd $1
+        source PKGBUILD
+        for n in ${pkgname[@]}; do
+            msg2 "%s" "$n"
+        done
+    cd ..
+}
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "PROFILE:"
+    msg2 "build_lists: %s" "$(show_build_lists ${list_dir_pkg})"
+    msg2 "build_list_pkg: %s" "${build_list_pkg}"
+    msg2 "is_build_list: %s" "${is_build_list}"
+
+    msg "OPTIONS:"
+    msg2 "arch: %s" "${target_arch}"
+    msg2 "branch: %s" "${target_branch}"
+    msg2 "chroots_pkg: %s" "${chroots_pkg}"
+
+
+    msg "ARGS:"
+    msg2 "clean_first: %s" "${clean_first}"
+    msg2 "wipe_clean: %s" "${wipe_clean}"
+    msg2 "namcap: %s" "${namcap}"
+    msg2 "sign: %s" "${sign}"
+
+    msg "PATHS:"
+    msg2 "pkg_dir: %s" "${pkg_dir}"
+
+    if ${clean_first}; then
+        msg "PKG:"
+        msg2 "base_packages: %s" "${base_packages[*]}"
+    fi
+
+    msg "BUILD QUEUE:"
+    run show_pkg "${build_list_pkg}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+load_vars "$USER_HOME/.makepkg.conf" || load_vars /etc/makepkg.conf
+
+clean_first=false
+wipe_clean=false
+namcap=false
+pretend=false
+is_build_list=false
+sign=false
+is_multilib=false
+
+usage() {
+    echo "Usage: ${0##*/} [options]"
+    echo "    -a <arch>          Arch [default: ${target_arch}]"
+    echo "    -b <branch>        Branch [default: ${target_branch}]"
+    echo '    -c                 Recreate chroot'
+    echo '    -h                 This help'
+    echo '    -i <pkg>           Install a package into the working copy of the chroot'
+    echo '    -n                 Install and run namcap check'
+    echo "    -p <pkg>           Build list or pkg [default: ${build_list_pkg}]"
+    echo '    -q                 Query settings and pretend build'
+    echo '    -r <dir>           Chroots directory'
+    echo "                       [default: ${chroots_pkg}]"
+    echo '    -s                 Sign packages'
+    echo '    -w                 Clean up cache and sources'
+    echo ''
+    echo ''
+    exit $1
+}
+
+orig_argv=("$@")
+
+opts='p:a:b:r:i:cwnsuqh'
+
+while getopts "${opts}" arg; do
+    case "${arg}" in
+        a) target_arch="$OPTARG" ;;
+        b) target_branch="$OPTARG" ;;
+        c) clean_first=true ;;
+        i) mkchrootpkg_args+=(-I "$OPTARG") ;;
+        n) namcap=true; mkchrootpkg_args+=(-n) ;;
+        p) build_list_pkg="${OPTARG%/}" ;;
+        q) pretend=true ;;
+        r) chroots_pkg="$OPTARG" ;;
+        s) sign=true ;;
+        w) wipe_clean=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument '${arg}'"; usage 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+check_root "$0" "${orig_argv[@]}"
+
+prepare_dir "${log_dir}"
+
+user_own "${log_dir}"
+
+prepare_dir "${tmp_dir}"
+
+prepare_conf "${target_arch}"
+
+mirrors_conf=$(get_pac_mirrors_conf "${target_branch}")
+
+mkchroot_args+=(-C ${pacman_conf} -M ${makepkg_conf} -S ${mirrors_conf} -B "${build_mirror}/${target_branch}")
+
+mkchrootpkg_args+=(-r ${work_dir})
+
+timer_start=$(get_timer)
+
+eval_build_list "${list_dir_pkg}" "${build_list_pkg}"
+
+prepare_dir "${pkg_dir}"
+
+user_own "${pkg_dir}"
+
+init_base_devel
+
+${pretend} && display_settings && exit
+
+${wipe_clean} && clean_up
+
+chroot_init
+
+run make_pkg "${build_list_pkg}"

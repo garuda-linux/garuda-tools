@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+version=@version@
+
+shopt -s extglob
+
+LIBDIR='@libdir@'
+SYSCONFDIR='@sysconfdir@'
+
+[[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
+
+import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-mount.sh
+
+display_settings(){
+    show_version
+    show_config
+
+    msg "ARGS:"
+    msg2 "automount: %s" "${automount}"
+    msg2 "run_args: %s" "${run_args[*]}"
+
+    msg "PATHS:"
+    msg2 "chrootdir: %s" "${chrootdir}"
+}
+
+load_user_info
+
+load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/garuda-tools.conf"
+
+automount=false
+pretend=false
+
+usage() {
+    echo "usage: ${0##*/} -a [or] ${0##*/} chroot-dir [command]"
+    echo '    -a             Automount detected linux system'
+    echo '    -h             Print this help message'
+    echo '    -q             Query settings and pretend'
+    echo ''
+    echo "    If 'command' is unspecified, ${0##*/} will launch /bin/sh."
+    echo ''
+    echo "    If 'automount' is true, ${0##*/} will launch /bin/bash"
+    echo "    and ${chrootdir}."
+    echo ''
+    echo ''
+    exit $1
+}
+
+orig_argv=("$@")
+
+opts=':haq'
+
+while getopts ${opts} arg; do
+    case "${arg}" in
+        a) automount=true ;;
+        q) pretend=true ;;
+        h|?) usage 0 ;;
+        *) echo "invalid argument ${arg}"; usage 1 ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
+check_root "$0" "${orig_argv[@]}"
+
+if ${automount}; then
+    chrootdir=/mnt
+    run_args=/bin/bash
+
+    ${pretend} && display_settings && exit 1
+
+    select_os "${chrootdir}"
+else
+    chrootdir=$1
+    shift
+    run_args="$@"
+
+    [[ -d ${chrootdir} ]] || die "Can't create chroot on non-directory %s" "${chrootdir}"
+
+    ${pretend} && display_settings && exit 1
+
+    chroot_api_efi_mount "${chrootdir}" || die "failed to setup API filesystems in chroot %s" "${chrootdir}"
+    chroot_mount /etc/resolv.conf "${chrootdir}/etc/resolv.conf" --bind
+fi
+
+SHELL=/bin/sh unshare --fork --pid chroot "${chrootdir}" ${run_args[*]}
