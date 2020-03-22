@@ -514,7 +514,7 @@ check_requirements(){
     fi
 
     local iso_kernel=${kernel:5:1}
-    [[ ${iso_kernel} < "4" ]] && die "ISO kernel must be version>=4.0!"
+#    [[ ${iso_kernel} < "4" ]] && die "ISO kernel must be version>=4.0!"
 }
 
 compress_images(){
