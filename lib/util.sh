@@ -424,7 +424,7 @@ load_profile_config(){
 
     [[ -z ${password} ]] && password="garuda"
 
-    [[ -z ${login_shell} ]] && login_shell='/bin/Zsh'
+    [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
 
     if [[ -z ${addgroups} ]]; then
         addgroups="input,lp,network,power,sys,video,wheel,plugdev,sambashare"
@@ -507,7 +507,7 @@ reset_profile(){
     unset login_shell
     unset netinstall
     unset chrootcfg
-    unset geoip\
+    unset geoip
     unset plymouth_boot
     unset plymouth_theme
     unset extra

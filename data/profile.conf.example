@@ -43,7 +43,7 @@
 # geoip="true"
 
 # unset defaults to given value
-# plymouth_theme=garuda
+# plymouth_theme="garuda"
 
 
 # unset defaults to given values
