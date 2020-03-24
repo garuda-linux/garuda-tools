@@ -215,23 +215,23 @@ pull_hp_repo(){
     load_vars "$USER_HOME/.makepkg.conf" || load_vars /etc/makepkg.conf
     [[ -z $SRCDEST ]] && SRCDEST=${cache_dir}
     
-    hp_repo=manjaro-homepage
+    hp_repo=garuda-homepage
     dl_file="${SRCDEST}/${hp_repo}/site/content/downloads/${edition}/${profile}.md"
 
     cd "${SRCDEST}"
     if [[ ! -d "${hp_repo}" ]]; then
-        msg "Cloning manjaro.org"
-        git clone "ssh://git@gitlab.manjaro.org:22277/webpage/${hp_repo}.git"
+        msg "Cloning garuda.org"
+        git clone "ssh://git@gitlab.garuda.org:22277/webpage/${hp_repo}.git"
     else
         cd "${hp_repo}"
-        msg "Pulling manjaro.org"
+        msg "Pulling garuda.org"
         git pull
     fi
 }
 
 push_hp_repo(){
     cd "${SRCDEST}/${hp_repo}"
-    msg "Updating manjaro.org"
+    msg "Updating garuda.org"
     git add ${dl_file}
     git commit -m "update download ${profile}"
     git push

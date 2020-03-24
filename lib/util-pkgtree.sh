@@ -35,7 +35,7 @@ clone_tree(){
     show_elapsed_time "${FUNCNAME}" "${timer}"
 }
 
-sync_tree_manjaro(){
+sync_tree_garuda(){
     cd ${tree_dir}
         for repo in ${repo_tree[@]}; do
             if [[ -d packages-${repo} ]]; then
