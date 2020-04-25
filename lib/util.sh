@@ -823,7 +823,7 @@ init_profiles() {
 	if [[ -d ${_workdir}/iso-profiles ]]; then
 		rm -Rf ${_workdir}/iso-profiles ]]
 	fi
-	git clone -q --depth 1 -b ${branch} https://gitlab.garuda.org/profiles-and-settings/iso-profiles.git ${_workdir}/iso-profiles/
+	git clone -q --depth 1 -b ${branch} https://gitlab.com/garuda-linux/tools/iso-profiles.git ${_workdir}/iso-profiles/
 	
 	#Check if git clone is done
 	if [[ -d ${_workdir}/iso-profiles/garuda ]] && [[ -d ${_workdir}/iso-profiles/community ]]; then
