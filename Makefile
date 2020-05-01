@@ -6,6 +6,8 @@ SYSCONFDIR = /etc
 SYSCONF = \
 	data/garuda-tools.conf \
 	data/branding.desc.d
+APP_BASE = \
+	applications/garuda-chroot.desktop \
 
 BIN_BASE = \
 	bin/mkchroot \
@@ -127,6 +129,9 @@ install_base:
 
 	install -dm0755 $(DESTDIR)$(PREFIX)/share/garuda-tools
 	install -m0644 ${SHARED_BASE} $(DESTDIR)$(PREFIX)/share/garuda-tools
+
+	install -dm0755 $(DESTDIR)$(PREFIX)/share/applications
+	install -m0644 ${APP_BASE} $(DESTDIR)$(PREFIX)/share/applications
 
 install_pkg:
 	install -dm0755 $(DESTDIR)$(SYSCONFDIR)/garuda-tools/pkg.list.d
