@@ -325,7 +325,7 @@ init_buildiso(){
     	branch=$(git rev-parse --abbrev-ref HEAD)
     	cd ${current_path}
     else
-    	[[ -z ${branch} ]] && branch="v18.0" #current branch release
+    	[[ -z ${branch} ]] && branch="master" #current branch release
     fi
 
     [[ -z ${gpgkey} ]] && gpgkey=''
@@ -835,7 +835,7 @@ init_profiles() {
 		for i in ${_workdir}/iso-profiles/.git ${_workdir}/iso-profiles/sonar; do
 			rm -Rf $i
 		done
-	else msg2 "Impossible to initialize iso-profiles, please check internet connection or browse at 'https://gitlab.garuda.org/profiles-and-settings/iso-profiles'"
+	else msg2 "Impossible to initialize iso-profiles, please check internet connection or browse at 'https://gitlab.com/garuda-linux/tools/iso-profiles'"
 	exit 1
 	fi
 }
