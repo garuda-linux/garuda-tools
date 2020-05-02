@@ -1,10 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=garuda-chroot
+Name=garuda-chroot-gui
 Comment=GUI for garuda-chroot
 Categories=System;
 Icon=system-run
 TryExec=garuda-chroot
-Exec=garuda-chroot -a
-Terminal=true
+Exec=garuda-chroot-gui

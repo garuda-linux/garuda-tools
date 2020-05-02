@@ -1,0 +1,47 @@
+#!/usr/bin/bash
+
+terms=( "xfce4-terminal" "gnome-terminal" "konsole" "terminator" "urxvt" "deepin-terminal" "qterminal" "xterm")
+
+declare -A commlist
+commlist=(["xfce4-terminal"]="xfce4-terminal -e"\
+          ["gnome-terminal"]="gnome-terminal -e"\
+          ["konsole"]="konsole --separate -e"\
+          ["terminator"]="terminator -u -e"\
+          ["urxvt"]="urxvt -e"\
+          ["deepin-terminal"]="deepin-terminal -e"\
+          ["qterminal"]="qterminal -e"\
+          ["xterm"]="xterm -e")
+
+term=""
+for i in ${!terms[*]}
+do
+    if [ -x /usr/bin/${terms[$i]} ]; then
+        term=${commlist[${terms[$i]}]}
+        break
+    fi
+done
+
+chgroot=""
+if [ $EUID -ne 0 ]; then
+    if [ -z "$term" ]; then
+        chgroot="su -c"
+    else
+        if [ -x /usr/bin/gksu ]; then
+            chgroot="gksu"
+        else
+            if [ -x /usr/bin/kdesu ]; then
+                chgroot="kdesu -c"
+            else
+                echo -e "\nError : No root privileges !\n"
+                exit 1
+            fi
+        fi
+        
+    fi
+    echo $chgroot "$term garuda-chroot -a"
+    $chgroot "$term garuda-chroot -a" 2>/dev/null
+else
+    echo $term garuda-chroot -a
+    $term garuda-chroot -a 2>/dev/null
+fi
+
