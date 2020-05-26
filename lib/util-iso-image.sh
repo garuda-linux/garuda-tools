@@ -54,12 +54,13 @@ configure_mhwd_drivers(){
     local path=$1${mhwd_repo}/ \
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
-    if  [ -z "$(ls $path | grep catalyst-utils 2> /dev/null)" ]; then
-        msg2 "Disabling Catalyst driver"
-        mkdir -p $drv_path/catalyst/
-        echo "" > $drv_path/catalyst/MHWDCONFIG
+    if  [ -z "$(ls $path | grep r8168 2> /dev/null)" ]; then
+        msg2 "Disabling r8168 driver"
+        mkdir -p $drv_path/r8168/
+        echo "" > $drv_path/r8168/MHWDCONFIG
     fi
 }
+
 
 configure_lsb(){
     if [ -e $1/etc/lsb-release ] ; then
@@ -150,6 +151,17 @@ images:
 # The slideshow is displayed during execution steps (e.g. when the
 # installer is actually writing to disk and doing other slow things).
 slideshow:               "show.qml"
+
+# There are two available APIs for the slideshow:
+#  - 1 (the default) loads the entire slideshow when the installation-
+#      slideshow page is shown and starts the QML then. The QML
+#      is never stopped (after installation is done, times etc.
+#      continue to fire).
+#  - 2 loads the slideshow on startup and calls onActivate() and
+#      onLeave() in the root object. After the installation is done,
+#      the show is stopped (first by calling onLeave(), then destroying
+#      the QML components).
+slideshowAPI: 1
 
 # Colors for text and background components.
 #
