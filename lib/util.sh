@@ -357,13 +357,13 @@ init_calamares(){
 
 init_deployiso(){
 
-    host="osdn.net"
+    host="sourceforge.net"
 
     [[ -z ${account} ]] && account="[SetUser]"
 
     [[ -z ${alt_storage} ]] && alt_storage=false
 
-    [[ -z ${tracker_url} ]] && tracker_url='udp://tracker.opentrackr.org:1337'
+    [[ -z ${tracker_url} ]] && tracker_url='udp://lonewolf.pedrohlc.com:23069'
 
     [[ -z ${piece_size} ]] && piece_size=21
 
@@ -826,7 +826,7 @@ init_profiles() {
 	git clone -q --depth 1 -b ${branch} https://gitlab.com/garuda-linux/tools/iso-profiles.git ${_workdir}/iso-profiles/
 	
 	#Check if git clone is done
-	if [[ -d ${_workdir}/iso-profiles/garuda ]] && [[ -d ${_workdir}/iso-profiles/community ]]; then
+	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/community ]]; then
 	
 		for i in ${_workdir}/iso-profiles/.gitignore ${_workdir}/iso-profiles/README.md; do
 		rm -f $i

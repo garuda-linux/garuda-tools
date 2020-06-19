@@ -13,12 +13,12 @@ local MINIMAL
 
 connect(){
     ${alt_storage} && server="storage-in" || server="storage"
-    local storage="@${server}.osdn.net:/storage/groups/m/ma/"
+    local storage="@${server}.sourceforge.net:/home/frs/project/garuda-linux/"
     echo "${account}${storage}${project}"
 }
 
 connect_shell(){
-    local shell="@shell.osdn.net:/home/groups/m/ma/"
+    local shell="@shell.sourceforge.net:/home/frs/project/garuda-linux/"
     echo "${account}${shell}${project}"
 }
 
@@ -28,7 +28,7 @@ make_torrent(){
     if [[ -n $(find ${src_dir} -type f -name "*.iso") ]]; then
         isos=$(ls ${src_dir}/*.iso)
         for iso in ${isos}; do
-            local seed=https://${host}/dl/${project}/${iso##*/}
+            local seed=https://${host}/projects/garuda-linux/files/${project}/${iso##*/}
             local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed})
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
@@ -46,11 +46,12 @@ prepare_transfer(){
 
     webshell=$(connect_shell)
     htdocs="htdocs/${profile}"
-
-    target_dir="${profile}/${dist_release}"
+    [[ ${extra} == 'false' ]] && _edition=("lite")
+    [[ ${extra} == 'true' ]] && _edition=("ultimate")
+    target_dir="${profile}/${_edition}/$(date +%y%m%d)"
     src_dir="${run_dir}/${edition}/${target_dir}"
 
-    ${hidden} && target_dir="${profile}/.${dist_release}"
+    ${hidden} && target_dir="${profile}/.${_edition}/$(date +%y%m%d)"
 }
 
 start_agent(){

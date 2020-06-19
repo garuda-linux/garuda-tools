@@ -224,8 +224,8 @@ gen_permalink(){
     if [[ ${edition} == "community" ]] || [[ ${edition} == "garuda" ]]; then
         if [[ -f "${iso_dir}/${iso_file}" ]]; then
             msg2 "Creating download link ..."
-            direct_url="https://osdn.net/dl/${edition}/${iso_file}"
-            [[ ${edition} == "community" ]] && direct_url="https://osdn.net/dl/garuda-${edition}/${iso_file}"
+            direct_url="https://sourceforge.net/projects/garuda-linux/files/${iso_file}"
+            [[ ${edition} == "community" ]] && direct_url="https://sourceforge.net/projects/garuda-linux/files/${iso_file}"
             ## html permalink
             html_doc="<!DOCTYPE HTML>"
             html_doc+="<meta charset=\"UTF-8\">"
@@ -256,7 +256,6 @@ gen_iso_fn(){
     if ! ${chrootcfg}; then
         [[ -n ${profile} ]] && vars+=("${profile}")
     fi
-    vars+=("${dist_release}")
 
     [[ ! ${target_branch} == "archlinux" ]] && vars+=("${target_branch}")
 
