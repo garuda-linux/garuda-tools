@@ -313,7 +313,7 @@ init_buildiso(){
 
     [[ -z ${dist_branding} ]] && dist_branding="garuda"
 
-    [[ -z ${iso_compression} ]] && iso_compression='zstd'
+    [[ -z ${iso_compression} ]] && iso_compression='xz'
 
     [[ -z ${kernel} ]] && kernel="linux-zen"
     
