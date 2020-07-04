@@ -345,11 +345,11 @@ init_calamares(){
 
 	[[ -z ${windowplacement} ]] && windowplacement="center"
 	
-	[[ -z ${sidebarbackground} ]] && sidebarbackground=#454948
+	[[ -z ${sidebarbackground} ]] && sidebarbackground=#006680
 	
 	[[ -z ${sidebartext} ]] &&  sidebartext=#efefef
 	
-	[[ -z ${sidebartextselect} ]] && sidebartextselect=#4d915e
+	[[ -z ${sidebartextselect} ]] && sidebartextselect=#2ba3c1
 	
 	[[ -z ${sidebartexthighlight} ]] && sidebartexthighlight=#1a1c1b
 }
