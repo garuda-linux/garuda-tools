@@ -159,7 +159,13 @@ write_packages_conf(){
     echo "---" > "$conf"
     echo "backend: pacman" >> "$conf"
     echo '' >> "$conf"
+    if ${needs_internet}; then
+        echo "skip_if_no_internet: false" >> "$conf"
+    else
+        echo "skip_if_no_internet: true" >> "$conf"
+    fi 
     echo "update_db: true" >> "$conf"
+    echo "update_system: true" >> "$conf"
 }
 
 write_welcome_conf(){
@@ -173,7 +179,7 @@ write_welcome_conf(){
     echo "requirements:" >> "$conf"
     echo "    requiredStorage:    7.9" >> "$conf"
     echo "    requiredRam:        1.0" >> "$conf"
-    echo "    internetCheckUrl:   https://archlinux.org" >> "$conf"
+    echo "    internetCheckUrl:   https://manjaro.org" >> "$conf"
     echo "    check:" >> "$conf"
     echo "      - storage" >> "$conf"
     echo "      - ram" >> "$conf"
@@ -184,7 +190,7 @@ write_welcome_conf(){
     echo "      - storage" >> "$conf"
     echo "      - ram" >> "$conf"
     echo "      - root" >> "$conf"
-    if ${netinstall}; then
+    if ${needs_internet}; then
         echo "      - internet" >> "$conf"
     fi
     if ${geoip}; then
@@ -255,6 +261,8 @@ write_netinstall_conf(){
     msg2 "Writing %s ..." "${conf##*/}"
     echo "---" > "$conf"
     echo "groupsUrl: ${netgroups}/$(get_yaml)" >> "$conf"
+    echo "label:" >> "$conf"
+    echo "    sidebar: \"${netinstall_label}\"" >> "$conf"
 }
 
 write_plymouthcfg_conf(){
@@ -378,6 +386,15 @@ write_settings_conf(){
     fi
     echo '' >> "$conf"
     echo "dont-chroot: false" >> "$conf"
+    if ${oem_used}; then
+        echo "oem-setup: true" >> "$conf"
+        echo "disable-cancel: true" >> "$conf"        
+    else
+        echo "oem-setup: false" >> "$conf"
+        echo "disable-cancel: false" >> "$conf"
+    fi
+    echo "disable-cancel-during-exec: true" >> "$conf"
+    echo "quit-at-end: false" >> "$conf"
 }
 
 configure_calamares(){
