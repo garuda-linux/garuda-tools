@@ -117,12 +117,54 @@ _verify_signature() {
     return ${_status}
 }
 
+_find_dev_by_path () {
+    local path="${1}"
+    local tmp_mnt=/tmp_mnt
+    local _mnt
+    local a d
+    local device
+
+    [[ "$path" ]] || return 1
+
+    mkdir -p "${tmp_mnt}"
+
+    for a in 1 2 3; do
+        for d in $(awk '{ print "/dev/"$4 }' /proc/partitions); do
+
+            # If the device is already mounted, it shouldn't be
+            # unmounted after the check.
+
+            grep -q "^$d " /proc/mounts && {
+                _mnt=$(grep "^$d " /proc/mounts | cut -d ' ' -f 2)
+                unmount=
+            } || {
+                mount -r -t auto "${d}" "${tmp_mnt}" 2> /dev/null || continue
+                _mnt="${tmp_mnt}"
+                unmount=true
+            }
+
+            # File exists in $d. Save $d on $device.
+
+            [[ -f "${_mnt}/${path}" ]] && device="${d}"
+            [[ "${unmount}" ]] && umount "${tmp_mnt}" 2> /dev/null || true
+            [[ "${device}" ]] && {
+                echo "${device}"
+                return
+            }
+
+        done
+        sleep 1
+    done
+    return 1
+}
+
 run_hook() {
     [[ -z "${arch}" ]] && arch="$(uname -m)"
     [[ -z "${copytoram_size}" ]] && copytoram_size="75%"
     [[ -z "${misobasedir}" ]] && misobasedir="garuda"
 
-    [[ -z "${dm_snap_prefix}" ]] && dm_snap_prefix="arch"
+    [[ -z "${dm_snap_prefix}" ]] && dm_snap_prefix="garuda"
+    misodevice=$(_find_dev_by_path /.miso)
     [[ -z "${misodevice}" ]] && misodevice="/dev/disk/by-label/${misolabel}"
     [[ -z "${cow_spacesize}" ]] && cow_spacesize="256M"
     [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
