@@ -54,13 +54,31 @@ configure_mhwd_drivers(){
     local path=$1${mhwd_repo}/ \
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
-    if  [ -z "$(ls $path | grep r8168 2> /dev/null)" ]; then
+    if  [ -z "$(ls $path | grep r8168-dkms 2> /dev/null)" ]; then
         msg2 "Disabling r8168 driver"
         mkdir -p $drv_path/r8168/
         echo "" > $drv_path/r8168/MHWDCONFIG
     fi
+    if  [ -z "$(ls $path | grep nvidia-utils 2> /dev/null)" ]; then
+        msg2 "Disabling Nvidia dkms driver"
+        mkdir -p $drv_path/nvidia-dkms/
+        echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
+        msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
+        mkdir -p $drv_path/video-hybrid-amd-nvidia-dkms-prime-render-offloading/
+        echo "" > $drv_path/video-hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling video-hybrid-intel-nvidia-dkms-prime-render-offloading driver"
+        mkdir -p $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/
+        echo "" > $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+                msg2 "video-intel-nvidia-optimus-manager driver"
+        mkdir -p $drv_path/video-intel-nvidia-optimus-manager/
+        echo "" > $drv_path/video-intel-nvidia-optimus-manager/MHWDCONFIG
+    fi
+    if  [ -z "$(ls $path | grep optimus-manager 2> /dev/null)" ]; then
+                    msg2 "video-intel-nvidia-optimus-manager driver"
+        mkdir -p $drv_path/video-intel-nvidia-optimus-manager/
+        echo "" > $drv_path/video-intel-nvidia-optimus-manager/MHWDCONFIG
+    fi
 }
-
 
 configure_lsb(){
     if [ -e $1/etc/lsb-release ] ; then
