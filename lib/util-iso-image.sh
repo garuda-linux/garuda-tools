@@ -143,7 +143,7 @@ strings:
     shortProductName:    ${dist_name}
     version:             ${dist_release}
     shortVersion:        ${dist_release}
-    versionedName:       ${dist_name} Linux ${dist_release} "\"${dist_codename}"\"
+    versionedName:       ${dist_name} Linux ${dist_release}
     shortVersionedName:  ${dist_name} ${dist_release}
     bootloaderEntryName: ${dist_name}
 
