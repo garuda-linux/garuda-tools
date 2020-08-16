@@ -242,25 +242,25 @@ write_postcfg_conf(){
     fi
 }
 
-get_yaml(){
-    local args=() yaml
-    if ${chrootcfg}; then
-        args+=("${profile}/chrootcfg")
-    else
-        args+=("${profile}/packages")
-    fi
-    args+=("systemd")
-    for arg in ${args[@]}; do
-        yaml=${yaml:-}${yaml:+-}${arg}
-    done
-    echo "${yaml}.yaml"
-}
+#get_yaml(){
+#    local args=() yaml
+#    if ${chrootcfg}; then
+#        args+=("${profile}/chrootcfg")
+#    else
+#        args+=("${profile}/packages")
+#   fi
+#    args+=("systemd")
+#    for arg in ${args[@]}; do
+#        yaml=${yaml:-}${yaml:+-}${arg}
+#    done
+#    echo "${yaml}.yaml"
+#}
 
 write_netinstall_conf(){
     local conf="${modules_dir}/netinstall.conf"
     msg2 "Writing %s ..." "${conf##*/}"
     echo "---" > "$conf"
-    echo "groupsUrl: ${netgroups}/$(get_yaml)" >> "$conf"
+    echo "groupsUrl: ${netgroups}" >> "$conf"
     echo "label:" >> "$conf"
     echo "    sidebar: \"${netinstall_label}\"" >> "$conf"
 }

@@ -454,7 +454,7 @@ load_profile_config(){
 
     [[ -z ${chrootcfg} ]] && chrootcfg='false'
 
-    netgroups="https://gitlab.manjaro.org/applications/calamares-netgroups/-/raw/master/"
+    netgroups="https://gitlab.com/garuda-linux/packages/pkgbuilds/garuda-pkgbuilds/-/raw/master/pkgbuilds/calamares-netinstall-settings/netinstall-software.yaml"
 
     [[ -z ${geoip} ]] && geoip='true'
 
