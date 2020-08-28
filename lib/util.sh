@@ -162,6 +162,7 @@ check_root() {
 
 copy_mirrorlist(){
     cp -a /etc/pacman.d/mirrorlist "$1/etc/pacman.d/"
+    cp -a /etc/pacman.d/chaotic-mirrorlist "$1/etc/pacman.d/"
 }
 
 copy_keyring(){
