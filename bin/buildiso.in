@@ -17,7 +17,6 @@ SYSCONFDIR='@sysconfdir@'
 
 [[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
 import ${LIBDIR}/util.sh
-import ${LIBDIR}/util-publish.sh
 
 show_profile(){
     prepare_profile "$1"
@@ -58,7 +57,7 @@ show_profile(){
         msg2 "strict_snaps: %s" "${strict_snaps}"
         msg2 "classic_snaps: %s" "${classic_snaps}"
         msg2 "snap_channel: %s" "${snap_channel}"
-        msg2 "src_dir: ${src_dir}"
+        msg2 "iso_dir: ${iso_dir}"
     fi
     reset_profile
 }
@@ -147,6 +146,7 @@ usage() {
     echo '    -r <dir>           Chroots directory'
     echo "                       [default: ${chroots_iso}]"
     echo '    -s                 create checksums'
+    echo "                       [default: ${iso_dir}]"
     echo '    -t <dir>           Target directory'
     echo "                       [default: ${cache_dir_iso}]"
     echo '    -u                 Create ISO torrent'
@@ -162,7 +162,7 @@ usage() {
 
 orig_argv=("$@")
 
-opts='p:a:b:r:t:k:g:d:cfzxmuvqhil'
+opts='p:a:b:r:t:k:g:d:cfzxmusvqhil'
 
 while getopts "${opts}" arg; do
     case "${arg}" in

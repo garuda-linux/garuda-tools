@@ -146,9 +146,9 @@ make_sfs() {
     mksfs_args+=(-comp ${iso_compression} ${highcomp})
 
     if ${verbose}; then
-        mksquashfs "${mksfs_args[@]}" >/dev/null
+        mksquashfs "${mksfs_args[@]}" 
     else
-        mksquashfs "${mksfs_args[@]}"
+        mksquashfs "${mksfs_args[@]}" >/dev/null
     fi
     make_checksum "${dest}" "${name}"
     ${persist} && rm "${src}.img"
@@ -216,8 +216,26 @@ make_iso() {
     assemble_iso
 
     ${permalink} && gen_permalink
+    ${torrent} && make_torrent
+    ${checksum} && checksumiso "${iso_dir}"
 
     msg "Done [Build ISO]"
+}
+
+make_torrent(){
+    find ${iso_dir} -type f -name "*.torrent" -delete
+
+    if [[ -n $(find ${iso_dir} -type f -name "*.iso") ]]; then
+        isos=$(ls ${iso_dir}/*.iso)
+        for iso in ${isos}; do
+            local seed1=https://${host}/projects/garuda-linux/files/${project}/${iso##*/}
+            local seed=https://garudalinux.in/iso/${edition}/${profile}/${_edition}/$(date +%y%m%d)/$(gen_iso_fn).iso/
+            local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed})
+            ${verbose} && mktorrent_args+=(-v)
+            msg2 "Creating (%s) ..." "${iso##*/}.torrent"
+            mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
+        done
+    fi
 }
 
 gen_permalink(){
