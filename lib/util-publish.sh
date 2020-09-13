@@ -32,7 +32,7 @@ make_torrent(){
             local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed})
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
-            mktorrent ${mktorrent_args[*]} -o ${iso}.torrent ${iso}
+            mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
         done
     fi
 }
@@ -49,7 +49,7 @@ prepare_transfer(){
     [[ ${extra} == 'false' ]] && _edition=("lite")
     [[ ${extra} == 'true' ]] && _edition=("ultimate")
     target_dir="${profile}/${_edition}/$(date +%y%m%d)"
-    src_dir="${run_dir}/${edition}/${target_dir}"
+    src_dir="${run_dir}/${_edition}/${target_dir}"
 
     ${hidden} && target_dir="${profile}/.${_edition}/$(date +%y%m%d)"
 }
@@ -83,6 +83,7 @@ sync_dir(){
     ${torrent} && make_torrent
     ${sign} && signiso "${src_dir}"
     ${ssh_agent} && ssh_add
+    ${checksum} && checksumiso "${src_dir}"
 
     msg "Start upload [%s] to [%s] ..." "$1" "${project}"
 

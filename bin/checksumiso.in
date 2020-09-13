@@ -9,12 +9,11 @@ import ${LIBDIR}/util.sh
 [[ ! -z "$1" ]] && cd "$1"
 
 for f in $(find . -maxdepth 1 -name '*.iso' | cut -d'/' -f2); do
-    if [[ ! -e $f.sig ]]; then
-        signfile $f
-    elif [[ $f -nt $f.sig ]]; then
-        rm $f.sig
-        signfile $f
+    if [[ ! -e $f.sha256 ]]; then
+        create_chksums $f
+    elif [[ $f -nt $f.sha256 ]]; then
+        create_chksums $f
     else
-        info "signature file for [$f] already created"
+        info "checksums for [$f] already created"
     fi
 done

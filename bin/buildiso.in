@@ -17,6 +17,7 @@ SYSCONFDIR='@sysconfdir@'
 
 [[ -r ${LIBDIR}/util-msg.sh ]] && source ${LIBDIR}/util-msg.sh
 import ${LIBDIR}/util.sh
+import ${LIBDIR}/util-publish.sh
 
 show_profile(){
     prepare_profile "$1"
@@ -57,6 +58,7 @@ show_profile(){
         msg2 "strict_snaps: %s" "${strict_snaps}"
         msg2 "classic_snaps: %s" "${classic_snaps}"
         msg2 "snap_channel: %s" "${snap_channel}"
+        msg2 "src_dir: ${src_dir}"
     fi
     reset_profile
 }
@@ -83,7 +85,15 @@ display_settings(){
     msg2 "iso_only: %s" "${iso_only}"
     msg2 "persist: %s" "${persist}"
     msg2 "extra: %s" "${full_iso}"
+    msg2 "checksumiso: %s" "${checksum}"
+    msg2 "torrent: %s" "${torrent}"
     msg2 "permalink: %s" "${permalink}"
+
+    if ${torrent}; then
+        msg2 "tracker_url: %s" "${tracker_url}"
+        msg2 "piece_size: %s" "${piece_size}"
+        msg2 "torrent_meta: %s" "${torrent_meta}"
+    fi
 
     msg "DIST SETTINGS:"
     msg2 "dist_name: %s" "${dist_name}"
@@ -112,8 +122,10 @@ images_only=false
 iso_only=false
 verbose=true
 persist=false
-initialize=false
+initialize=true
 permalink=false
+torrent=false
+checksum=false
 
 usage() {
     echo "Usage: ${0##*/} [options]"
@@ -134,8 +146,10 @@ usage() {
     echo '    -q                 Query settings and pretend build'
     echo '    -r <dir>           Chroots directory'
     echo "                       [default: ${chroots_iso}]"
+    echo '    -s                 create checksums'
     echo '    -t <dir>           Target directory'
     echo "                       [default: ${cache_dir_iso}]"
+    echo '    -u                 Create ISO torrent'
     echo '    -v                 Verbose output to log file, show profile detail (-q)'
     echo '    -x                 Build images only'
     echo '    -z                 Generate iso only'
@@ -148,7 +162,7 @@ usage() {
 
 orig_argv=("$@")
 
-opts='p:a:b:r:t:k:g:d:cfzxmvqhil'
+opts='p:a:b:r:t:k:g:d:cfzxmuvqhil'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
@@ -164,7 +178,9 @@ while getopts "${opts}" arg; do
         p) build_list_iso="$OPTARG" ;;
         q) pretend=true ;;
         r) chroots_iso="$OPTARG" ;;
+        s) checksum=true ;;
         t) cache_dir_iso="$OPTARG" ;;
+        u) torrent=true ;;
         v) verbose=true ;;
         x) images_only=true ;;
         z) iso_only=true ;;

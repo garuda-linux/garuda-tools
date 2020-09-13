@@ -58,6 +58,7 @@ BIN_ISO = \
 	bin/buildiso \
 	bin/testiso \
 	bin/deployiso \
+    bin/checksumiso \
 	bin/signiso
 
 LIBS_ISO = \

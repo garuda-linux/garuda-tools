@@ -208,11 +208,11 @@ init_common(){
 
     [[ -z ${target_arch} ]] && target_arch=$(uname -m)
 
-    [[ -z ${cache_dir} ]] && cache_dir='/var/cache/garuda-tools'
+    [[ -z ${cache_dir} ]] && cache_dir='/var/cache/garuda-tools/garuda-cache'
 
-    [[ -z ${chroots_dir} ]] && chroots_dir='/var/lib/garuda-tools'
+    [[ -z ${chroots_dir} ]] && chroots_dir='/var/cache/garuda-tools/garuda-chroots'
 
-    [[ -z ${log_dir} ]] && log_dir='/var/log/garuda-tools'
+    [[ -z ${log_dir} ]] && log_dir='/var/cache/garuda-tools/garuda-logs'
 
     [[ -z ${build_mirror} ]] && build_mirror='https://mirrors.kernel.org'
 
@@ -822,7 +822,7 @@ create_chksums() {
 }
 
 init_profiles() {	
-	_workdir='/usr/share/garuda-tools'
+	_workdir='/var/cache/garuda-tools'
 	if [[ -d ${_workdir}/iso-profiles ]]; then
 		rm -Rf ${_workdir}/iso-profiles ]]
 	fi
