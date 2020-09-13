@@ -122,7 +122,7 @@ images_only=false
 iso_only=false
 verbose=true
 persist=false
-initialize=true
+initialize=false
 permalink=false
 torrent=false
 checksum=false
@@ -195,7 +195,7 @@ shift $(($OPTIND - 1))
 if ${initialize}; then
 	msg "Initialize iso profiles ${branch}"
 	init_profiles
-	msg2 "Done: iso profiles are stored in /usr/share/garuda-tools/iso-profiles"
+	msg2 "Done: iso profiles are stored in /var/cache/garuda-tools/iso-profiles"
 	exit 1
 fi
 
