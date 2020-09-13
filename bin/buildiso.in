@@ -123,8 +123,8 @@ verbose=true
 persist=false
 initialize=false
 permalink=false
-torrent=false
-checksum=false
+torrent=true
+checksum=true
 
 usage() {
     echo "Usage: ${0##*/} [options]"

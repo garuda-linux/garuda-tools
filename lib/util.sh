@@ -208,7 +208,7 @@ init_common(){
 
     [[ -z ${target_arch} ]] && target_arch=$(uname -m)
 
-    [[ -z ${cache_dir} ]] && cache_dir='/var/cache/garuda-tools/garuda-cache'
+    [[ -z ${cache_dir} ]] && cache_dir='/var/cache/garuda-tools/garuda-builds'
 
     [[ -z ${chroots_dir} ]] && chroots_dir='/var/cache/garuda-tools/garuda-chroots'
 
