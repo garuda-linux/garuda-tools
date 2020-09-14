@@ -688,7 +688,7 @@ clean_dir(){
 write_repo_conf(){
     local repos=$(find $USER_HOME -type f -name "repo_info")
     local path name
-    [[ -z ${repos[@]} ]] && run_dir=${DATADIR}/iso-profiles && return 1
+    [[ -z ${repos[@]} ]] && run_dir=${_workdir}/iso-profiles && return 1
     for r in ${repos[@]}; do
         path=${r%/repo_info}
         name=${path##*/}
