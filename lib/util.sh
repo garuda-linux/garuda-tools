@@ -364,7 +364,7 @@ init_deployiso(){
 
     [[ -z ${alt_storage} ]] && alt_storage=false
 
-    [[ -z ${tracker_url} ]] && tracker_url='udp://lonewolf.pedrohlc.com:23069'
+    [[ -z ${tracker_url} ]] && tracker_url='udp://lonewolf-builder.duckdns.org:23069'
 
     [[ -z ${piece_size} ]] && piece_size=21
 
