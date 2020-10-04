@@ -66,12 +66,8 @@ select_os(){
     type=$os_str
     root=${os_str%%:*}
     type=${type##*:}
-        if [[ "${type##*:}" == 'linux' ]]; then
         msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$root"
         chroot_mount_partitions "$1" "$root"
-        else
-                die "You can't mount %s!" "$select"
-        fi
 }
 
 chroot_mount_partitions(){
