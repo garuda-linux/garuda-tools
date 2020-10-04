@@ -41,37 +41,35 @@ get_chroot_arch(){
 
 chroot_part_mount() {
     info "mount: [%s]" "$2"
-    mount "$@" && CHROOT_ACTIVE_PART_MOUNTS=("$2" "${CHROOT_ACTIVE_PART_MOUNTS[@]}")
+    mount -o subvol=@ "$@" && CHROOT_ACTIVE_PART_MOUNTS=("$2" "${CHROOT_ACTIVE_PART_MOUNTS[@]}")
 }
 
 select_os(){
-        local os_list=( $(detect) ) count=${#os_list[@]}
+    local detected_os_list=( $(detect) ) os_list=() count select os_str os_root
+    for os in ${detected_os_list[@]}; do
+        case ${os##*:} in
+            'linux') os_list+=($os)
+        esac
+    done
+    count=${#os_list[@]}
+    if [[ ${count} < 1 ]]; then
+        die "No Linux partitions detected!"
+    fi
     if [[ ${count} > 1 ]]; then
-                msg "Detected systems:"
-                local i=0
-                for os in ${os_list[@]}; do
-            local last=${os##*:}
-            case $last in
-                'efi') count=$((count-1)) ;;
-                *) info "$i) $(get_os_name $os)"; i=$((i+1)) ;;
-            esac
-                done
-                i=0
+        msg "Detected systems:"
+        local i=0
+        for os in ${os_list[@]}; do
+            info "$i) $(get_os_name $os)"; i=$((i+1))
+        done
         msg "Select system to mount [0-%s] : " "$((count-1))"
-                read select
-        else
+        read select
+    else
         select=0
     fi
-    local os_str=${os_list[$select]} type
-    type=$os_str
-    root=${os_str%%:*}
-    type=${type##*:}
-        if [[ "${type##*:}" == 'linux' ]]; then
-        msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$root"
-        chroot_mount_partitions "$1" "$root"
-        else
-                die "You can't mount %s!" "$select"
-        fi
+    os_str=${os_list[$select]}
+    os_root=${os_str%%:*}
+    msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$os_root"
+    chroot_mount_partitions "$1" "$os_root"
 }
 
 chroot_mount_partitions(){
@@ -120,7 +118,7 @@ chroot_mount_partitions(){
 
 chroot_mount() {
     #info "mount: [%s]" "$2"
-    mount "$@" && CHROOT_ACTIVE_MOUNTS=("$2" "${CHROOT_ACTIVE_MOUNTS[@]}")
+    mount -o subvol=@ "$@" && CHROOT_ACTIVE_MOUNTS=("$2" "${CHROOT_ACTIVE_MOUNTS[@]}")
 }
 
 chroot_mount_conditional() {
