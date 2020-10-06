@@ -41,7 +41,7 @@ get_chroot_arch(){
 
 chroot_part_mount() {
     info "mount: [%s]" "$2"
-    mount -o subvol=@ "$@" && CHROOT_ACTIVE_PART_MOUNTS=("$2" "${CHROOT_ACTIVE_PART_MOUNTS[@]}")
+    mount "$@" && CHROOT_ACTIVE_PART_MOUNTS=("$2" "${CHROOT_ACTIVE_PART_MOUNTS[@]}")
 }
 
 select_os(){
@@ -116,7 +116,7 @@ chroot_mount_partitions(){
 
 chroot_mount() {
     #info "mount: [%s]" "$2"
-    mount -o subvol=@ "$@" && CHROOT_ACTIVE_MOUNTS=("$2" "${CHROOT_ACTIVE_MOUNTS[@]}")
+    mount "$@" && CHROOT_ACTIVE_MOUNTS=("$2" "${CHROOT_ACTIVE_MOUNTS[@]}")
 }
 
 chroot_mount_conditional() {
