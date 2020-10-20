@@ -234,7 +234,7 @@ write_postcfg_conf(){
     echo "---" > "$conf"
     echo "keyrings:" >> "$conf"
     echo "    - archlinux" >> "$conf"
-#    echo "    - garuda" >> "$conf"
+    echo "    - chaotic" >> "$conf"
     if [[ -n ${smb_workgroup} ]]; then
         echo "" >> "$conf"
         echo "samba:" >> "$conf"
