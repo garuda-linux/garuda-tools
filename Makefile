@@ -58,6 +58,7 @@ BIN_ISO = \
 	bin/buildiso \
 	bin/testiso \
 	bin/deployiso \
+	bin/buildall \
     bin/checksumiso \
 	bin/signiso
 
