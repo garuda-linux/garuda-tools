@@ -42,6 +42,9 @@
 # use geoip
 # geoip="true"
 
+# use plymouth
+# plymouth_boot="true"
+
 # unset defaults to given value
 # plymouth_theme="garuda"
 
@@ -78,3 +81,5 @@
 # names must match systemd service names
 # services in enable_systemd array don't need to be listed here
 # enable_systemd_live=('garuda-live' 'mhwd-live' 'pacman-init' 'mirrors-live')
+
+# disable_systemd_live=()

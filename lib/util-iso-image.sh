@@ -36,8 +36,8 @@ add_svc_rc(){
 }
 
 add_svc_sd(){
-    if [[ -f $1/etc/systemd/system/$2.service ]] || \
-    [[ -f $1/usr/lib/systemd/system/$2.service ]]; then
+    if [[ -f $1/etc/systemd/system/$2 ]] || \
+    [[ -f $1/usr/lib/systemd/system/$2 ]]; then
         msg2 "Setting %s ..." "$2"
         chroot $1 systemctl enable $2 &>/dev/null
     fi
@@ -210,10 +210,19 @@ configure_journald(){
     sed -i 's/#\(Storage=\)auto/\1volatile/' "$conf"
 }
 
+disable_srv_live(){
+        for srv in ${disable_systemd_live[@]}; do
+        enable_systemd=(${enable_systemd[@]//*$srv*})
+        done
+    }
+
 configure_services(){
     info "Configuring services"
     use_apparmor="false"
     apparmor_boot_args=""
+    
+    [[ ! -z $disable_systemd_live ]] && disable_srv_live
+    
     for svc in ${enable_systemd[@]}; do
         add_svc_sd "$1" "$svc"
         [[ "$svc" == "apparmor" ]] && use_apparmor="true"
