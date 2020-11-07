@@ -430,11 +430,11 @@ load_profile_config(){
     [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
 
     if [[ -z ${addgroups} ]]; then
-        addgroups="lp,network,power,sys,wheel,video,input"
+        addgroups="lp,network,power,sys,wheel"
     fi
 
     if [[ -z ${enable_systemd[@]} ]]; then
-        enable_systemd=('avahi-daemon' 'bluetooth' 'cronie' 'ModemManager' 'NetworkManager' 'org.cups.cupsd' 'haveged' 'snapd' 'systemd-timesyncd' 'ofono' 'evdev-rce' 'haveged' 'prelockd' 'irqbalance' 'systemd-swap' 'nohang' 'memavaild' 'ananicy' 'libvirtd' 'virtlogd' 'xboxdrv' 'fancontrol' 'lm_sensors' 'firewalld' 'xow' 'fstrim.timer')
+        enable_systemd=('avahi-daemon' 'bluetooth' 'cronie' 'ModemManager' 'NetworkManager' 'org.cups.cupsd' 'haveged' 'apparmor' 'snapd.apparmor' 'snapd' 'systemd-timesyncd' 'ofono' 'evdev-rce' 'haveged' 'preload' 'irqbalance' 'systemd-swap' 'nohang' 'cpupower' 'ananicy' 'libvirtd' 'virtlogd' 'iio-sensor-proxy' 'xboxdrv' 'fancontrol' 'lm_sensors' 'firewalld' 'xow')
     fi
 
     [[ -z ${disable_systemd[@]} ]] && disable_systemd=('pacman-init')
