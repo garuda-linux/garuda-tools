@@ -430,7 +430,7 @@ load_profile_config(){
     [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
 
     if [[ -z ${addgroups} ]]; then
-        addgroups="lp,network,power,sys,wheel"
+        addgroups="lp,network,power,sys,wheel,video,input"
     fi
 
     if [[ -z ${enable_systemd[@]} ]]; then
