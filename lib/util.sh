@@ -424,8 +424,6 @@ load_profile_config(){
     [[ -z ${plymouth_theme} ]] && plymouth_theme="garuda"
 
     [[ -z ${password} ]] && password="garuda"
-    
-    [[ -z ${user_shell} ]] && user_shell='/bin/zsh'
 
     [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
 
@@ -507,10 +505,8 @@ reset_profile(){
     unset enable_systemd
     unset disable_systemd
     unset enable_systemd_live
-    unset disable_systemd_live
     unset packages_desktop
     unset packages_mhwd
-    unset user_shell
     unset login_shell
     unset netinstall
     unset chrootcfg

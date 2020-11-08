@@ -46,7 +46,6 @@ show_profile(){
         msg2 "hostname: %s" "${hostname}"
         msg2 "username: %s" "${username}"
         msg2 "password: %s" "${password}"
-        msg2 "user_shell: %s" "${user_shell}"
         msg2 "login_shell: %s" "${login_shell}"
         msg2 "addgroups: %s" "${addgroups}"
         [[ -n ${smb_workgroup} ]] && msg2 "smb_workgroup: %s" "${smb_workgroup}"
@@ -54,7 +53,7 @@ show_profile(){
         msg2 "enable_systemd: %s" "${enable_systemd[*]}"
         msg2 "enable_systemd_live: %s" "${enable_systemd_live[*]}"
         [[ -n ${disable_systemd[*]} ]] && msg2 "disable_systemd: %s" "${disable_systemd[*]}"
-        [[ -n ${disable_systemd_live[*]} ]] && msg2 "disable_systemd_live: %s" "${disable_systemd_live[*]}"
+
         msg2 "strict_snaps: %s" "${strict_snaps}"
         msg2 "classic_snaps: %s" "${classic_snaps}"
         msg2 "snap_channel: %s" "${snap_channel}"
