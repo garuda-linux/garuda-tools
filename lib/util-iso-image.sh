@@ -70,13 +70,8 @@ configure_mhwd_drivers(){
         mkdir -p $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/
         echo "" > $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
                 msg2 "video-intel-nvidia-optimus-manager driver"
-        mkdir -p $drv_path/video-intel-nvidia-optimus-manager/
-        echo "" > $drv_path/video-intel-nvidia-optimus-manager/MHWDCONFIG
-    fi
-    if  [ -z "$(ls $path | grep optimus-manager 2> /dev/null)" ]; then
-                    msg2 "video-intel-nvidia-optimus-manager driver"
-        mkdir -p $drv_path/video-intel-nvidia-optimus-manager/
-        echo "" > $drv_path/video-intel-nvidia-optimus-manager/MHWDCONFIG
+        mkdir -p $drv_path/video-optimus-manager/
+        echo "" > $drv_path/video-optimus-manager/MHWDCONFIG
     fi
 }
 
