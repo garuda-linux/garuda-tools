@@ -230,9 +230,9 @@ make_torrent(){
     if [[ -n $(find ${iso_dir} -type f -name "*.iso") ]]; then
         isos=$(ls ${iso_dir}/*.iso)
         for iso in ${isos}; do
-            local seed=https://builds.garudalinux.org/iso/${edition}/${profile}/${_edition}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local seed1=https://osdn.net/projects/garuda-linux/storage/${profile}/${_edition}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local seed2=https://sourceforge.net/projects/garuda-linux/files/${profile}/${_edition}/$(date +%y%m%d)/$(gen_iso_fn).iso
+            local seed=https://builds.garudalinux.org/iso/${edition}/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
+            local seed1=https://osdn.net/projects/garuda-linux/storage/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
+            local seed2=https://sourceforge.net/projects/garuda-linux/files/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
             local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed} -w ${seed1} -w ${seed2})
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
@@ -279,14 +279,12 @@ gen_iso_fn(){
     fi
 
     [[ ! ${target_branch} == "archlinux" ]] && vars+=("${target_branch}")
-
-    [[ ${extra} == 'false' ]] && vars+=("lite")
     
     [[ ${extra} == 'true' ]] && vars+=("ultimate")
 
-    vars+=("$(date +%y%m%d)")
-
     vars+=("${kernel}")
+    
+    vars+=("$(date +%y%m%d)")
 
     [[ ${target_arch} == "i686" ]] && vars+=("${target_arch}")
     for n in ${vars[@]}; do
@@ -641,14 +639,13 @@ load_profile(){
 
     iso_file=$(gen_iso_fn).iso
 
-    [[ ${extra} == 'false' ]] && _edition=("lite")
     [[ ${extra} == 'true' ]] && _edition=("ultimate")
     iso_label=$(get_iso_label "${dist_branding}_${profile}_${dist_release//.}_${_edition}")
 
     mkchroot_args+=(-C ${pacman_conf} -S ${mirrors_conf} -B "${build_mirror}/${target_branch}" -K)
     work_dir=${chroots_iso}/${profile}/${target_arch}
 
-    iso_dir="${cache_dir_iso}/${edition}/${profile}/${_edition}/$(date +%y%m%d)"
+    iso_dir="${cache_dir_iso}/${edition}/${profile}/$(date +%y%m%d)"
 
     iso_root=${chroots_iso}/${profile}/iso
     mnt_dir=${chroots_iso}/${profile}/mnt

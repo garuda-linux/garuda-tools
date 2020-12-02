@@ -316,7 +316,7 @@ init_buildiso(){
 
     [[ -z ${iso_compression} ]] && iso_compression='xz'
 
-    [[ -z ${kernel} ]] && kernel="linux-zen"
+    [[ -z ${kernel} ]] && kernel="linux-tkg-bmq"
     
     load_run_dir "${profile_repo}"
     
@@ -432,7 +432,7 @@ load_profile_config(){
     fi
 
     if [[ -z ${enable_systemd[@]} ]]; then
-        enable_systemd=('avahi-daemon' 'bluetooth' 'cronie' 'ModemManager' 'NetworkManager' 'org.cups.cupsd' 'haveged' 'apparmor' 'snapd.apparmor' 'snapd' 'systemd-timesyncd' 'ofono' 'evdev-rce' 'haveged' 'preload' 'irqbalance' 'systemd-swap' 'nohang' 'cpupower' 'ananicy' 'libvirtd' 'virtlogd' 'iio-sensor-proxy' 'xboxdrv' 'fancontrol' 'lm_sensors' 'firewalld' 'xow')
+        enable_systemd=('avahi-daemon' 'bluetooth' 'cronie' 'ModemManager' 'NetworkManager' 'cups' 'systemd-timesyncd')
     fi
 
     [[ -z ${disable_systemd[@]} ]] && disable_systemd=('pacman-init')
