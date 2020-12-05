@@ -54,24 +54,38 @@ configure_mhwd_drivers(){
     local path=$1${mhwd_repo}/ \
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
-    if  [ -z "$(ls $path | grep r8168-dkms 2> /dev/null)" ]; then
-        msg2 "Disabling r8168 driver"
-        mkdir -p $drv_path/r8168/
-        echo "" > $drv_path/r8168/MHWDCONFIG
-    fi
     if  [ -z "$(ls $path | grep nvidia-utils 2> /dev/null)" ]; then
         msg2 "Disabling Nvidia dkms driver"
         mkdir -p $drv_path/nvidia-dkms/
         echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
         msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/video-hybrid-amd-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/video-hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-                msg2 "Disabling video-hybrid-intel-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/video-hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-                msg2 "video-intel-nvidia-optimus-manager driver"
-        mkdir -p $drv_path/video-optimus-manager/
-        echo "" > $drv_path/video-optimus-manager/MHWDCONFIG
+        mkdir -p $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/
+        echo "" > $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling hybrid-intel-nvidia-dkms-prime-render-offloading driver"
+        mkdir -p $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/
+        echo "" > $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling optimus-manager driver"
+        mkdir -p $drv_path/optimus-manager/
+        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+    fi
+    
+    if  [ -z "$(ls $path | grep optimus-manager-git 2> /dev/null)" ]; then
+                msg2 "Disabling optimus-manager driver"
+        mkdir -p $drv_path/optimus-manager/
+        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+    fi
+    
+    
+    local drv_path=$1/var/lib/mhwd/db/pci/network_drivers
+    if  [ -z "$(ls $path | grep r8168-dkms 2> /dev/null)" ]; then
+        msg2 "Disabling r8168 driver"
+        mkdir -p $drv_path/r8168/
+        echo "" > $drv_path/r8168/MHWDCONFIG
+    fi
+    if  [ -z "$(ls $path | grep broadcom-wl-dkms 2> /dev/null)" ]; then
+        msg2 "Disabling broadcom-wl driver"
+        mkdir -p $drv_path/broadcom-wl/
+        echo "" > $drv_path/broadcom-wl/MHWDCONFIG
     fi
 }
 
