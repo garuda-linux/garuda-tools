@@ -54,6 +54,24 @@ configure_mhwd_drivers(){
     local path=$1${mhwd_repo}/ \
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
+    if  [ -z "$(ls $path | grep nvidia-340xx-utils 2> /dev/null)" ]; then
+        msg2 "Disabling Nvidia 340xx driver"
+        mkdir -p $drv_path/nvidia-340xx-dkms/
+        echo "" > $drv_path/nvidia-340xx-dkms/MHWDCONFIG
+        msg2 "Disabling Nvidia 340xx Bumblebee driver"
+        mkdir -p $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/
+        echo "" > $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/MHWDCONFIG
+    fi
+    
+    if  [ -z "$(ls $path | grep nvidia-390xx-utils 2> /dev/null)" ]; then
+        msg2 "Disabling Nvidia 390xx driver"
+        mkdir -p $drv_path/nvidia-390xx-dkms/
+        echo "" > $drv_path/nvidia-390xx-dkms/MHWDCONFIG
+        msg2 "Disabling Nvidia 390xx Bumblebee driver"
+        mkdir -p $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee/
+        echo "" > $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee/MHWDCONFIG
+    fi
+    
     if  [ -z "$(ls $path | grep nvidia-utils 2> /dev/null)" ]; then
         msg2 "Disabling Nvidia dkms driver"
         mkdir -p $drv_path/nvidia-dkms/
