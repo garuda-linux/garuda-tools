@@ -29,7 +29,7 @@ make_torrent(){
         isos=$(ls ${src_dir}/*.iso)
         for iso in ${isos}; do
             local seed=https://${host}/projects/garuda-linux/files/${project}/${iso##*/}
-            local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed})
+            local mktorrent_args=(-c "${torrent_meta}" -l ${piece_size} -a ${tracker_url} -w ${seed})
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
             mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
