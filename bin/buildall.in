@@ -10,13 +10,13 @@ function goto
 
 function cleardir
 {
-    rm -rf --one-file-system /var/cache/garuda-tools/garuda-chroots/buildiso
+    rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso
     buildiso -i
 }
 
 cleardir
 
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/bspwm/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/bspwm/$(date +%y%m%d)/*.iso; then
     goto cinnamon
 else 
     if buildiso -p bspwm; then
@@ -28,7 +28,7 @@ fi
 
 : cinnamon
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/cinnamon/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/cinnamon/$(date +%y%m%d)/*.iso; then
     goto deepin
 else 
     if buildiso -p cinnamon; then
@@ -40,19 +40,31 @@ fi
 
 : deepin
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/deepin/lite/$(date +%y%m%d)/*.iso; then
-    goto gnome
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/deepin/$(date +%y%m%d)/*.iso; then
+    goto dr460nized
 else 
     if buildiso -p deepin; then
-        goto gnome
+        goto dr460nized
     else echo "Deepin ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
+        echo "Deepin" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+: dr460nized
+cleardir
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized/$(date +%y%m%d)/*.iso; then
+    goto gnome
+else 
+    if buildiso -p dr460nized; then
+        goto gnome
+    else echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "Deepin" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
 : gnome
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
     goto gnome-barebones
 else 
     if buildiso -p gnome; then
@@ -64,7 +76,7 @@ fi
 
 : gnome-barebones
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome-barebones/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome-barebones/$(date +%y%m%d)/*.iso; then
     goto i3
 else 
     if buildiso -p gnome-barebones; then
@@ -76,31 +88,19 @@ fi
 
 : i3
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/lite/$(date +%y%m%d)/*.iso; then
-    goto kde
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/$(date +%y%m%d)/*.iso; then
+    goto kde-barebones
 else 
     if buildiso -p i3; then
-        goto kde
+        goto kde-barebones
     else echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
-: kde
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde/lite/$(date +%y%m%d)/*.iso; then
-    goto kde-barebones
-else 
-    if buildiso -p kde; then
-        goto kde-barebones
-    else echo "KDE ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "KDE" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
 : kde-barebones
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/$(date +%y%m%d)/*.iso; then
     goto lxqt-kwin
 else 
     if buildiso -p kde-barebones; then
@@ -112,7 +112,7 @@ fi
 
 : lxqt-kwin
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/$(date +%y%m%d)/*.iso; then
     goto mate
 else 
     if buildiso -p lxqt-kwin; then
@@ -124,10 +124,10 @@ fi
 
 : mate
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/mate/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/mate/$(date +%y%m%d)/*.iso; then
     goto recbox
 else 
-    if buildiso -p deepin; then
+    if buildiso -p mate; then
         goto recbox
     else echo "MATE ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "MATE" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -136,7 +136,7 @@ fi
 
 : recbox
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/recbox/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/recbox/$(date +%y%m%d)/*.iso; then
     goto ukui
 else 
     if buildiso -p recbox; then
@@ -148,7 +148,7 @@ fi
 
 : ukui
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/ukui/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/ukui/$(date +%y%m%d)/*.iso; then
     goto wayfire
 else 
     if buildiso -p ukui; then
@@ -160,7 +160,7 @@ fi
 
 : wayfire
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/wayfire/lite/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/wayfire/$(date +%y%m%d)/*.iso; then
     goto xfce
 else 
     if buildiso -p wayfire; then
@@ -172,73 +172,25 @@ fi
 
 : xfce
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/lite/$(date +%y%m%d)/*.iso; then
-    goto cinnamon_u
-else 
-    if buildiso -p xfce; then
-        goto cinnamon_u
-    else echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: cinnamon_u
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/cinnamon/ultimate/$(date +%y%m%d)/*.iso; then
-    goto gnome_u
-else 
-    if buildiso -p cinnamon -f; then
-        goto gnome_u
-    else echo "Cinnamon Ultimate ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "Cinnamon Ultimate" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: gnome_u
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/ultimate/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%d)/*.iso; then
     goto kde_u
 else 
-    if buildiso -p gnome -f; then
+    if buildiso -p xfce; then
         goto kde_u
-    else echo "GNOME Ultimate ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "GNOME Ultimate" >> /var/cache/garuda-tools/rebuild_needed.log
+    else echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
+        echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
 : kde_u
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde/ultimate/$(date +%y%m%d)/*.iso; then
-    goto mate_u
+    goto readyW
 else 
     if buildiso -p kde -f; then
-        goto mate_u
+        goto ready
     else echo "KDE Ultimate ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "KDE Ultimate" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: mate_u
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/mate/ultimate/$(date +%y%m%d)/*.iso; then
-    goto xfce_u
-else 
-    if buildiso -p mate -f; then
-        goto xfce_u
-    else echo "MATE Ultimate ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "MATE Ultimate" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: xfce_u
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/ultimate/$(date +%y%m%d)/*.iso; then
-    goto ready
-else 
-    if buildiso -p xfce -f; then
-        goto ready
-    else echo "XFCE Ultimate ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "XFCE Ultimate" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
