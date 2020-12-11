@@ -11,6 +11,7 @@ build() {
     add_module "via-agp"
     add_module "sis-agp"
     add_module "intel-agp"
+    add_module "virtio-gpu"
 
     if [[ $(uname -m) == i686 ]]; then
         add_module "amd64-agp"
