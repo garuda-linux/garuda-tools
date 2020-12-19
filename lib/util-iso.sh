@@ -283,7 +283,7 @@ gen_iso_fn(){
 
     [[ ! ${target_branch} == "archlinux" ]] && vars+=("${target_branch}")
     
-    [[ ${extra} == 'true' ]] && vars+=("ultimate")
+   ## [[ ${extra} == 'true' ]] && vars+=("ultimate")
 
     vars+=("${kernel}")
     

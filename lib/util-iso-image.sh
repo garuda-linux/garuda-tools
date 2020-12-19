@@ -73,7 +73,7 @@ configure_mhwd_drivers(){
     fi
     
     if  [ -z "$(ls $path | grep nvidia-utils 2> /dev/null)" ]; then
-        msg2 "Disabling Nvidia dkms driver"
+        msg2 "Disabling nvidia-dkms driver"
         mkdir -p $drv_path/nvidia-dkms/
         echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
         msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
@@ -85,6 +85,36 @@ configure_mhwd_drivers(){
                 msg2 "Disabling optimus-manager driver"
         mkdir -p $drv_path/optimus-manager/
         echo "" > $drv_path/optimus-manager/MHWDCONFIG
+    fi
+    
+    if  [ -z "$(ls $path | grep chaotic-nvidia-utils-tkg 2> /dev/null)" ]; then
+        msg2 "Disabling  chaotic-nvidia-dkms-tkg driver"
+        mkdir -p $drv_path/chaotic-nvidia-dkms-tkg/
+        echo "" > $drv_path/chaotic-nvidia-dkms-tkg/MHWDCONFIG
+        msg2 "Disabling hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
+        mkdir -p $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading/
+        echo "" > $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling hybrid-intel-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
+        mkdir -p $drv_path/hybrid-intel-chaotc-nvidia-dkms-tkg-prime-render-offloading/
+        echo "" > $drv_path/hybrid-intel-chaotic-nvidia-dkms-tkg-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling chaotic-optimus-manager-tkg driver"
+        mkdir -p $drv_path/chaotic-optimus-manager-tkg/
+        echo "" > $drv_path/chaotic-optimus-manager-tkg/MHWDCONFIG
+    fi
+    
+    if  [ -z "$(ls $path | grep chaotic-nvidia-dev-utils-tkg 2> /dev/null)" ]; then
+        msg2 "Disabling  chaotic-nvidia-dev-dkms-tkg driver"
+        mkdir -p $drv_path/chaotic-nvidia-dev-dkms-tkg/
+        echo "" > $drv_path/chaotic-nvidia-dev-dkms-tkg/MHWDCONFIG
+        msg2 "Disabling hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
+        mkdir -p $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/
+        echo "" > $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling hybrid-intel-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
+        mkdir -p $drv_path/hybrid-intel-chaotc-nvidia-dev-dkms-tkg-prime-render-offloading/
+        echo "" > $drv_path/hybrid-intel-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/MHWDCONFIG
+                msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
+        mkdir -p $drv_path/chaotic-optimus-manager-dev-tkg/
+        echo "" > $drv_path/chaotic-optimus-manager-dev-tkg/MHWDCONFIG
     fi
     
     if  [ -z "$(ls $path | grep optimus-manager-git 2> /dev/null)" ]; then
