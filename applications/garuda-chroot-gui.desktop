@@ -2,7 +2,9 @@
 Version=1.0
 Type=Application
 Name=garuda-chroot-gui
+Name[de]=Garuda Chroot GUI
 Comment=GUI for garuda-chroot
+Comment[de]=Eine GUI für garuda-chroot
 Categories=System;
 Icon=system-run
 TryExec=garuda-chroot
