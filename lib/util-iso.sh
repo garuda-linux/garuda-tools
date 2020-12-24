@@ -234,9 +234,11 @@ make_torrent(){
         isos=$(ls ${iso_dir}/*.iso)
         for iso in ${isos}; do
             local seed=https://builds.garudalinux.org/iso/${edition}/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local seed1=https://osdn.net/projects/garuda-linux/storage/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local seed2=https://sourceforge.net/projects/garuda-linux/files/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local mktorrent_args=(-c "${torrent_meta}" -p -l ${piece_size} -a ${tracker_url} -w ${seed} -w ${seed1} -w ${seed2})
+            local tracker_url1=udp://tracker.opentrackr.org:1337/announce
+            local tracker_url2=udp://tracker.openbittorrent.com:80/announce
+            local tracker_url3=http://fosstorrents.com:6969/announce
+            local tracker_url4=udp://tracker.leechers-paradise.org:6969/announce
+            local mktorrent_args=(-c "${torrent_meta}" -l ${piece_size} -a ${tracker_url1} -a ${tracker_url2} -a ${tracker_url3} -a ${tracker_url4} -w ${seed}
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
             mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
