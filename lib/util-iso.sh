@@ -238,7 +238,7 @@ make_torrent(){
             local tracker_url2=udp://tracker.openbittorrent.com:80/announce
             local tracker_url3=http://fosstorrents.com:6969/announce
             local tracker_url4=udp://tracker.leechers-paradise.org:6969/announce
-            local mktorrent_args=(-c "${torrent_meta}" -l ${piece_size} -a ${tracker_url1} -a ${tracker_url2} -a ${tracker_url3} -a ${tracker_url4} -w ${seed}
+            mktorrent_args=(-c "${torrent_meta}" -l ${piece_size} -a ${tracker_url1} -a ${tracker_url2} -a ${tracker_url3} -a ${tracker_url4} -w ${seed}
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
             mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
