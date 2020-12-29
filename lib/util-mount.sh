@@ -65,7 +65,7 @@ select_os(){
     os_str=${os_list[$select]}
     os_root=${os_str%%:*}
     msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$os_root"
-    chroot_mount_partitions "$1" "$os_root" "$(cut -d':' -f5 <<<"$os_str")"
+    chroot_mount_partitions "$1" "$os_root" "$(cut -d':' -f7 <<<"$os_str")"
 }
 
 chroot_mount_partitions(){
@@ -76,12 +76,7 @@ chroot_mount_partitions(){
     [[ $(trap -p EXIT) ]] && die 'Error! Attempting to overwrite existing EXIT trap'
     trap 'trap_handler' EXIT
 
-    # BTRFS has subvolumes we need to take into account
-    if [[ "$3" = "btrfs" ]]; then
-        chroot_part_mount $2 $1 -o subvol=@
-    else
-        chroot_part_mount $2 $1
-    fi
+    chroot_part_mount $2 $1 $( [ ! -z "$3" ] && printf "%s%s" '-o ' "$3" )
 
     local mounts=$(parse_fstab "$1")
 
