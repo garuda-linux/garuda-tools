@@ -72,7 +72,7 @@ shift $(( OPTIND - 1 ))
 check_root "$0" "${orig_argv[@]}"
 
 if ${automount}; then
-    chrootdir=/mnt/@
+    chrootdir=/mnt
     run_args=/bin/bash
 
     ${pretend} && display_settings && exit 1

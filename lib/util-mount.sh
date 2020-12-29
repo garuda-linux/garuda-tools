@@ -14,7 +14,7 @@ ignore_error() {
 }
 
 parse_fstab(){
-    echo $(perl -ane 'printf("%s:%s\n", @F[0,1]) if $F[0] =~ m#^UUID=#;' $1/etc/fstab)
+    echo $(perl -ane 'printf("%s:%s:%s\n", @F[0,1], @F[3]) if $F[0] =~ m#^UUID=#;' $1/etc/fstab)
 # 	perl -ane 'printf("%s:%s\n", @F[0,1]) if $F[0] =~ m#^/dev#;' $1/etc/fstab
 # 	perl -ane 'printf("%s:%s\n", @F[0,1]) if $F[0] =~ m#^LABEL=#;' $1/etc/fstab
 }
@@ -26,11 +26,7 @@ detect(){
 
 # $1: os-prober array
 get_os_name(){
-    local str=$1
-    str="${str#*:}"
-    str="${str#*:}"
-    str="${str%:*}"
-    echo "$str"
+    echo "$(cut -d':' -f2 <<<"$1")"
 }
 
 get_chroot_arch(){
@@ -45,29 +41,31 @@ chroot_part_mount() {
 }
 
 select_os(){
-        local os_list=( $(detect) ) count=${#os_list[@]}
+    local detected_os_list=( $(detect) ) os_list=() count select os_str os_root
+    for os in ${detected_os_list[@]}; do
+        if [[ "$(cut -d':' -f4 <<<"$os")" = "linux" ]]; then
+            os_list+=($os)
+        fi
+    done
+    count=${#os_list[@]}
+    if [[ ${count} < 1 ]]; then
+        die "No Linux partitions detected!"
+    fi
     if [[ ${count} > 1 ]]; then
-                msg "Detected systems:"
-                local i=0
-                for os in ${os_list[@]}; do
-            local last=${os##*:}
-            case $last in
-                'efi') count=$((count-1)) ;;
-                *) info "$i) $(get_os_name $os)"; i=$((i+1)) ;;
-            esac
-                done
-                i=0
+        msg "Detected systems:"
+        local i=0
+        for os in ${os_list[@]}; do
+            info "$i) $(get_os_name $os)"; i=$((i+1))
+        done
         msg "Select system to mount [0-%s] : " "$((count-1))"
-                read select
-        else
+        read select
+    else
         select=0
     fi
-    local os_str=${os_list[$select]} type
-    type=$os_str
-    root=${os_str%%:*}
-    type=${type##*:}
-        msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$root"
-        chroot_mount_partitions "$1" "$root"
+    os_str=${os_list[$select]}
+    os_root=${os_str%%:*}
+    msg "Mounting (%s) [%s]" "$(get_os_name $os_str)" "$os_root"
+    chroot_mount_partitions "$1" "$os_root" "$(cut -d':' -f5 <<<"$os_str")"
 }
 
 chroot_mount_partitions(){
@@ -78,16 +76,21 @@ chroot_mount_partitions(){
     [[ $(trap -p EXIT) ]] && die 'Error! Attempting to overwrite existing EXIT trap'
     trap 'trap_handler' EXIT
 
-    chroot_part_mount $2 $1
+    # BTRFS has subvolumes we need to take into account
+    if [[ "$3" = "btrfs" ]]; then
+        chroot_part_mount $2 $1 -o subvol=@
+    else
+        chroot_part_mount $2 $1
+    fi
 
     local mounts=$(parse_fstab "$1")
 
     for entry in ${mounts[@]}; do
         entry=${entry//UUID=}
-        local dev=${entry%:*} mp=${entry#*:}
-        case "${entry#*:}" in
+        local dev="$(cut -d':' -f1 <<<"$entry")" mp="$(cut -d':' -f2 <<<"$entry")" options="$(cut -d':' -f3 <<<"$entry")"
+        case "$mp" in
             '/'|'swap'|'none') continue ;;
-            *) chroot_part_mount "/dev/disk/by-uuid/${dev}" "$1${mp}" ;;
+            *) chroot_part_mount "/dev/disk/by-uuid/${dev}" "$1${mp}" -o "$options" ;;
         esac
     done
 
