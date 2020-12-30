@@ -506,6 +506,7 @@ reset_profile(){
     unset disable_systemd
     unset enable_systemd_live
     unset packages_desktop
+    unset packages_desktop_common
     unset packages_mhwd
     unset login_shell
     unset netinstall
@@ -546,6 +547,7 @@ check_profile(){
     fi
 
     [[ -f "$1/Packages-Desktop" ]] && packages_desktop=$1/Packages-Desktop
+    [[ -f "$1/Packages-Desktop-Common" ]] && packages_desktop_common=$1/Packages-Desktop-Common
 
     [[ -f "$1/Packages-Mhwd" ]] && packages_mhwd=$1/Packages-Mhwd
 
@@ -555,6 +557,7 @@ check_profile(){
 }
 
 # $1: file name
+# $2: append, default: false
 load_pkgs(){
     info "Loading Packages: [%s] ..." "${1##*/}"
 
@@ -640,7 +643,7 @@ load_pkgs(){
         _purge="s|>cleanup.*||g" \
         _purge_rm="s|>cleanup||g"
 
-    packages=$(sed "$_com_rm" "$1" \
+    local pkgs=$(sed "$_com_rm" "$1" \
             | sed "$_space" \
             | sed "$_blacklist" \
             | sed "$_purge" \
@@ -659,6 +662,12 @@ load_pkgs(){
             | sed "$_extra" \
             | sed "$_extra_rm" \
             | sed "$_clean")
+
+    if [[ "$2" == "true" ]]; then
+        packages="$packages $pkgs"
+    else
+        packages="$pkgs"
+    fi
 
     if [[ $1 == "${packages_mhwd}" ]]; then
 

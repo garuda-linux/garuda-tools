@@ -378,6 +378,7 @@ make_image_desktop() {
         pacman -Qr "${path}" > "${path}/desktopfs-pkgs.txt"
         cp "${path}/desktopfs-pkgs.txt" ${iso_dir}/$(gen_iso_fn)-pkgs.txt
         [[ -e ${profile_dir}/desktop-overlay ]] && copy_overlay "${profile_dir}/desktop-overlay" "${path}"
+        [[ -e ${profile_dir}/desktop-overlay-common ]] && copy_overlay "${profile_dir}/desktop-overlay-common" "${path}"
 
         if [[ -e "${path}/usr/share/calamares/branding/garuda/branding.desc" ]]; then
             configure_branding "${path}"
@@ -555,6 +556,9 @@ prepare_images(){
     run_safe "make_image_root"
     if [[ -f "${packages_desktop}" ]] ; then
         load_pkgs "${packages_desktop}"
+        if [[ -f "${packages_desktop_common}" ]] ; then
+            load_pkgs "${packages_desktop_common}" true
+        fi
         run_safe "make_image_desktop"
     fi
     if [[ -f ${profile_dir}/Packages-Live ]]; then
