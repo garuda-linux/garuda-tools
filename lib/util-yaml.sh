@@ -124,6 +124,11 @@ write_unpack_conf(){
     echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/rootfs.sfs\"" >> "$conf"
     echo "      sourcefs: \"squashfs\"" >> "$conf"
     echo "      destination: \"\"" >> "$conf"
+    if [[ -f "${packages_common}" ]] ; then
+        echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/commonfs.sfs\"" >> "$conf"
+        echo "      sourcefs: \"squashfs\"" >> "$conf"
+        echo "      destination: \"\"" >> "$conf"
+    fi
     if [[ -f "${packages_desktop}" ]] ; then
         echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/desktopfs.sfs\"" >> "$conf"
         echo "      sourcefs: \"squashfs\"" >> "$conf"

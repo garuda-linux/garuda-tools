@@ -162,7 +162,12 @@ check_root() {
 
 copy_mirrorlist(){
     cp -a /etc/pacman.d/mirrorlist "$1/etc/pacman.d/"
-    cp -a /etc/pacman.d/chaotic-mirrorlist "$1/etc/pacman.d/"
+    if [[ -d /etc/pacman.d/chaotic-mirrorlist ]] && [[ ! -d $1/etc/pacman.d/chaotic-mirrorlist ]]; then
+        cp -a /etc/pacman.d/chaotic-mirrorlist "$1/etc/pacman.d/"
+    fi
+    if [[ -d /etc/pacman.d/blackarch-mirrorlist ]] && [[ ! -d $1/etc/pacman.d/blackarch-mirrorlist ]]; then
+        cp -a /etc/pacman.d/blackarch-mirrorlist "$1/etc/pacman.d/"
+    fi
 }
 
 copy_keyring(){
@@ -544,6 +549,8 @@ check_profile(){
     if ! ${has_keyfiles} && ! ${has_keydirs}; then
         die "Profile [%s] sanity check failed!" "$1"
     fi
+    
+    [[ -f "$1/Packages-Common" ]] && packages_common=$1/Packages-Common
 
     [[ -f "$1/Packages-Desktop" ]] && packages_desktop=$1/Packages-Desktop
 
