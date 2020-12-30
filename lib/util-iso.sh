@@ -415,7 +415,8 @@ make_image_live() {
         chroot_create "${path}" "${packages}"
 
         pacman -Qr "${path}" > "${path}/livefs-pkgs.txt"
-        copy_overlay "${profile_dir}/live-overlay" "${path}"
+        [[ -e ${profile_dir}/live-overlay ]] && copy_overlay "${profile_dir}/live-overlay" "${path}"
+        [[ -e ${profile_dir}/live-overlay-common ]] && copy_overlay "${profile_dir}/live-overlay-common" "${path}"
         configure_live_image "${path}"
 
         if [[ -e "${path}/usr/share/calamares/branding/garuda/branding.desc" ]]; then
