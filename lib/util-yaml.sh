@@ -124,11 +124,6 @@ write_unpack_conf(){
     echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/rootfs.sfs\"" >> "$conf"
     echo "      sourcefs: \"squashfs\"" >> "$conf"
     echo "      destination: \"\"" >> "$conf"
-    if [[ -f "${packages_common}" ]] ; then
-        echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/commonfs.sfs\"" >> "$conf"
-        echo "      sourcefs: \"squashfs\"" >> "$conf"
-        echo "      destination: \"\"" >> "$conf"
-    fi
     if [[ -f "${packages_desktop}" ]] ; then
         echo "    - source: \"/run/miso/bootmnt/${iso_name}/${target_arch}/desktopfs.sfs\"" >> "$conf"
         echo "      sourcefs: \"squashfs\"" >> "$conf"
@@ -485,6 +480,9 @@ make_profile_yaml(){
     write_netgroup_yaml "$1" "$(gen_fn "Packages-Root")"
     if [[ -f "${packages_desktop}" ]]; then
         load_pkgs "${packages_desktop}"
+        if [[ -f "${packages_desktop_common}" ]]; then
+            load_pkgs "${packages_desktop_common}" true
+        fi
         write_netgroup_yaml "$1" "$(gen_fn "Packages-Desktop")"
     fi
     ${calamares} && write_calamares_yaml "$1"
