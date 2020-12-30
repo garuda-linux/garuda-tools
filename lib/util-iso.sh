@@ -365,41 +365,13 @@ make_image_root() {
     fi
 }
 
-make_image_common() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        msg "Prepare [Common installation] (commonfs)"
-        local path="${work_dir}/commonfs"
-        mkdir -p ${path}
-
-        mount_fs_root "${path}"
-
-        chroot_create "${path}" "${packages}"
-
-        pacman -Qr "${path}" > "${path}/commonfs-pkgs.txt"
-        cp "${path}/commonfs-pkgs.txt" ${iso_dir}/$(gen_iso_fn)-pkgs.txt
-        [[ -e ${profile_dir}/common-overlay ]] && copy_overlay "${profile_dir}/common-overlay" "${path}"
-
-        if [[ -e "${path}/usr/share/calamares/branding/garuda/branding.desc" ]]; then
-            configure_branding "${path}"
-            msg "Done [Distribution: Release ${dist_release} Codename ${dist_codename}]"
-        fi
-
-        reset_pac_conf "${path}"
-
-        umount_fs
-        clean_up_image "${path}"
-        : > ${work_dir}/build.${FUNCNAME}
-        msg "Done [Common installation] (commonfs)"
-    fi
-}
-
 make_image_desktop() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         msg "Prepare [Desktop installation] (desktopfs)"
         local path="${work_dir}/desktopfs"
         mkdir -p ${path}
 
-        mount_fs_common "${path}"
+        mount_fs_root "${path}"
 
         chroot_create "${path}" "${packages}"
 
@@ -581,10 +553,6 @@ prepare_images(){
     local timer=$(get_timer)
     load_pkgs "${profile_dir}/Packages-Root"
     run_safe "make_image_root"
-    if [[ -f "${packages_common}" ]] ; then
-        load_pkgs "${packages_common}"
-        run_safe "make_image_common"
-    fi
     if [[ -f "${packages_desktop}" ]] ; then
         load_pkgs "${packages_desktop}"
         run_safe "make_image_desktop"
