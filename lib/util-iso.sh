@@ -377,8 +377,8 @@ make_image_desktop() {
 
         pacman -Qr "${path}" > "${path}/desktopfs-pkgs.txt"
         cp "${path}/desktopfs-pkgs.txt" ${iso_dir}/$(gen_iso_fn)-pkgs.txt
-        [[ -e ${profile_dir}/desktop-overlay ]] && copy_overlay "${profile_dir}/desktop-overlay" "${path}"
         [[ -e ${profile_dir}/desktop-overlay-common ]] && copy_overlay "${profile_dir}/desktop-overlay-common" "${path}"
+        [[ -e ${profile_dir}/desktop-overlay ]] && copy_overlay "${profile_dir}/desktop-overlay" "${path}"
 
         if [[ -e "${path}/usr/share/calamares/branding/garuda/branding.desc" ]]; then
             configure_branding "${path}"
@@ -415,8 +415,8 @@ make_image_live() {
         chroot_create "${path}" "${packages}"
 
         pacman -Qr "${path}" > "${path}/livefs-pkgs.txt"
-        [[ -e ${profile_dir}/live-overlay ]] && copy_overlay "${profile_dir}/live-overlay" "${path}"
         [[ -e ${profile_dir}/live-overlay-common ]] && copy_overlay "${profile_dir}/live-overlay-common" "${path}"
+        [[ -e ${profile_dir}/live-overlay ]] && copy_overlay "${profile_dir}/live-overlay" "${path}"
         configure_live_image "${path}"
 
         if [[ -e "${path}/usr/share/calamares/branding/garuda/branding.desc" ]]; then
