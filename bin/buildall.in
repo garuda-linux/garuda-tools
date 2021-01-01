@@ -38,26 +38,26 @@ else
     fi
 fi
 
-: deepin
+: dr460nized
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/deepin/$(date +%y%m%d)/*.iso; then
-    goto dr460nized
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized-gaming/ultimate/$(date +%y%m%d)/*.iso; then
+    goto dr460nized-gaming
 else 
-    if buildiso -p deepin; then
-        goto dr460nized
-    else echo "Deepin ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
+    if buildiso -p dr460nized; then
+        goto dr460nized-gaming
+    else echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "Deepin" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
-: dr460nized
+: dr460nized-gaming
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized/$(date +%y%m%d)/*.iso; then
     goto gnome
 else 
-    if buildiso -p dr460nized; then
+    if buildiso -p dr460nized-gaming -f; then
         goto gnome
-    else echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
+    else echo "Dr460nized Gaming ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "Deepin" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
@@ -125,12 +125,24 @@ fi
 : mate
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/mate/$(date +%y%m%d)/*.iso; then
-    goto recbox
+    goto qtile
 else 
-    if buildiso -p mate; then
+    if buildiso -p qtile; then
         goto recbox
     else echo "MATE ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "MATE" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+: qtile
+cleardir
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/tile/$(date +%y%m%d)/*.iso; then
+    goto recbox
+else 
+    if buildiso -p qtile; then
+        goto recbox
+    else echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
+        echo "QtileE" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
@@ -143,18 +155,6 @@ else
         goto ukui
     else echo "Recbox ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
         echo "Recbox" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: ukui
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/ukui/$(date +%y%m%d)/*.iso; then
-    goto wayfire
-else 
-    if buildiso -p ukui; then
-        goto wayfire
-    else echo "UKUI ISO building failed. Manual intervention required!" | apprise -vv "tgram://1368184718:AAHTO7Pq_Uvm9HCBeYjTZzcMZ-3huZbtrm4/-1001325273433" -t "ISO Build failed!"
-        echo "UKUI" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
