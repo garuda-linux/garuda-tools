@@ -117,7 +117,7 @@ cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-multimedia/$(date +%y%m%d)/*.iso; then
     goto lxqt-kwin
 else 
-    if buildiso -p kde -f; then
+    if buildiso -p kde-multimedia -f; then
         goto lxqt-kwin
     else echo "KDE Multimedia ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "KDE Multimedia" >> /var/cache/garuda-tools/rebuild_needed.log
