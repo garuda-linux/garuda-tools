@@ -163,6 +163,11 @@ check_root() {
 copy_mirrorlist(){
     cp -a /etc/pacman.d/mirrorlist "$1/etc/pacman.d/"
     cp -a /etc/pacman.d/chaotic-mirrorlist "$1/etc/pacman.d/"
+    
+    if [[ -d /etc/pacman.d/blackarch-mirrorlist ]] && [[ ! -d $1/etc/pacman.d/blackarch-mirrorlist ]]; then
+        cp -a /etc/pacman.d/blackarch-mirrorlist "$1/etc/pacman.d/"
+    fi
+    
 }
 
 copy_keyring(){
