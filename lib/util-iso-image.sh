@@ -50,122 +50,89 @@ set_xdm(){
     fi
 }
 
+lslist_contains_package(){
+    if [[ $1 =~ .*$2-.*\.pkg ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+configure_mhwd_drivers_delete(){
+    [ -d "$1" ] && rm -r "$1" || true
+}
+
 configure_mhwd_drivers(){
     local path=$1${mhwd_repo}/ \
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
-    if  [ -z "$(ls $path | grep nvidia-340xx-utils 2> /dev/null)" ]; then
+    local packagelist="$(ls $path)"
+
+    if ! lslist_contains_package "$packagelist" nvidia-340xx-utils; then
         msg2 "Disabling Nvidia 340xx driver"
-        mkdir -p $drv_path/nvidia-340xx-dkms/
-        echo "" > $drv_path/nvidia-340xx-dkms/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/nvidia-340xx-dkms/
         msg2 "Disabling Nvidia 340xx Bumblebee driver"
-        mkdir -p $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/
-        echo "" > $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/
     fi
     
-    if  [ -z "$(ls $path | grep nvidia-390xx-utils 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" nvidia-390xx-utils; then
         msg2 "Disabling Nvidia 390xx driver"
-        mkdir -p $drv_path/nvidia-390xx-dkms/
-        echo "" > $drv_path/nvidia-390xx-dkms/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/nvidia-390xx-dkms/
         msg2 "Disabling Nvidia 390xx Bumblebee driver"
-        mkdir -p $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee/
-        echo "" > $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee
     fi
     
-    if  [ -z "$(ls $path | grep nvidia-utils 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" nvidia-utils; then
         msg2 "Disabling nvidia-dkms driver"
-        mkdir -p $drv_path/nvidia-dkms/
-        echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/nvidia-dkms/
         msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading
         msg2 "Disabling hybrid-intel-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading
         msg2 "Disabling optimus-manager driver"
-        mkdir -p $drv_path/optimus-manager/
-        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/optimus-manager
     fi
     
-    if  [ -z "$(ls $path | grep chaotic-nvidia-utils-tkg 2> /dev/null)" ]; then
-        msg2 "Disabling  chaotic-nvidia-dkms-tkg driver"
-        mkdir -p $drv_path/chaotic-nvidia-dkms-tkg/
-        echo "" > $drv_path/chaotic-nvidia-dkms-tkg/MHWDCONFIG
+    if ! lslist_contains_package "$packagelist" chaotic-nvidia-utils-tkg; then
+        msg2 "Disabling chaotic-nvidia-dkms-tkg driver"
+        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dkms-tkg
         msg2 "Disabling hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading/
-        echo "" > $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading
         msg2 "Disabling hybrid-intel-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-intel-chaotc-nvidia-dkms-tkg-prime-render-offloading/
-        echo "" > $drv_path/hybrid-intel-chaotic-nvidia-dkms-tkg-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-intel-chaotc-nvidia-dkms-tkg-prime-render-offloading
         msg2 "Disabling chaotic-optimus-manager-tkg driver"
-        mkdir -p $drv_path/chaotic-optimus-manager-tkg/
-        echo "" > $drv_path/chaotic-optimus-manager-tkg/MHWDCONFIG
-    else
-        msg2 "Disabling nvidia-dkms driver"
-        mkdir -p $drv_path/nvidia-dkms/
-        echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
-        msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-        msg2 "Disabling hybrid-intel-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-        msg2 "Disabling optimus-manager driver"
-        mkdir -p $drv_path/optimus-manager/
-        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-tkg
     fi
     
-    if  [ -z "$(ls $path | grep chaotic-nvidia-dev-utils-tkg 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" chaotic-nvidia-dev-utils-tkg; then
         msg2 "Disabling  chaotic-nvidia-dev-dkms-tkg driver"
-        mkdir -p $drv_path/chaotic-nvidia-dev-dkms-tkg/
-        echo "" > $drv_path/chaotic-nvidia-dev-dkms-tkg/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dev-dkms-tkg
         msg2 "Disabling hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/
-        echo "" > $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading
         msg2 "Disabling hybrid-intel-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-intel-chaotc-nvidia-dev-dkms-tkg-prime-render-offloading/
-        echo "" > $drv_path/hybrid-intel-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/hybrid-intel-chaotc-nvidia-dev-dkms-tkg-prime-render-offloading
         msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
-        mkdir -p $drv_path/chaotic-optimus-manager-dev-tkg/
-        echo "" > $drv_path/chaotic-optimus-manager-dev-tkg/MHWDCONFIG
-    else
-        msg2 "Disabling nvidia-dkms driver"
-        mkdir -p $drv_path/nvidia-dkms/
-        echo "" > $drv_path/nvidia-dkms/MHWDCONFIG
-        msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-        msg2 "Disabling hybrid-intel-nvidia-dkms-prime-render-offloading driver"
-        mkdir -p $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/
-        echo "" > $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading/MHWDCONFIG
-        msg2 "Disabling optimus-manager driver"
-        mkdir -p $drv_path/optimus-manager/
-        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
     fi
     
-    if  [ -z "$(ls $path | grep optimus-manager-git 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" optimus-manager-git; then
         msg2 "Disabling optimus-manager driver"
-        mkdir -p $drv_path/optimus-manager/
-        echo "" > $drv_path/optimus-manager/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/optimus-manager
         msg2 "Disabling chaotic-optimus-manager-tkg driver"
-        mkdir -p $drv_path/chaotic-optimus-manager-tkg/
-        echo "" > $drv_path/chaotic-optimus-manager-tkg/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-tkg
         msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
-        mkdir -p $drv_path/chaotic-optimus-manager-dev-tkg/
-        echo "" > $drv_path/chaotic-optimus-manager-dev-tkg/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
     fi
     
     
     local drv_path=$1/var/lib/mhwd/db/pci/network_drivers
-    if  [ -z "$(ls $path | grep r8168-dkms 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" r8168-dkms; then
         msg2 "Disabling r8168 driver"
-        mkdir -p $drv_path/r8168/
-        echo "" > $drv_path/r8168/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/r8168/
     fi
-    if  [ -z "$(ls $path | grep broadcom-wl-dkms 2> /dev/null)" ]; then
+    if ! lslist_contains_package "$packagelist" broadcom-wl-dkms; then
         msg2 "Disabling broadcom-wl driver"
-        mkdir -p $drv_path/broadcom-wl/
-        echo "" > $drv_path/broadcom-wl/MHWDCONFIG
+        configure_mhwd_drivers_delete $drv_path/broadcom-wl/
     fi
 }
 
