@@ -145,12 +145,14 @@ write_users_conf(){
     echo "doAutologin:     false" >> "$conf" # can be either 'true' or 'false'
     echo "sudoersGroup:    wheel" >> "$conf"
     echo "setRootPassword: true" >> "$conf" # must be true, else some options get hidden
-    echo "doReusePassword: false" >> "$conf" # only used in old 'users' module
+    echo "doReusePassword: true" >> "$conf" # only used in old 'users' module
     echo "availableShells: /bin/bash, /bin/zsh" >> "$conf" # only used in new 'users' module
     echo "avatarFilePath:  ~/.face" >> "$conf" # mostly used file-name for avatar
     if [[ -n "$user_shell" ]]; then
         echo "userShell:       $user_shell" >> "$conf"
-    fi    
+    fi
+    echo "passwordRequirements:
+    nonempty: true" >> "$conf" # make sure the user doesn't enter an empty password
 }
 
 write_packages_conf(){
