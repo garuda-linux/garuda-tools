@@ -92,7 +92,7 @@ create_min_fs "$newroot"
 chroot_api_mount "$newroot" || die "failed to setup API filesystems in new root"
 
 msg2 'Installing packages to %s' "$newroot"
-if ! pacman -r "$newroot" -Sy "${pacman_args[@]}"; then
+if ! pacman -r "$newroot" -Sy --needed "${pacman_args[@]}"; then
     die 'Failed to install packages to new root'
 fi
 
