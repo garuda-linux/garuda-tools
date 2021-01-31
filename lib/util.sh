@@ -321,7 +321,7 @@ init_buildiso(){
 
     [[ -z ${iso_compression} ]] && iso_compression='xz'
 
-    [[ -z ${kernel} ]] && kernel="linux-tkg-bmq"
+    [[ -z ${kernel} ]] && kernel="linux-zen"
     
     load_run_dir "${profile_repo}"
     
