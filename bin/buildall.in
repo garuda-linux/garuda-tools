@@ -43,12 +43,24 @@ fi
 : dr460nized
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized/$(date +%y%m%d)/*.iso; then
-    goto dr460nized-gaming
+    goto dr460nized-blackarch
 else 
     if buildiso -p dr460nized; then
-        goto dr460nized-gaming
+        goto dr460nized-blackarch
     else echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "Deepin" >> /var/cache/garuda-tools/rebuild_needed.log
+        echo "Dr460nized" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+: dr460nized-blackarch
+cleardir
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized-blackarch/$(date +%y%m%d)/*.iso; then
+    goto dr460nized-gaming
+else 
+    if buildiso -p dr460nized-blackarch; then
+        goto dr460nized-gaming
+    else echo "Dr460nized-blackarch ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "Dr460nized-blackarch" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
@@ -189,7 +201,7 @@ cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%d)/*.iso; then
     goto ready
 else 
-    if buildiso -p xfce; then
+    if buildiso -p xfce -k linux-lts; then
         goto ready
     else echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
