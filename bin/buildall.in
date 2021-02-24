@@ -93,7 +93,7 @@ cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome-barebones/$(date +%y%m%d)/*.iso; then
     goto i3
 else 
-    if buildiso -p gnome-barebones; then
+    if buildiso -p gnome-barebones -k linux-lts; then
         goto i3
     else echo "GNOME Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "GNOME Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -117,7 +117,7 @@ cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/$(date +%y%m%d)/*.iso; then
     goto kde_multimedia
 else 
-    if buildiso -p kde-barebones; then
+    if buildiso -p kde-barebones -k linux-lts; then
         goto kde_multimedia
     else echo "KDE Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "KDE Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
