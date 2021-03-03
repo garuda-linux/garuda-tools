@@ -41,6 +41,11 @@ add_svc_sd(){
         msg2 "Setting %s ..." "$2"
         chroot $1 systemctl enable $2 &>/dev/null
     fi
+    if [[ -f $1/etc/systemd/system/$2 ]] || \
+    [[ -f $1/usr/lib/systemd/system/$2 ]]; then
+        msg2 "Setting %s ..." "$2"
+        chroot $1 systemctl enable $2 &>/dev/null
+    fi
 }
 
 set_xdm(){
@@ -252,6 +257,18 @@ style:
    sidebarTextHighlight: "\"${sidebartexthighlight}"\"" > $1/usr/share/calamares/branding/garuda/branding.desc
 }
 
+configure_polkit_user_rules(){
+    msg2 "Configuring polkit user rules"
+    echo "/* Stop asking the user for a password while they are in a live session
+ */
+polkit.addRule(function(action, subject) {
+    if (subject.user == \"${username}\")
+    {
+        return polkit.Result.YES;
+    }
+});" > $1/etc/polkit-1/rules.d/49-nopasswd-live.rules
+}
+
 configure_logind(){
     msg2 "Configuring logind ..."
     local conf=$1/etc/systemd/logind.conf
@@ -266,14 +283,20 @@ configure_journald(){
     sed -i 's/#\(Storage=\)auto/\1volatile/' "$conf"
 }
 
+disable_srv_live(){
+    for srv in ${disable_systemd_live[@]}; do
+         enable_systemd_live=(${enable_systemd_live[@]//*$srv*})
+    done
+}
+
 configure_services(){
     info "Configuring services"
     use_apparmor="false"
     apparmor_boot_args=""
-    for svc in ${enable_systemd[@]}; do
-        add_svc_sd "$1" "$svc"
-        [[ "$svc" == "apparmor" ]] && use_apparmor="true"
-    done
+    enable_systemd_live=(${enable_systemd_live[@]} ${enable_systemd[@]})
+
+    [[ ! -z $disable_systemd_live ]] && disable_srv_live
+
     for svc in ${enable_systemd_live[@]}; do
         add_svc_sd "$1" "$svc"
         [[ "$svc" == "apparmor" ]] && use_apparmor="true"

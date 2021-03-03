@@ -385,6 +385,8 @@ make_image_desktop() {
             msg "Done [Distribution: Release ${dist_release} Codename ${dist_codename}]"
         fi
 
+        configure_polkit_user_rules "${path}"
+        
         reset_pac_conf "${path}"
 
         seed_snaps ${path}
