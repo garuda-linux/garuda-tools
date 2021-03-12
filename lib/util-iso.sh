@@ -212,11 +212,13 @@ make_iso() {
         [[ -f "${iso_dir}/${iso_file}.sha1" ]] && rm -f "${iso_dir}/${iso_file}.sha1"
         [[ -f "${iso_dir}/${iso_file}.sha256" ]] && rm -f "${iso_dir}/${iso_file}.sha256"
         [[ -f "${iso_dir}/${iso_file}.torrent" ]] && rm -f "${iso_dir}/${iso_file}.torrent"
+        [[ -f "${iso_dir}/${iso_file}.zsync" ]] && rm -f "${iso_dir}/${iso_file}.zsync"
     fi
     assemble_iso
 
     ${permalink} && gen_permalink
     ${torrent} && make_torrent
+    ${zsync} && make_zsync2
     ${checksum} && checksumiso "${iso_dir}"
 
     if [ -e "/var/cache/garuda-tools/garuda-builds/.env" ]; then
@@ -242,6 +244,18 @@ make_torrent(){
             ${verbose} && mktorrent_args+=(-v)
             msg2 "Creating (%s) ..." "${iso##*/}.torrent"
             mktorrent ${mktorrent_args[*]} -o ${isos}.torrent ${isos}
+        done
+    fi
+}
+
+make_zsync2(){
+    find ${iso_dir} -type f -name "*.zsync" -delete
+
+    if [[ -n $(find ${iso_dir} -type f -name "*.iso") ]]; then
+        isos=$(ls ${iso_dir}/*.iso)
+        for iso in ${isos}; do
+            msg2 "Creating (%s) ..." "${iso##*/}.zsync"
+            zsyncmake2 -u ${iso}
         done
     fi
 }

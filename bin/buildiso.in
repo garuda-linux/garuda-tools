@@ -86,6 +86,7 @@ display_settings(){
     msg2 "extra: %s" "${full_iso}"
     msg2 "checksumiso: %s" "${checksum}"
     msg2 "torrent: %s" "${torrent}"
+    msg2 "zsync: %s" "${zsync}"
     msg2 "permalink: %s" "${permalink}"
 
     if ${torrent}; then
@@ -124,6 +125,7 @@ persist=false
 initialize=false
 permalink=false
 torrent=true
+zsync=true
 checksum=true
 
 usage() {
@@ -150,6 +152,7 @@ usage() {
     echo '    -t <dir>           Target directory'
     echo "                       [default: ${cache_dir_iso}]"
     echo '    -u                 Create ISO torrent'
+    echo '    -U                 Create ISO zsync file'
     echo '    -v                 Verbose output to log file, show profile detail (-q)'
     echo '    -x                 Build images only'
     echo '    -z                 Generate iso only'
@@ -181,6 +184,7 @@ while getopts "${opts}" arg; do
         s) checksum=true ;;
         t) cache_dir_iso="$OPTARG" ;;
         u) torrent=true ;;
+        U) zsync=true ;;
         v) verbose=true ;;
         x) images_only=true ;;
         z) iso_only=true ;;
