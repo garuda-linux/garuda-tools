@@ -218,7 +218,7 @@ make_iso() {
 
     ${permalink} && gen_permalink
     ${torrent} && make_torrent
-    ${zsync} && make_zsync2
+    ${zsync} && make_zsync
     ${checksum} && checksumiso "${iso_dir}"
 
     if [ -e "/var/cache/garuda-tools/garuda-builds/.env" ]; then
@@ -248,7 +248,7 @@ make_torrent(){
     fi
 }
 
-make_zsync2(){
+make_zsync(){
     find ${iso_dir} -type f -name "*.zsync" -delete
 
     if [[ -n $(find ${iso_dir} -type f -name "*.iso") ]]; then
@@ -256,7 +256,7 @@ make_zsync2(){
         for iso in ${isos}; do
             msg2 "Creating (%s) ..." "${iso##*/}.zsync"
             # 2 mb blocks sounds fine, letting zsync auto decide block size is not a good idea here,  takes forever
-            zsyncmake2 -b 2097152 ${iso} -o ${iso}.torrent
+            zsyncmake ${iso} -o ${iso}.torrent
         done
     fi
 }
