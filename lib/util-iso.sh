@@ -255,7 +255,8 @@ make_zsync2(){
         isos=$(ls ${iso_dir}/*.iso)
         for iso in ${isos}; do
             msg2 "Creating (%s) ..." "${iso##*/}.zsync"
-            zsyncmake2 -u ${iso}
+            # 2 mb blocks sounds fine, letting zsync auto decide block size is not a good idea here,  takes forever
+            zsyncmake2 -b 2097152 ${iso} -o ${iso}.torrent
         done
     fi
 }
