@@ -123,6 +123,7 @@ iso_only=false
 verbose=true
 persist=false
 initialize=false
+update_release_symlinks=""
 permalink=false
 torrent=true
 zsync=true
@@ -146,6 +147,7 @@ usage() {
     echo "    -p <profile>       Buildset or profile [default: ${build_list_iso}]"
     echo '    -q                 Query settings and pretend build'
     echo '    -r <dir>           Chroots directory'
+    echo '    -R timestamp       Update the latest release symlinks to this release'
     echo "                       [default: ${chroots_iso}]"
     echo '    -s                 create checksums'
     echo "                       [default: ${iso_dir}]"
@@ -165,11 +167,12 @@ usage() {
 
 orig_argv=("$@")
 
-opts='p:a:b:r:t:k:g:d:cfzxmuUsvqhil'
+opts='p:a:b:r:t:k:g:d:R:cfzxmuUsvqhil'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
      	i) initialize=true ;;
+        R) update_release_symlinks="$OPTARG" ;;
         a) target_arch="$OPTARG" ;;
         b) target_branch="$OPTARG" ;;
         c) clean_first=false ;;
@@ -201,6 +204,14 @@ if ${initialize}; then
 	init_profiles
 	msg2 "Done: iso profiles are stored in /var/cache/garuda-tools/iso-profiles"
 	exit 1
+fi
+
+if [ "${update_release_symlinks}" != "" ]; then
+    msg "Updating release ISO profiles to ${update_release_symlinks}"
+    upd_iso_symlinks ${update_release_symlinks}
+    msg2 "Done!"
+    # I'm not sure why $initialize causes it to exit out with an error, but I'm just doing it here too cause I can't be bothered
+    exit 1
 fi
 
 timer_start=$(get_timer)

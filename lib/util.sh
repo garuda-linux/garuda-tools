@@ -862,3 +862,18 @@ init_profiles() {
 	fi
 }
 
+# This is terrible code but honestly I just can't be bothered to fix it
+upd_iso_symlinks() {
+    find "${cache_dir_iso}" -not -path "${cache_dir_iso}/latest*" -type f -exec bash -c '
+        path="$(realpath --relative-to="$3" "$1")"
+        if ! [[ "$path" =~ ^.*\/$2\/.*\..* ]]; then
+            exit
+        fi
+        path="${path/$2\/}"
+        folder="$(dirname $path)"
+        extension="${path#*.}"
+
+        mkdir -p "$3/latest/$folder"
+        ln -fs $1 "$3/latest/$folder/latest.$extension"
+        ' _ "{}" "$1" "${cache_dir_iso}" \;
+}
