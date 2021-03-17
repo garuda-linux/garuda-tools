@@ -874,6 +874,13 @@ upd_iso_symlinks() {
         extension="${path#*.}"
 
         mkdir -p "$3/latest/$folder"
-        ln -fs $1 "$3/latest/$folder/latest.$extension"
+        filename="$3/latest/$folder/latest.$extension"
+        if [ "$extension" == "iso.zsync" ]; then
+            \cp "$1" "$filename"
+            relative="$(realpath --relative-to="$3/latest/$folder" "${1%.*}")"
+            sed -i "0,/.*URL.*/{s|.*URL.*|URL: $relative|}" "$filename"
+        else
+            ln -fs "$1" "$filename"
+        fi
         ' _ "{}" "$1" "${cache_dir_iso}" \;
 }
