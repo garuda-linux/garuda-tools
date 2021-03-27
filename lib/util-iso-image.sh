@@ -90,10 +90,8 @@ configure_mhwd_drivers(){
     if ! lslist_contains_package "$packagelist" nvidia-utils; then
         msg2 "Disabling nvidia-dkms driver"
         configure_mhwd_drivers_delete $drv_path/nvidia-dkms/
-        msg2 "Disabling hybrid-amd-nvidia-dkms-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-amd-nvidia-dkms-prime-render-offloading
-        msg2 "Disabling hybrid-intel-nvidia-dkms-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-dkms-prime-render-offloading
+        msg2 "Disabling nvidia-prime-render-offload driver"
+        configure_mhwd_drivers_delete $drv_path/nvidia-prime-render-offload
         msg2 "Disabling optimus-manager driver"
         configure_mhwd_drivers_delete $drv_path/optimus-manager
     fi
@@ -101,10 +99,8 @@ configure_mhwd_drivers(){
     if ! lslist_contains_package "$packagelist" chaotic-nvidia-utils-tkg; then
         msg2 "Disabling chaotic-nvidia-dkms-tkg driver"
         configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dkms-tkg
-        msg2 "Disabling hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-amd-chaotic-nvidia-dkms-tkg-prime-render-offloading
-        msg2 "Disabling hybrid-intel-chaotic-nvidia-dkms-tkg-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-intel-chaotc-nvidia-dkms-tkg-prime-render-offloading
+        msg2 "Disabling chaotic-nvidia-tkg-prime-render-offload driver"
+        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-tkg-prime-render-offload
         msg2 "Disabling chaotic-optimus-manager-tkg driver"
         configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-tkg
     fi
@@ -112,10 +108,8 @@ configure_mhwd_drivers(){
     if ! lslist_contains_package "$packagelist" chaotic-nvidia-dev-utils-tkg; then
         msg2 "Disabling  chaotic-nvidia-dev-dkms-tkg driver"
         configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dev-dkms-tkg
-        msg2 "Disabling hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-amd-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading
-        msg2 "Disabling hybrid-intel-chaotic-nvidia-dev-dkms-tkg-prime-render-offloading driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-intel-chaotc-nvidia-dev-dkms-tkg-prime-render-offloading
+        msg2 "Disabling chaotic-nvidia-dev-tkg-prime-render-offload driver"
+        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dev-tkg-prime-render-offload
         msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
         configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
     fi
