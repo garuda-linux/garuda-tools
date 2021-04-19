@@ -114,7 +114,7 @@ configure_mhwd_drivers(){
         configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
     fi
     
-    if ! lslist_contains_package "$packagelist" optimus-manager-git; then
+    if ! lslist_contains_package "$packagelist" optimus-manager; then
         msg2 "Disabling optimus-manager driver"
         configure_mhwd_drivers_delete $drv_path/optimus-manager
         msg2 "Disabling chaotic-optimus-manager-tkg driver"

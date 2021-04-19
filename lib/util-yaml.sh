@@ -180,7 +180,7 @@ write_welcome_conf(){
     echo '' >> "$conf"
     echo "requirements:" >> "$conf"
     echo "    requiredStorage:    29.9" >> "$conf"
-    echo "    requiredRam:        3.5" >> "$conf"
+    echo "    requiredRam:        2.5" >> "$conf"
     echo "    internetCheckUrl:   https://garudalinux.org" >> "$conf"
     echo "    check:" >> "$conf"
     echo "      - storage" >> "$conf"
