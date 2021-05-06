@@ -19,24 +19,12 @@ cleardir
 source /var/cache/garuda-tools/garuda-builds/.env
 
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/bspwm/$(date +%y%m%d)/*.iso; then
-    goto cinnamon
-else 
-    if buildiso -p bspwm; then
-        goto cinnamon
-    else echo "BSPWM ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "BSPWM" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: cinnamon
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/cinnamon/$(date +%y%m%d)/*.iso; then
     goto dr460nized
 else 
-    if buildiso -p cinnamon; then
+    if buildiso -p bspwm; then
         goto dr460nized
-    else echo "Cinnamon ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "Cinnamon" >> /var/cache/garuda-tools/rebuild_needed.log
+    else echo "BSPWM ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "BSPWM" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
@@ -115,72 +103,48 @@ fi
 : kde-barebones
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/$(date +%y%m%d)/*.iso; then
-    goto kde_multimedia
-else 
-    if buildiso -p kde-barebones -k linux-lts; then
-        goto kde_multimedia
-    else echo "KDE Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "KDE Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: kde_multimedia
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-multimedia/$(date +%y%m%d)/*.iso; then
     goto lxqt-kwin
 else 
-    if buildiso -p kde-multimedia -f; then
+    if buildiso -p kde-barebones -k linux-lts; then
         goto lxqt-kwin
-    else echo "KDE Multimedia ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "KDE Multimedia" >> /var/cache/garuda-tools/rebuild_needed.log
+    else echo "KDE Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "KDE Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
 : lxqt-kwin
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/$(date +%y%m%d)/*.iso; then
-    goto mate
-else 
-    if buildiso -p lxqt-kwin; then
-        goto mate
-    else echo "LXQT-Kwin ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "LXQT-Kwin" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-: mate
-cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/mate/$(date +%y%m%d)/*.iso; then
     goto qtile
 else 
-    if buildiso -p mate; then
+    if buildiso -p lxqt-kwin; then
         goto qtile
-    else echo "MATE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "MATE" >> /var/cache/garuda-tools/rebuild_needed.log
+    else echo "LXQT-Kwin ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "LXQT-Kwin" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
 : qtile
 cleardir
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/qtile/$(date +%y%m%d)/*.iso; then
-    goto recbox
+    goto sway
 else 
     if buildiso -p qtile; then
-        goto recbox
+        goto sway
     else echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Qtile" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
-: recbox
+: sway
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/recbox/$(date +%y%m%d)/*.iso; then
+if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/sway/$(date +%y%m%d)/*.iso; then
     goto wayfire
 else 
-    if buildiso -p recbox; then
+    if buildiso -p sway; then
         goto wayfire
-    else echo "Recbox ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "Recbox" >> /var/cache/garuda-tools/rebuild_needed.log
+    else echo "Sway ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "Sway" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
