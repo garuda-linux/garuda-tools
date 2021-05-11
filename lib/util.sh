@@ -864,6 +864,11 @@ init_profiles() {
 
 # This is terrible code but honestly I just can't be bothered to fix it
 upd_iso_symlinks() {
+    # Delete any existing invalid entries. We don't want to just delete the entire folder, since old links that may not yet exist for our current $1 may still be perfectly valid.
+    find "${cache_dir_iso}/latest" -name \*.iso -type l ! -exec test -e {} \; -exec bash -c '
+        rm -r "$(dirname "$1")"
+    ' _ "{}" \;
+
     find "${cache_dir_iso}" -not -path "${cache_dir_iso}/latest*" -type f -exec bash -c '
         path="$(realpath --relative-to="$3" "$1")"
         if ! [[ "$path" =~ ^.*\/$2\/.*\..* ]]; then
