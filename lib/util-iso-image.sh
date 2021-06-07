@@ -123,6 +123,11 @@ configure_mhwd_drivers(){
         configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
     fi
     
+    if ! lslist_contains_package "$packagelist" virtualbox-guest-utils; then
+        msg2 "Disabling video-virtualmachine driver"
+        configure_mhwd_drivers_delete $drv_path/video-virtualmachine
+    fi
+    
     
     local drv_path=$1/var/lib/mhwd/db/pci/network_drivers
     if ! lslist_contains_package "$packagelist" r8168-dkms; then
