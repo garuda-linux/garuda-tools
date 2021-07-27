@@ -203,15 +203,14 @@ if ${initialize}; then
 	msg "Initialize iso profiles ${branch}"
 	init_profiles
 	msg2 "Done: iso profiles are stored in /var/cache/garuda-tools/iso-profiles"
-	exit 1
+	exit 0
 fi
 
 if [ "${update_release_symlinks}" != "" ]; then
     msg "Updating release ISO profiles to ${update_release_symlinks}"
     upd_iso_symlinks ${update_release_symlinks}
     msg2 "Done!"
-    # I'm not sure why $initialize causes it to exit out with an error, but I'm just doing it here too cause I can't be bothered
-    exit 1
+    exit 0
 fi
 
 timer_start=$(get_timer)
