@@ -10,10 +10,10 @@ function goto
 
 function cleardir
 {
-    rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso
-    buildiso -i
+    rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso/*
 }
 
+buildiso -i
 cleardir
 
 source /var/cache/garuda-tools/garuda-builds/.env
