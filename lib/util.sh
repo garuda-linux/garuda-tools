@@ -885,7 +885,8 @@ upd_iso_symlinks() {
             relative="$(realpath --relative-to="$3/latest/$folder" "${1%.*}")"
             sed -i "0,/.*URL.*/{s|.*URL.*|URL: $relative|}" "$filename"
         else
-            ln -fs "$1" "$filename"
+            relative="$(realpath --relative-to="$3/latest/$folder" "$1")"
+            ln -fs "$relative" "$filename"
         fi
         ' _ "{}" "$1" "${cache_dir_iso}" \;
 }
