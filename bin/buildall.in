@@ -8,13 +8,19 @@ function goto
     exit
 }
 
-function cleardir
+# $1 last $2 next
+function advancedir
 {
-    rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso/*
+    if [ -e /var/cache/garuda-tools/garuda-chroots/buildiso/$1/x86_64/build.make_image_root ]; then
+        mkdir -p /var/cache/garuda-tools/garuda-chroots/buildiso/$2/x86_64/ /var/cache/garuda-tools/garuda-chroots/buildiso/$2/iso/garuda/x86_64/
+        mv /var/cache/garuda-tools/garuda-chroots/buildiso/$1/x86_64/{rootfs,build.make_image_root} /var/cache/garuda-tools/garuda-chroots/buildiso/$2/x86_64/
+        mv /var/cache/garuda-tools/garuda-chroots/buildiso/$1/iso/garuda/x86_64/rootfs* /var/cache/garuda-tools/garuda-chroots/buildiso/$2/iso/garuda/x86_64/
+        rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso/$1
+    fi
 }
 
+rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso/*
 buildiso -i
-cleardir
 
 source /var/cache/garuda-tools/garuda-builds/.env
 
@@ -29,11 +35,11 @@ else
 fi
 
 : dr460nized
-cleardir
+advancedir bspwm dr460nized
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized/$(date +%y%m%d)/*.iso; then
     goto dr460nized-blackarch
 else 
-    if buildiso -p dr460nized; then
+    if buildiso -cp dr460nized; then
         goto dr460nized-blackarch
     else echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Dr460nized" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -41,11 +47,11 @@ else
 fi
 
 : dr460nized-blackarch
-cleardir
+advancedir dr460nized dr460nized-blackarch
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized-blackarch/$(date +%y%m%d)/*.iso; then
     goto dr460nized-gaming
 else 
-    if buildiso -p dr460nized-blackarch; then
+    if buildiso -cp dr460nized-blackarch; then
         goto dr460nized-gaming
     else echo "Dr460nized-blackarch ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Dr460nized-blackarch" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -53,11 +59,11 @@ else
 fi
 
 : dr460nized-gaming
-cleardir
+advancedir dr460nized-blackarch dr460nized-gaming
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized-gaming/$(date +%y%m%d)/*.iso; then
     goto gnome
 else 
-    if buildiso -p dr460nized-gaming -f; then
+    if buildiso -cp dr460nized-gaming -f; then
         goto gnome
     else echo "Dr460nized Gaming ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Dr460nized Gaming" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -65,11 +71,11 @@ else
 fi
 
 : gnome
-cleardir
+advancedir dr460nized-gaming gnome
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
     goto gnome-barebones
 else 
-    if buildiso -p gnome; then
+    if buildiso -cp gnome; then
         goto gnome-barebones
     else echo "GNOME ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "GNOME" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -77,11 +83,11 @@ else
 fi
 
 : gnome-barebones
-cleardir
+advancedir gnome gnome-barebones
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome-barebones/$(date +%y%m%d)/*.iso; then
     goto i3
 else 
-    if buildiso -p gnome-barebones -k linux-lts; then
+    if buildiso -cp gnome-barebones -k linux-lts; then
         goto i3
     else echo "GNOME Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "GNOME Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -89,11 +95,11 @@ else
 fi
 
 : i3
-cleardir
+advancedir gnome-barebones i3
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/$(date +%y%m%d)/*.iso; then
     goto kde-barebones
 else 
-    if buildiso -p i3; then
+    if buildiso -cp i3; then
         goto kde-barebones
     else echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -101,11 +107,11 @@ else
 fi
 
 : kde-barebones
-cleardir
+advancedir i3 kde-barebones
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/$(date +%y%m%d)/*.iso; then
     goto lxqt-kwin
 else 
-    if buildiso -p kde-barebones -k linux-lts; then
+    if buildiso -cp kde-barebones -k linux-lts; then
         goto lxqt-kwin
     else echo "KDE Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "KDE Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -113,11 +119,11 @@ else
 fi
 
 : lxqt-kwin
-cleardir
+advancedir kde-barebones lxqt-kwin
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/$(date +%y%m%d)/*.iso; then
     goto qtile
 else 
-    if buildiso -p lxqt-kwin; then
+    if buildiso -cp lxqt-kwin; then
         goto qtile
     else echo "LXQT-Kwin ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "LXQT-Kwin" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -125,11 +131,11 @@ else
 fi
 
 : qtile
-cleardir
+advancedir lxqt-kwin qtile
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/qtile/$(date +%y%m%d)/*.iso; then
     goto sway
 else 
-    if buildiso -p qtile; then
+    if buildiso -cp qtile; then
         goto sway
     else echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Qtile" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -137,11 +143,11 @@ else
 fi
 
 : sway
-cleardir
+advancedir qtile sway
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/sway/$(date +%y%m%d)/*.iso; then
     goto wayfire
 else 
-    if buildiso -p sway; then
+    if buildiso -cp sway; then
         goto wayfire
     else echo "Sway ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Sway" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -149,11 +155,11 @@ else
 fi
 
 : wayfire
-cleardir
+advancedir sway wayfire
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/wayfire/$(date +%y%m%d)/*.iso; then
     goto xfce
 else 
-    if buildiso -p wayfire; then
+    if buildiso -cp wayfire; then
         goto xfce
     else echo "Wayfire ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Wayfire" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -161,11 +167,11 @@ else
 fi
 
 : xfce
-cleardir
+advancedir wayfire xfce
 if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%d)/*.iso; then
     goto ready
 else 
-    if buildiso -p xfce -k linux-lts; then
+    if buildiso -cp xfce -k linux-lts; then
         goto ready
     else echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -173,8 +179,8 @@ else
 fi
 
 : ready
-cat /var/cache/garuda-tools/rebuild_needed.log | apprise -vv "${TELEGRAM}" -t "Failed builds"
-rm -rf /var/cache/garuda-tools/rebuild_needed.log
-cleardir
+[ -e /var/cache/garuda-tools/rebuild_needed.log ] && cat /var/cache/garuda-tools/rebuild_needed.log | apprise -vv "${TELEGRAM}" -t "Failed builds"
+rm /var/cache/garuda-tools/rebuild_needed.log
+rm -rf /var/cache/garuda-tools/garuda-chroots/buildiso/*
 exit
 

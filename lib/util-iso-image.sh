@@ -96,33 +96,6 @@ configure_mhwd_drivers(){
         configure_mhwd_drivers_delete $drv_path/optimus-manager
     fi
     
-    if ! lslist_contains_package "$packagelist" chaotic-nvidia-utils-tkg; then
-        msg2 "Disabling chaotic-nvidia-dkms-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dkms-tkg
-        msg2 "Disabling chaotic-nvidia-tkg-prime-render-offload driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-tkg-prime-render-offload
-        msg2 "Disabling chaotic-optimus-manager-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-tkg
-    fi
-    
-    if ! lslist_contains_package "$packagelist" chaotic-nvidia-dev-utils-tkg; then
-        msg2 "Disabling  chaotic-nvidia-dev-dkms-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dev-dkms-tkg
-        msg2 "Disabling chaotic-nvidia-dev-tkg-prime-render-offload driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-nvidia-dev-tkg-prime-render-offload
-        msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
-    fi
-    
-    if ! lslist_contains_package "$packagelist" optimus-manager; then
-        msg2 "Disabling optimus-manager driver"
-        configure_mhwd_drivers_delete $drv_path/optimus-manager
-        msg2 "Disabling chaotic-optimus-manager-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-tkg
-        msg2 "Disabling chaotic-optimus-manager-dev-tkg driver"
-        configure_mhwd_drivers_delete $drv_path/chaotic-optimus-manager-dev-tkg
-    fi
-    
     if ! lslist_contains_package "$packagelist" virtualbox-guest-utils; then
         msg2 "Disabling video-virtualmachine driver"
         configure_mhwd_drivers_delete $drv_path/video-virtualmachine
