@@ -113,14 +113,6 @@ configure_mhwd_drivers(){
     fi
 }
 
-configure_lsb(){
-    if [ -e $1/etc/lsb-release ] ; then
-        msg2 "Configuring lsb-release"
-        sed -i -e "s/^.*DISTRIB_RELEASE.*/DISTRIB_RELEASE=${dist_release}/" $1/etc/lsb-release
-        sed -i -e "s/^.*DISTRIB_CODENAME.*/DISTRIB_CODENAME=${dist_codename}/" $1/etc/lsb-release
-    fi
-}
-
 configure_branding(){
     msg2 "Configuring branding"
     echo "---
