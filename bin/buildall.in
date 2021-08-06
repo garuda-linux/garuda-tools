@@ -51,7 +51,7 @@ if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized-gaming/
 fi
 
 cleardir
-if  test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p gnome; then
         echo "GNOME ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "GNOME" >> /var/cache/garuda-tools/rebuild_needed.log
