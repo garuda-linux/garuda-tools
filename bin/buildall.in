@@ -59,14 +59,6 @@ if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m
 fi
 
 cleardir
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome-barebones/$(date +%y%m%d)/*.iso; then
-    if ! buildiso -p gnome-barebones -k linux-lts; then
-        echo "GNOME Barebones ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "GNOME Barebones" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-cleardir
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p i3; then
         echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
