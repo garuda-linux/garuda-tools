@@ -83,6 +83,14 @@ if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/$(date +
 fi
 
 cleardir
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/mate/$(date +%y%m%d)/*.iso; then
+    if ! buildiso -p mate; then
+        echo "MATE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "MATE" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+cleardir
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/qtile/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p qtile; then
         echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
