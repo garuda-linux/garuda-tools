@@ -219,7 +219,7 @@ init_common(){
 
     [[ -z ${log_dir} ]] && log_dir='/var/cache/garuda-tools/garuda-logs'
 
-    [[ -z ${build_mirror} ]] && build_mirror='https://mirrors.kernel.org'
+    [[ -z ${build_mirror} ]] && build_mirror='http://mirrors.kernel.org'
 
     [[ -z ${tmp_dir} ]] && tmp_dir='/tmp/garuda-tools'
 }
