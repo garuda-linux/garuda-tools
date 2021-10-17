@@ -39,8 +39,8 @@ prepare_initramfs(){
 prepare_boot_extras(){
     cp $1/boot/amd-ucode.img $2/amd_ucode.img
     cp $1/boot/intel-ucode.img $2/intel_ucode.img
-    cp $1/usr/share/licenses/amd-ucode/LICENSE.amd-ucode $2/amd_ucode.LICENSE
-    cp $1/usr/share/licenses/intel-ucode/LICENSE $2/intel_ucode.LICENSE
+    cp $1/usr/share/licenses/amd-ucode/LIC* $2/amd_ucode.LICENSE
+    cp $1/usr/share/licenses/intel-ucode/LIC* $2/intel_ucode.LICENSE
     cp $1/boot/memtest86+/memtest.bin $2/memtest
     cp $1/usr/share/licenses/common/GPL2/license.txt $2/memtest.COPYING
 }
