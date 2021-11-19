@@ -85,6 +85,12 @@ write_services_conf(){
     echo 'targets:' >> "$conf"
     echo '    - name: "graphical"' >> "$conf"
     echo '      mandatory: true' >> "$conf"
+    if ${zfs_used}; then
+    echo '    - name: "zfs"' >> "$conf"
+    echo '      mandatory: true' >> "$conf"
+    echo '    - name: "zfs-import"' >> "$conf"
+    echo '      mandatory: true' >> "$conf"
+    fi
     echo '' >> "$conf"
     echo 'disable:' >> "$conf"
     for s in ${disable_systemd[@]}; do
@@ -245,6 +251,12 @@ write_postcfg_conf(){
     fi
 }
 
+write_zfspartitioncfg_conf(){
+    local conf="${modules_dir}/partition.conf"
+    msg2 "Writing %s ..." "${conf##*/}"
+    echo 'defaultFileSystemType:  "zfs"' >> "$conf"
+}
+
 #get_yaml(){
 #    local args=() yaml
 #    if ${chrootcfg}; then
@@ -327,6 +339,11 @@ write_settings_conf(){
     echo "        - summary" >> "$conf"
     echo "    - exec:" >> "$conf"
     echo "        - partition" >> "$conf"
+    if ${zfs_used}; then
+        echo "        - zfs" >> "$conf" && write_zfspartitioncfg_conf
+    else
+        msg2 "Skipping to set zfs module."
+    fi
     echo "        - mount" >> "$conf"
     if ${netinstall}; then
         if ${chrootcfg}; then

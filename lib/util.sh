@@ -456,6 +456,8 @@ load_profile_config(){
     [[ -z ${netinstall} ]] && netinstall='false'
     [[ -z ${netinstall_label} ]] && netinstall_label='Package selection'
 
+    [[ -z ${zfs_used} ]] && zfs_used='false'
+
     [[ -z ${mhwd_used} ]] && mhwd_used='true'
 
     [[ -z ${oem_used} ]] && oem_used='false'
