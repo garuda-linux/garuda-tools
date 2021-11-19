@@ -229,7 +229,7 @@ make_iso() {
         source /var/cache/garuda-tools/garuda-builds/.env
     fi
     if [ ! -z "$TELEGRAM" ]; then
-        echo "${iso_file} built successfully!" | apprise -vv "${TELEGRAM}" -t "New ${iso_type} build available!"
+        echo "${iso_file} built successfully!" | apprise -vv "${TELEGRAM}" -t "New ISO build available!"
     fi
 
     msg "Done [Build ISO]"
