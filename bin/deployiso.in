@@ -77,7 +77,7 @@ sourceforge_remove=false
 fosshost=false
 release_symlinks=false
 
-rsync_args=(--delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" -rtlvH)
+rsync_args=(--delay-updates --safe-links -e '"ssh -o StrictHostKeyChecking=no"' -rtlvH --partial)
 
 usage() {
     echo "Usage: ${0##*/} [options]"
