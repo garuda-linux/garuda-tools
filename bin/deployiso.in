@@ -70,52 +70,41 @@ load_config "${USERCONFDIR}/garuda-tools.conf" || load_config "${SYSCONFDIR}/gar
 
 run_dir=${cache_dir_iso}
 
-hidden=false
-pretend=false
-torrent=false
-update=false
+#pretend=false
 verbose=false
-sign=false
-alt_storage=false
-shell_upload=false
-upd_homepage=false
+sourceforge=false
+sourceforge_remove=false
+fosshost=false
+release_symlinks=false
 
 rsync_args=(-aP -e ssh)
 
 usage() {
     echo "Usage: ${0##*/} [options]"
-    echo '    -a                 Use alternate storage server'
-    echo '    -d                 Use hidden remote directory'
+    echo '    -S                 Sync to sourceforge'
+    echo '    -d                 Pass --delete-ignored and --delete to sourceforge'
+    echo '    -F                 Sync to fosshost'
+    echo '    -R                 Update the latest release symlink'
+    echo "    -t                 Override timestamp [default: ${dist_timestamp}]"
     echo '    -h                 This help'
-    echo "    -l                 Limit bandwidth in kB/s [default: ${limit}]"
-    echo "    -p                 Source folder to upload [default: ${build_list_iso}]"
-    echo '    -q                 Query settings and pretend upload'
-    echo '    -s                 Sign ISO and create checksums'
-    echo '    -t                 Create ISO torrent'
-    echo '    -u                 Update remote directory'
-    echo '    -v                 Verbose output'
-    echo '    -w                 Update download page on garuda.org'
-    echo '    -z                 Upload permalinks (shell.osdn.net)'
+    echo '    -v                 Verbose'
+#    echo '    -q                 Query settings and pretend upload'
     echo ''
     echo ''
-    exit $1
+    exit 1
 }
 
-opts='adhl:p:qstuvwz'
+opts='SdFRt:hv'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
-        a) alt_storage=true ;;
-        d) hidden=true ;;
-        l) limit="$OPTARG"; rsync_args+=(--bwlimit=${limit}) ;;
-        p) build_list_iso="$OPTARG" ;;
-        q) pretend=true; rsync_args+=(-n) ;;
-        s) sign=true ;;
-        t) torrent=true ;;
-        u) update=true; rsync_args+=(-u) ;;
-        v) verbose=true; rsync_args+=(-v --stats) ;;
-        w) upd_homepage=true; shell_upload=true ;;
-        z) shell_upload=true ;;
+#        q) pretend=true; rsync_args+=(-n) ;;
+        v) verbose=true ;;
+        S) sourceforge=true ;;
+        d) sourceforge_remove=true ;;
+        F) fosshost=true ;;
+        R) release_symlinks=true ;;
+        t) dist_timestamp="$OPTARG" ;;
         h|?) usage 0 ;;
         *) echo "invalid argument '${arg}'"; usage 1 ;;
     esac
@@ -125,8 +114,8 @@ shift $(($OPTIND - 1))
 
 timer_start=$(get_timer)
 
-eval_build_list "${list_dir_iso}" "${build_list_iso}"
+#eval_build_list "${list_dir_iso}" "${build_list_iso}"
 
-${pretend} && display_settings && exit 1
+#${pretend} && display_settings && exit 1
 
-run sync_dir "${build_list_iso}"
+sync_dir

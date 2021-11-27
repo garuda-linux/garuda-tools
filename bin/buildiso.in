@@ -147,11 +147,11 @@ usage() {
     echo "    -p <profile>       Buildset or profile [default: ${build_list_iso}]"
     echo '    -q                 Query settings and pretend build'
     echo '    -r <dir>           Chroots directory'
-    echo '    -R timestamp       Update the latest release symlinks to this release'
     echo "                       [default: ${chroots_iso}]"
     echo '    -s                 create checksums'
     echo "                       [default: ${iso_dir}]"
     echo '    -t <dir>           Target directory'
+    echo "    -T <timestamp>     Override timestamp [default: ${dist_timestamp}]"
     echo "                       [default: ${cache_dir_iso}]"
     echo '    -u                 Create ISO torrent'
     echo '    -U                 Create ISO zsync file'
@@ -167,12 +167,11 @@ usage() {
 
 orig_argv=("$@")
 
-opts='p:a:b:r:t:k:g:d:R:cfzxmuUsvqhil'
+opts='p:a:b:r:t:T:k:g:d:R:cfzxmuUsvqhil'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
      	i) initialize=true ;;
-        R) update_release_symlinks="$OPTARG" ;;
         a) target_arch="$OPTARG" ;;
         b) target_branch="$OPTARG" ;;
         c) clean_first=false ;;
@@ -186,6 +185,7 @@ while getopts "${opts}" arg; do
         r) chroots_iso="$OPTARG" ;;
         s) checksum=true ;;
         t) cache_dir_iso="$OPTARG" ;;
+        T) dist_timestamp="$OPTARG" ;;
         u) torrent=true ;;
         U) zsync=true ;;
         v) verbose=true ;;
@@ -204,13 +204,6 @@ if ${initialize}; then
 	init_profiles
 	msg2 "Done: iso profiles are stored in /var/cache/garuda-tools/iso-profiles"
 	exit 0
-fi
-
-if [ "${update_release_symlinks}" != "" ]; then
-    msg "Updating release ISO profiles to ${update_release_symlinks}"
-    upd_iso_symlinks ${update_release_symlinks}
-    msg2 "Done!"
-    exit 0
 fi
 
 timer_start=$(get_timer)

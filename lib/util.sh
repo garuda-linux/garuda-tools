@@ -309,6 +309,8 @@ init_buildiso(){
 
     ##### iso settings #####
 
+    [[ -z ${dist_timestamp} ]] && dist_timestamp="$(date +%y%m%d)"
+
     [[ -z ${dist_release} ]] && dist_release=$(get_release)
 
     [[ -z ${dist_codename} ]] && dist_codename=$(get_codename)
@@ -862,33 +864,4 @@ init_profiles() {
 	else msg2 "Impossible to initialize iso-profiles, please check internet connection or browse at 'https://gitlab.com/garuda-linux/tools/iso-profiles'"
 	exit 1
 	fi
-}
-
-# This is terrible code but honestly I just can't be bothered to fix it
-upd_iso_symlinks() {
-    # Delete any existing invalid entries. We don't want to just delete the entire folder, since old links that may not yet exist for our current $1 may still be perfectly valid.
-    find "${cache_dir_iso}/latest" -name \*.iso -type l ! -exec test -e {} \; -exec bash -c '
-        rm -r "$(dirname "$1")"
-    ' _ "{}" \;
-
-    find "${cache_dir_iso}" -not -path "${cache_dir_iso}/latest*" -type f -exec bash -c '
-        path="$(realpath --relative-to="$3" "$1")"
-        if ! [[ "$path" =~ ^.*\/$2\/.*\..* ]]; then
-            exit
-        fi
-        path="${path/$2\/}"
-        folder="$(dirname $path)"
-        extension="${path#*.}"
-
-        mkdir -p "$3/latest/$folder"
-        filename="$3/latest/$folder/latest.$extension"
-        if [ "$extension" == "iso.zsync" ]; then
-            \cp "$1" "$filename"
-            relative="$(realpath --relative-to="$3/latest/$folder" "${1%.*}")"
-            sed -i "0,/.*URL.*/{s|.*URL.*|URL: $relative|}" "$filename"
-        else
-            relative="$(realpath --relative-to="$3/latest/$folder" "$1")"
-            ln -fs "$relative" "$filename"
-        fi
-        ' _ "{}" "$1" "${cache_dir_iso}" \;
 }
