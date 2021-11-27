@@ -310,7 +310,7 @@ gen_iso_fn(){
 
     vars+=("${kernel}")
     
-    vars+=("$(date +%y%m%d)")
+    vars+=("${dist_timestamp}")
 
     [[ ${target_arch} == "i686" ]] && vars+=("${target_arch}")
     for n in ${vars[@]}; do
@@ -676,7 +676,7 @@ load_profile(){
     mkchroot_args+=(-C ${pacman_conf} -S ${mirrors_conf} -B "${build_mirror}/${target_branch}" -K)
     work_dir=${chroots_iso}/${profile}/${target_arch}
 
-    iso_dir="${cache_dir_iso}/${edition}/${profile}/$(date +%y%m%d)"
+    iso_dir="${cache_dir_iso}/${edition}/${profile}/${dist_timestamp}
 
     iso_root=${chroots_iso}/${profile}/iso
     mnt_dir=${chroots_iso}/${profile}/mnt
