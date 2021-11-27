@@ -32,8 +32,8 @@ sync_sourceforge(){
             --include="/*/*/${dist_timestamp}/"   \
             --include="/*/*/${dist_timestamp}/**" \
             --exclude='*' \
-            --delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" \
-            --max-size=5G -rtlvH $delete \
+            ${rsync_args[*]} \
+            --max-size=5G $delete \
             "${run_dir}/" "$(connect_sourceforge)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
@@ -62,7 +62,7 @@ sync_fosshost(){
             --include="/latest/" \
             --include="/latest/**" \
             --exclude='*' \
-            --delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" -rtlvH \
+            ${rsync_args[*]} \
             "${run_dir}/" "$(connect_fosshost $1)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
