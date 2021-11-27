@@ -32,8 +32,9 @@ sync_sourceforge(){
             --include="/*/*/${dist_timestamp}/"   \
             --include="/*/*/${dist_timestamp}/**" \
             --exclude='*' \
-            --delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" -rtlvH $delete \
-            "${run_dir}" "$(connect_sourceforge)"
+            --delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" \
+            --max-size=5G -rtlvH $delete \
+            "${run_dir}/" "$(connect_sourceforge)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
             msg "Upload failed. retrying (%s/%s) ..." "$count" "$max_count"
@@ -62,7 +63,7 @@ sync_fosshost(){
             --include="/latest/**" \
             --exclude='*' \
             --delay-updates --safe-links -e "ssh -o StrictHostKeyChecking=no" -rtlvH \
-            "${run_dir}" "$(connect_fosshost $1)"
+            "${run_dir}/" "$(connect_fosshost $1)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
             msg "Upload failed. retrying (%s/%s) ..." "$count" "$max_count"
