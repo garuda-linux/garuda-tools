@@ -63,7 +63,7 @@ sync_fosshost(){
             --include="/latest/**" \
             --exclude='*' \
             ${rsync_args[*]} \
-            -e "ssh -o StrictHostKeyChecking=no" \
+            -e "ssh -o StrictHostKeyChecking=no" --delay-updates \
             "${run_dir}/" "$(connect_fosshost $1)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
