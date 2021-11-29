@@ -26,7 +26,7 @@ sync_sourceforge(){
     msg "Start upload [%s] to [sourceforge] ..." "$dist_timestamp"
 
     while [[ $count -le $max_count ]]; do
-        rsync --exclude 'latest' --include='/'                           \
+        rsync --exclude 'latest' --exclude 'unmaintained' --include='/'                           \
             --include='/*/'                  \
             --include='/*/*/' \
             --include="/*/*/${dist_timestamp}/"   \
@@ -54,7 +54,7 @@ sync_fosshost(){
     msg "Start upload [%s] to [fosshost %s] ..." "$dist_timestamp" "$1"
 
     while [[ $count -le $max_count ]]; do
-        rsync --include='/'                           \
+        rsync --exclude 'unmaintained' --include='/'                           \
             --include='/*/'                  \
             --include='/*/*/' \
             --include="/*/*/${dist_timestamp}/"   \
@@ -84,7 +84,7 @@ update_release_symlinks(){
         rm -r "$(dirname "$1")"
     ' _ "{}" \;
 
-    find "${cache_dir_iso}" -not -path "${cache_dir_iso}/latest*" -type f -exec bash -c '
+    find "${cache_dir_iso}" -not -path "${cache_dir_iso}/latest*" -not -path "${cache_dir_iso}/unmaintained*" -type f -exec bash -c '
         path="$(realpath --relative-to="$3" "$1")"
         if ! [[ "$path" =~ ^.*\/$2\/.*\..* ]]; then
             exit
