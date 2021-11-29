@@ -365,7 +365,7 @@ copy_from_cache(){
         -w "${mountargs_rw}" \
         -B "${build_mirror}/${target_branch}" \
         "$1" \
-        pacman -v -Sw $2 --noconfirm || return 1
+        pacman -v -Syw $2 --noconfirm || return 1
     chroot-run \
         -r "${mountargs_ro}" \
         -w "${mountargs_rw}" \

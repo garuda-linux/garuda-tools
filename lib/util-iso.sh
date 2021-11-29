@@ -366,7 +366,7 @@ make_image_root() {
         local path="${work_dir}/rootfs"
         mkdir -p ${path}
 
-        chroot_create "${path}" -y "${packages}" || die
+        chroot_create "${path}" "${packages}" || die
 
         # profide multilib usage to mhwd-script
         if [[ ! -z ${multilib} ]]; then
