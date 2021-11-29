@@ -25,6 +25,7 @@ newroot=/mnt
 hostcache=false
 copykeyring=true
 copymirrorlist=true
+syncpacmandb=false
 
 usage() {
     echo "usage: ${0##*/} [options] root [packages...]"
@@ -35,6 +36,7 @@ usage() {
     echo " -i             Avoid auto-confirmation of package selections"
     echo " -M             Avoid copying the host's mirrorlist to the target"
     echo " -h             Print this help message"
+    echo " -S             Sync pacman db"
     echo ''
     echo ' basestrap installs packages to the specified new root directory.'
     echo ' If no packages are given, basestrap defaults to the "base" group.'
@@ -51,7 +53,7 @@ usage() {
 
 orig_argv=("$@")
 
-opts=':C:cdGiM'
+opts=':C:cdGiMS'
 
 while getopts ${opts} arg; do
     case "${arg}" in
@@ -61,6 +63,7 @@ while getopts ${opts} arg; do
         G) copykeyring=false ;;
         i) interactive=true ;;
         M) copymirrorlist=false ;;
+        S) syncpacmandb=true ;;
         :) echo "invalid argument ${arg}:$OPTARG"; usage 1;;
         ?) usage 0 ;;
     esac
@@ -77,6 +80,8 @@ ${hostcache} && pacman_args+=(--cachedir="$newroot/var/cache/pacman/pkg")
 
 ${interactive} && pacman_args+=(--noconfirm)
 
+${syncpacmandb} && pacman_args+=(-y)
+
 [[ -n $pacman_config ]] && pacman_args+=(--config="$pacman_config")
 
 [[ -d $newroot ]] || die "%s is not a directory" "$newroot"
@@ -92,7 +97,7 @@ create_min_fs "$newroot"
 chroot_api_mount "$newroot" || die "failed to setup API filesystems in new root"
 
 msg2 'Installing packages to %s' "$newroot"
-if ! pacman -r "$newroot" -Sy --needed "${pacman_args[@]}"; then
+if ! pacman -r "$newroot" -S --needed "${pacman_args[@]}"; then
     die 'Failed to install packages to new root'
 fi
 

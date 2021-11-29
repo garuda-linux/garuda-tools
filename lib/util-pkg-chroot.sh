@@ -174,7 +174,7 @@ chroot_init(){
     local timer=$(get_timer)
     if ${clean_first} || [[ ! -d "${work_dir}" ]]; then
         chroot_clean
-        chroot_create
+        chroot_create -S
     else
         chroot_update
     fi

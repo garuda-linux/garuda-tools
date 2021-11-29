@@ -108,7 +108,7 @@ update_release_symlinks(){
 }
 
 sync_dir(){
-    [ "$release_symlinks" == true ] && update_release_symlinks
+    [ "$release_symlinks" == true ] && update_release_symlinks "${dist_timestamp}"
 
     [ "$sourceforge" == true ] && sync_sourceforge
     [ "$fosshost" == true ] && sync_fosshost us && sync_fosshost uk
