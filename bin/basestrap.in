@@ -53,7 +53,7 @@ usage() {
 
 orig_argv=("$@")
 
-opts=':C:cdGiMS'
+opts=':C:cdGiMy'
 
 while getopts ${opts} arg; do
     case "${arg}" in
@@ -63,7 +63,7 @@ while getopts ${opts} arg; do
         G) copykeyring=false ;;
         i) interactive=true ;;
         M) copymirrorlist=false ;;
-        S) syncpacmandb=true ;;
+        y) syncpacmandb=true ;;
         :) echo "invalid argument ${arg}:$OPTARG"; usage 1;;
         ?) usage 0 ;;
     esac

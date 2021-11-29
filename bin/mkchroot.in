@@ -21,6 +21,7 @@ working_dir=''
 build_locales=false
 keep_mirrors=false
 keep_flag=''
+syncpacmandb_flag=''
 
 usage() {
     echo "Usage: ${0##*/} [options] working-dir package-list..."
@@ -30,6 +31,7 @@ usage() {
     echo '    -S <file>     Location of a pacman-mirrors config file'
     echo '    -c <dir>      Set pacman cache'
     echo '    -L            Use build locale.gen en/de'
+    echo '    -y            Sync pacman db'
     echo '    -B            Use custom build mirror'
     echo '    -K            Keep mirrorlist (-B)'
     echo '    -x            copy pacman.conf'
@@ -39,7 +41,7 @@ usage() {
 
 orig_argv=("$@")
 
-opts='hLKC:M:S:c:B:'
+opts='hyLKC:M:S:c:B:'
 
 while getopts ${opts} arg; do
     case "${arg}" in
@@ -50,6 +52,7 @@ while getopts ${opts} arg; do
         L) build_locales=true ;;
         B) build_mirror="$OPTARG" ;;
         K) keep_mirrors=true; keep_flag='-K' ;;
+        y) syncpacmandb_flag='-y' ;;
         h|?) usage ;;
         *) error "invalid argument '$arg'"; usage ;;
     esac
@@ -97,12 +100,12 @@ if [[ -n $pac_conf ]] && [[ -n $mirrors_conf ]] && [[ -n ${build_mirror} ]]; the
     pac_base="$working_dir/pacman-basestrap.conf"
     sed "s#Include = /etc/pacman.d/mirrorlist#Server = ${url}#g" $pac_conf > $pac_base
 
-    basestrap -GMcd ${pac_base:+-C "$pac_base"} "$working_dir" \
+    basestrap -GMcd ${syncpacmandb_flag} ${pac_base:+-C "$pac_base"} "$working_dir" \
     "${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
 
     [[ -f "$pac_base" ]] && rm "$pac_base"
 else
-    basestrap -GMcd ${pac_conf:+-C "$pac_conf"} "$working_dir" \
+    basestrap -GMcd ${syncpacmandb_flag} ${pac_conf:+-C "$pac_conf"} "$working_dir" \
     "${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
 fi
 
