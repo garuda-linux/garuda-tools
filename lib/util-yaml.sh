@@ -238,14 +238,9 @@ write_mhwdcfg_conf(){
 
 write_postcfg_conf(){
     local conf="${modules_dir}/postcfg.conf"
-    msg2 "Writing %s ..." "${conf##*/}"
-    echo "---" > "$conf"
-    echo "keyrings:" >> "$conf"
-    echo "    - archlinux" >> "$conf"
-    echo "    - chaotic" >> "$conf"
-    echo "    - blackarch" >> "$conf"
     if [[ -n ${smb_workgroup} ]]; then
-        echo "" >> "$conf"
+        msg2 "Writing %s ..." "${conf##*/}"
+        echo "---" > "$conf"
         echo "samba:" >> "$conf"
         echo "    - workgroup:  ${smb_workgroup}" >> "$conf"
     fi
