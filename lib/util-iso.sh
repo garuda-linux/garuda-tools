@@ -409,7 +409,7 @@ make_image_desktop() {
         seed_snaps ${path}
 
         echo "Enable os-prober"
-        sed -i -e 's,.*GRUB_DISABLE_OS_PROBER=.*,GRUB_DISABLE_OS_PROBER=false,' "${path}/etc/default/grub"
+        sed -i -r 's,^(#|)GRUB_DISABLE_OS_PROBER=.*,GRUB_DISABLE_OS_PROBER=false,' "${path}/etc/default/grub"
         
         umount_fs
         clean_up_image "${path}"
