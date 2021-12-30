@@ -72,20 +72,6 @@ configure_mhwd_drivers(){
         drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
     info "Configuring mhwd db ..."
     local packagelist="$(ls $path)"
-
-    if ! lslist_contains_package "$packagelist" nvidia-340xx-utils; then
-        msg2 "Disabling Nvidia 340xx driver"
-        configure_mhwd_drivers_delete $drv_path/nvidia-340xx-dkms/
-        msg2 "Disabling Nvidia 340xx Bumblebee driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-340xx-dkms-bumblebee/
-    fi
-    
-    if ! lslist_contains_package "$packagelist" nvidia-390xx-utils; then
-        msg2 "Disabling Nvidia 390xx driver"
-        configure_mhwd_drivers_delete $drv_path/nvidia-390xx-dkms/
-        msg2 "Disabling Nvidia 390xx Bumblebee driver"
-        configure_mhwd_drivers_delete $drv_path/hybrid-intel-nvidia-390xx-dkms-bumblebee
-    fi
     
     if ! lslist_contains_package "$packagelist" nvidia-utils; then
         msg2 "Disabling nvidia-dkms driver"
@@ -96,7 +82,7 @@ configure_mhwd_drivers(){
         configure_mhwd_drivers_delete $drv_path/optimus-manager
     fi
     
-    if ! lslist_contains_package "$packagelist" virtualbox-guest-utils; then
+    if ! lslist_contains_package "$packagelist" garuda-virtualmachine-guest-config; then
         msg2 "Disabling video-virtualmachine driver"
         configure_mhwd_drivers_delete $drv_path/video-virtualmachine
     fi
