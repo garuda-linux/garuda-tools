@@ -445,4 +445,5 @@ clean_up_image(){
 	find "$1" -name *.pacnew -name *.pacsave -name *.pacorig -delete
 	rm -f "$1"/boot/grub/grub.cfg
 	rm -f "$1"/var/lib/garuda/partial_upgrade
+    rm -rf "$1"/var/lib/garuda/tmp/
 }
