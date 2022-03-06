@@ -472,7 +472,7 @@ load_profile_config(){
 
     [[ -z ${smb_workgroup} ]] && smb_workgroup=''
 
-    [[ -z ${extra} ]] && extra='false'
+    [[ -z ${extra} ]] && extra='true'
     [[ ${full_iso} ]] && extra='true'
 
     basic='true'
