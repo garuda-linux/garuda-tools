@@ -130,13 +130,6 @@ if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%
     fi
 fi
 
-if ! test -f  /var/cache/garuda-tools/rebuild_needed.log; then
-    cat /var/cache/garuda-tools/rebuild_needed.log | apprise -vv "${TELEGRAM}" -t "Failed builds"
-    rm -rf /var/cache/garuda-tools/rebuild_needed.log
-else
-    echo "All builds finished successfuly! 🥳"  | apprise -vv "${TELEGRAM}" -t "Failed builds" -t "Building finished!"
-fi
-
 cleardir
 exit
 
