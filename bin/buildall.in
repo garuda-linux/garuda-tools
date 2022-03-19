@@ -75,6 +75,14 @@ if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/kde-barebones/$(da
 fi
 
 cleardir
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/kde-git/$(date +%y%m%d)/*.iso; then
+    if ! buildiso -p kde-git; then
+        echo "KDE-git ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "KDE-git" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+cleardir
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/lxqt-kwin/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p lxqt-kwin; then
         echo "LXQT-Kwin ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
@@ -85,8 +93,8 @@ fi
 cleardir
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/cinnamon/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p cinnamon; then
-        echo "CINNAMON ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "CINNAMON" >> /var/cache/garuda-tools/rebuild_needed.log
+        echo "Cinnamon ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "Cinnamon" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
