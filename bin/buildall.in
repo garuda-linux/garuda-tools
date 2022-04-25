@@ -20,15 +20,6 @@ buildiso -i
 
 source /var/cache/garuda-tools/garuda-builds/.env
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%d)/*.iso; then
-    if ! buildiso -p xfce -k linux-lts; then
-        echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-cleardir
-
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/dr460nized/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p dr460nized; then
         echo "Dr460nized ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
@@ -47,19 +38,19 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
-    if ! buildiso -p gnome; then
-        echo "GNOME ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "GNOME" >> /var/cache/garuda-tools/rebuild_needed.log
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/xfce/$(date +%y%m%d)/*.iso; then
+    if ! buildiso -p xfce -k linux-lts; then
+        echo "XFCE ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "XFCE" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/$(date +%y%m%d)/*.iso; then
-    if ! buildiso -p i3; then
-        echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/gnome/$(date +%y%m%d)/*.iso; then
+    if ! buildiso -p gnome; then
+        echo "GNOME ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "GNOME" >> /var/cache/garuda-tools/rebuild_needed.log
     fi
 fi
 
@@ -110,7 +101,16 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/sway/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/i3/$(date +%y%m%d)/*.iso; then
+    if ! buildiso -p i3; then
+        echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
+        echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
+    fi
+fi
+
+cleardir
+
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/sway/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p sway; then
         echo "Sway ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Sway" >> /var/cache/garuda-tools/rebuild_needed.log
