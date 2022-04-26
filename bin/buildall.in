@@ -101,7 +101,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/i3/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/i3/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p i3; then
         echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -110,7 +110,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/sway/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/sway/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p sway; then
         echo "Sway ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Sway" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -119,7 +119,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/wayfire/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/wayfire/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p wayfire; then
         echo "Wayfire ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Wayfire" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -128,7 +128,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/bspwm/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/bspwm/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p bspwm; then
         echo "BSPWM ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "BSPWM" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -137,7 +137,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/community/qtile/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/qtile/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p qtile; then
         echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Qtile" >> /var/cache/garuda-tools/rebuild_needed.log

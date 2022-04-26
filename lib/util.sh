@@ -493,8 +493,8 @@ get_project(){
         'garuda')
             project="garuda"
         ;;
-        'community')
-            project="garuda-community"
+        'garuda-wm')
+            project="garuda-wm"
         ;;
     esac
     echo "${project}"
@@ -852,7 +852,7 @@ init_profiles() {
 	git clone -q --depth 1 -b ${branch} https://gitlab.com/garuda-linux/tools/iso-profiles.git ${_workdir}/iso-profiles/
 	
 	#Check if git clone is done
-	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/community ]]; then
+	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/garuda-wm ]]; then
 	
 		for i in ${_workdir}/iso-profiles/.gitignore ${_workdir}/iso-profiles/README.md; do
 		rm -f $i
