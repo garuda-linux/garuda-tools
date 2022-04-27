@@ -128,15 +128,6 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/bspwm/$(date +%y%m%d)/*.iso; then
-    if ! buildiso -p bspwm; then
-        echo "BSPWM ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
-        echo "BSPWM" >> /var/cache/garuda-tools/rebuild_needed.log
-    fi
-fi
-
-cleardir
-
 if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/qtile/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p qtile; then
         echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
