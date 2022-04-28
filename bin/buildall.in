@@ -1,12 +1,4 @@
 #!/bin/bash
-function goto
-{
-    label=$1
-    cmd=$(sed -n "/^:[[:blank:]][[:blank:]]*${label}/{:a;n;p;ba};" $0 | 
-          grep -v ':$')
-    eval "$cmd"
-    exit
-}
 
 # $1 last $2 next
 function cleardir
@@ -101,7 +93,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/i3/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/i3/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p i3; then
         echo "i3 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "i3" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -110,7 +102,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/sway/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/sway/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p sway; then
         echo "Sway ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Sway" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -119,7 +111,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/wayfire/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/wayfire/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p wayfire; then
         echo "Wayfire ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Wayfire" >> /var/cache/garuda-tools/rebuild_needed.log
@@ -128,7 +120,7 @@ fi
 
 cleardir
 
-if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda-wm/qtile/$(date +%y%m%d)/*.iso; then
+if ! test -f /var/cache/garuda-tools/garuda-builds/iso/garuda/qtile/$(date +%y%m%d)/*.iso; then
     if ! buildiso -p qtile; then
         echo "Qtile ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO Build failed!"
         echo "Qtile" >> /var/cache/garuda-tools/rebuild_needed.log

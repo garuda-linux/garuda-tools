@@ -268,11 +268,11 @@ make_zsync(){
 }
 
 gen_permalink(){
-    if [[ ${edition} == "garuda-wm" ]] || [[ ${edition} == "garuda" ]]; then
+    if [[ ${edition} == "community" ]] || [[ ${edition} == "garuda" ]]; then
         if [[ -f "${iso_dir}/${iso_file}" ]]; then
             msg2 "Creating download link ..."
             direct_url="https://sourceforge.net/projects/garuda-linux/files/${iso_file}"
-            [[ ${edition} == "garuda-wm" ]] && direct_url="https://sourceforge.net/projects/garuda-linux/files/${iso_file}"
+            [[ ${edition} == "community" ]] && direct_url="https://sourceforge.net/projects/garuda-linux/files/${iso_file}"
             ## html permalink
             html_doc="<!DOCTYPE HTML>"
             html_doc+="<meta charset=\"UTF-8\">"
