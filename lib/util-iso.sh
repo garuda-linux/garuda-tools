@@ -322,8 +322,7 @@ gen_iso_fn(){
 
 reset_pac_conf(){
     info "Restoring [%s/etc/pacman.conf] ..." "$1"
-    sed -e 's|^.*HoldPkg.*|HoldPkg      = pacman glibc garuda-system|' \
-        -e "s|^.*#CheckSpace|CheckSpace|" \
+    sed -e "s|^.*#CheckSpace|CheckSpace|" \
         -i "$1/etc/pacman.conf"
 }
 
