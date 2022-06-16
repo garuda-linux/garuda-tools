@@ -26,9 +26,10 @@ sync_sourceforge(){
     msg "Start upload [%s] to [sourceforge] ..." "$dist_timestamp"
 
     while [[ $count -le $max_count ]]; do
-        rsync --exclude 'latest' --exclude 'unmaintained' --include='/'                           \
-            --include='/*/'                  \
-            --include='/*/*/' \
+        rsync --exclude 'latest' --exclude 'logs' --exclude 'unmaintained' --exclude='*.iso.zsync' \
+            --include='/'                         \
+            --include='/*/'                       \
+            --include='/*/*/'                     \
             --include="/*/*/${dist_timestamp}/"   \
             --include="/*/*/${dist_timestamp}/**" \
             --exclude='*' \
