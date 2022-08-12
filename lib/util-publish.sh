@@ -79,7 +79,7 @@ sync_fosshost(){
 }
 
 update_release_symlinks(){
-    msg "Updating release ISO profiles to ${1}}"
+    msg "Updating release ISO profiles to ${1}"
     # Delete any existing invalid entries. We don't want to just delete the entire folder, since old links that may not yet exist for our current $1 may still be perfectly valid.
     find "${cache_dir_iso}/latest" -name \*.iso -type l ! -exec test -e {} \; -exec bash -c '
         rm -r "$(dirname "$1")"
