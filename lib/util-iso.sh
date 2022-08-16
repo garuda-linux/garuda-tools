@@ -241,8 +241,9 @@ make_torrent(){
     if [[ -n $(find ${iso_dir} -type f -name "*.iso") ]]; then
         isos=$(ls ${iso_dir}/*.iso)
         for iso in ${isos}; do
-            local seed=https://mirrors.fossho.st/garuda/iso/${edition}/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
-            local seed1=https://mirrors.fosshost.org/garuda/iso/${edition}/${profile}/$(date +%y%m%d)/$(gen_iso_fn).iso
+            mirror_path="${edition}/${profile}/${dist_timestamp}/${iso_file}"
+            local seed="https://mirrors.fossho.st/garuda/iso/${mirror_path}"
+            local seed1="https://us-ny-mirror.garudalinux.org/iso/${mirror_path}"
             local tracker_url1=udp://tracker.opentrackr.org:1337/announce
             local tracker_url2=udp://tracker.openbittorrent.com:80/announce
             local tracker_url3=http://fosstorrents.com:6969/announce
