@@ -369,7 +369,6 @@ write_settings_conf(){
     echo "        - initcpio" >> "$conf" && write_initcpio_conf
     if ${oem_used}; then
         msg2 "Skipping to set users module."
-        echo "        - oemuser" >> "$conf"
     else
         echo "        - users" >> "$conf"
     fi
