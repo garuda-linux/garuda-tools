@@ -377,7 +377,7 @@ write_settings_conf(){
         msg2 "Skipping to set mhwdcfg module."
     fi
     echo "        - hwclock" >> "$conf"
-    echo "        - services" >> "$conf" && write_services_conf
+    echo "        - services-systemd" >> "$conf" && write_services_conf
     echo "        - grubcfg" >> "$conf"
     echo "        - bootloader" >> "$conf" && write_bootloader_conf
     if ${oem_used}; then
