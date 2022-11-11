@@ -516,7 +516,7 @@ make_image_boot() {
 }
 
 configure_grub(){
-    local default_args="misobasedir=${iso_name} misolabel=${iso_label}" \
+    local default_args="misobasedir=${iso_name} root=misolabel:${iso_label}" \
         boot_args=('quiet' 'systemd.show_status=1' 'ibt=off' ${custom_boot_args} ${apparmor_boot_args})
 
     sed -e "s|@DIST_NAME@|${dist_name}|g" \

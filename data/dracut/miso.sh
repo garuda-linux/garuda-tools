@@ -48,7 +48,7 @@ _mnt_overlayfs() {
     mount -t overlay overlay -o lowerdir="${src}",upperdir="${upper_dir}",workdir="${work_dir}" "${newroot}${mnt}"
 }
 
-misolabel=$(getarg misolabel=)
+misolabel="${root#misolabel:}"
 misobasedir=$(getarg misobasedir=)
 misodevice=$(getarg misodevice=)
 overlay_root_size=$(getarg overlay_root_size=)
