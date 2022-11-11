@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rootok=1
+getargbool 0 misolabel && rootok=1 && root=miso

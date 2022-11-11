@@ -13,12 +13,15 @@ _mnt_dev() {
 
     echo ":: Mounting '${dev}' to '${mnt}'"
 
+    while ! udevadm settle --exit-if-exists="$dev" -t 30; do
+        die "'${dev}' device did not show up after 30 seconds..."
+        return 1
+    done
+
     if mount -o "${opts}" "${flg}" "${dev}" "${mnt}"; then
         echo ":: Device '${dev}' mounted successfully."
     else
-        warn "ERROR; Failed to mount '${dev}'"
-        warn "   Falling back to interactive prompt"
-        warn "   You can try to fix the problem manually, log out when you are finished"
+        die "Failed to mount '${dev}'"
     fi
 }
 
