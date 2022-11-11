@@ -14,8 +14,11 @@ depends() {
 install() {
     inst losetup
     inst mountpoint
+    inst /usr/lib/udev/rules.d/60-cdrom_id.rules
 
     hostonly='' instmods overlay
     hostonly='' instmods loop
+    hostonly='' instmods cdrom
     inst_hook mount 000 "$moddir/miso.sh"
+    inst_hook cmdline 000 "$moddir/cmdline.sh"
 }

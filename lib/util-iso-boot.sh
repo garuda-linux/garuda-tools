@@ -12,9 +12,9 @@
 prepare_initcpio(){
     msg2 "Copying initcpio ..."
     if ${use_dracut}; then
-        mkdir -p $1/usr/lib/dracut/modules.d/95miso
-        install -Dm755 "${DATADIR}"/miso.sh $pkgdir/usr/lib/dracut/modules.d/95miso/miso.sh
-        install -Dm755 "${DATADIR}"/module-setup.sh $pkgdir/usr/lib/dracut/modules.d/95miso/module-setup.sh
+        install -Dm755 "${DATADIR}"/cmdline.sh $1/usr/lib/dracut/modules.d/95miso/cmdline.sh
+        install -Dm755 "${DATADIR}"/miso.sh $1/usr/lib/dracut/modules.d/95miso/miso.sh
+        install -Dm755 "${DATADIR}"/module-setup.sh $1/usr/lib/dracut/modules.d/95miso/module-setup.sh
     else
         cp /etc/initcpio/hooks/miso* $1/etc/initcpio/hooks
         cp /etc/initcpio/install/miso* $1/etc/initcpio/install
@@ -23,12 +23,12 @@ prepare_initcpio(){
 }
 
 prepare_initramfs(){
+    local _kernver=$(ls $1/usr/lib/modules/ | awk '{print $1}')
     if ${use_dracut}; then
         chroot-run $1 \
-            /usr/bin/dracut /boot/initramfs.img --force -o "systemd rootfs-block" -a miso --no-hostonly
+            /usr/bin/dracut /boot/initramfs.img ${_kernver} --force -o "systemd rootfs-block" -a miso --no-hostonly
     else
         cp ${DATADIR}/mkinitcpio.conf $1/etc/mkinitcpio-${iso_name}.conf
-        local _kernver=$(ls $1/usr/lib/modules/ | awk '{print $1}')
         if [[ -n ${gpgkey} ]]; then
             su ${OWNER} -c "gpg --export ${gpgkey} >${USERCONFDIR}/gpgkey"
             exec 17<>${USERCONFDIR}/gpgkey

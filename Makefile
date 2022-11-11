@@ -69,7 +69,10 @@ LIBS_ISO = \
 SHARED_ISO = \
 	data/pacman-mhwd.conf \
 	data/mkinitcpio.conf \
-	data/profile.conf.example
+	data/profile.conf.example \
+	data/dracut/miso.sh \
+	data/dracut/module-setup.sh \
+	data/dracut/cmdline.sh
 
 CPIOHOOKS = \
 	$(wildcard initcpio/hooks/*)

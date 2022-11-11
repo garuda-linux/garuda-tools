@@ -45,14 +45,16 @@ _mnt_overlayfs() {
     mount -t overlay overlay -o lowerdir="${src}",upperdir="${upper_dir}",workdir="${work_dir}" "${newroot}${mnt}"
 }
 
-misobasedir=$(getarg misolabel=)
+misolabel=$(getarg misolabel=)
 misobasedir=$(getarg misobasedir=)
 misodevice=$(getarg misodevice=)
 overlay_root_size=$(getarg overlay_root_size=)
+newroot="$NEWROOT"
 
 [[ -z "${misobasedir}" ]] && misobasedir="garuda"
 [[ -z "${misodevice}" ]] && misodevice="/dev/disk/by-label/${misolabel}"
 [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
+[[ -z "${arch}" ]] && arch="$(uname -m)"
 
 mount_miso_root() {
     if ! mountpoint -q "/run/miso/bootmnt"; then
