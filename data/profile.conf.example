@@ -30,6 +30,9 @@
 # possible values: grub;systemd-boot
 # efi_boot_loader="grub"
 
+# use dracut
+# use_dracut="false"
+
 # kernel parameters (array); example: custom_boot_args="'acpi_osi=Linux'"
 # custom_boot_args=
 
