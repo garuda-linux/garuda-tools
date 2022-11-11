@@ -501,11 +501,11 @@ make_image_boot() {
             mount_fs_net "${path}"
         fi
 
+        prepare_boot_extras "${path}" "${boot}"
         prepare_initcpio "${path}"
         prepare_initramfs "${path}"
 
         cp ${path}/boot/initramfs.img ${boot}/initramfs-${target_arch}.img
-        prepare_boot_extras "${path}" "${boot}"
 
         umount_fs
 

@@ -11,28 +11,39 @@
 
 prepare_initcpio(){
     msg2 "Copying initcpio ..."
-    cp /etc/initcpio/hooks/miso* $1/etc/initcpio/hooks
-    cp /etc/initcpio/install/miso* $1/etc/initcpio/install
-    cp /etc/initcpio/miso_shutdown $1/etc/initcpio
+    if ${use_dracut}; then
+        mkdir -p $1/usr/lib/dracut/modules.d/95miso
+        install -Dm755 "${DATADIR}"/miso.sh $pkgdir/usr/lib/dracut/modules.d/95miso/miso.sh
+        install -Dm755 "${DATADIR}"/module-setup.sh $pkgdir/usr/lib/dracut/modules.d/95miso/module-setup.sh
+    else
+        cp /etc/initcpio/hooks/miso* $1/etc/initcpio/hooks
+        cp /etc/initcpio/install/miso* $1/etc/initcpio/install
+        cp /etc/initcpio/miso_shutdown $1/etc/initcpio
+    fi
 }
 
 prepare_initramfs(){
-    cp ${DATADIR}/mkinitcpio.conf $1/etc/mkinitcpio-${iso_name}.conf
-    local _kernver=$(ls $1/usr/lib/modules/ | awk '{print $1}')
-    if [[ -n ${gpgkey} ]]; then
-        su ${OWNER} -c "gpg --export ${gpgkey} >${USERCONFDIR}/gpgkey"
-        exec 17<>${USERCONFDIR}/gpgkey
-    fi
-    MISO_GNUPG_FD=${gpgkey:+17} chroot-run $1 \
-        /usr/bin/mkinitcpio -k ${_kernver} \
-        -c /etc/mkinitcpio-${iso_name}.conf \
-        -g /boot/initramfs.img
+    if ${use_dracut}; then
+        chroot-run $1 \
+            /usr/bin/dracut /boot/initramfs.img --force -o "systemd rootfs-block" -a miso --no-hostonly
+    else
+        cp ${DATADIR}/mkinitcpio.conf $1/etc/mkinitcpio-${iso_name}.conf
+        local _kernver=$(ls $1/usr/lib/modules/ | awk '{print $1}')
+        if [[ -n ${gpgkey} ]]; then
+            su ${OWNER} -c "gpg --export ${gpgkey} >${USERCONFDIR}/gpgkey"
+            exec 17<>${USERCONFDIR}/gpgkey
+        fi
+        MISO_GNUPG_FD=${gpgkey:+17} chroot-run $1 \
+            /usr/bin/mkinitcpio -k ${_kernver} \
+            -c /etc/mkinitcpio-${iso_name}.conf \
+            -g /boot/initramfs.img
 
-    if [[ -n ${gpgkey} ]]; then
-        exec 17<&-
-    fi
-    if [[ -f ${USERCONFDIR}/gpgkey ]]; then
-        rm ${USERCONFDIR}/gpgkey
+        if [[ -n ${gpgkey} ]]; then
+            exec 17<&-
+        fi
+        if [[ -f ${USERCONFDIR}/gpgkey ]]; then
+            rm ${USERCONFDIR}/gpgkey
+        fi
     fi
 }
 
