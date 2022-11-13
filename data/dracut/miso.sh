@@ -13,11 +13,6 @@ _mnt_dev() {
 
     echo ":: Mounting '${dev}' to '${mnt}'"
 
-    while ! udevadm settle --exit-if-exists="$dev" -t 30; do
-        die "'${dev}' device did not show up after 30 seconds..."
-        return 1
-    done
-
     if mount -o "${opts}" "${flg}" "${dev}" "${mnt}"; then
         echo ":: Device '${dev}' mounted successfully."
     else
@@ -48,14 +43,11 @@ _mnt_overlayfs() {
     mount -t overlay overlay -o lowerdir="${src}",upperdir="${upper_dir}",workdir="${work_dir}" "${newroot}${mnt}"
 }
 
-misolabel="${root#misolabel:}"
 misobasedir=$(getarg misobasedir=)
 misodevice=$(getarg misodevice=)
 overlay_root_size=$(getarg overlay_root_size=)
-newroot="$NEWROOT"
 
 [[ -z "${misobasedir}" ]] && misobasedir="garuda"
-[[ -z "${misodevice}" ]] && misodevice="/dev/disk/by-label/${misolabel}"
 [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
 [[ -z "${arch}" ]] && arch="$(uname -m)"
 
@@ -78,7 +70,7 @@ mount_miso_root() {
         fi
     done
 
-    _mnt_overlayfs "${lower_dir}" "${newroot}" "/"
+    _mnt_overlayfs "${lower_dir}" "${NEWROOT}" "/"
 }
 
 mount_miso_root

@@ -20,5 +20,5 @@ install() {
     hostonly='' instmods loop
     hostonly='' instmods cdrom
     inst_hook mount 000 "$moddir/miso.sh"
-    inst_hook cmdline 000 "$moddir/cmdline.sh"
+    inst_hook cmdline 000 "$moddir/parse-miso.sh"
 }

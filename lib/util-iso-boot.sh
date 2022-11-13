@@ -12,7 +12,7 @@
 prepare_initcpio(){
     msg2 "Copying initcpio ..."
     if ${use_dracut}; then
-        install -Dm755 "${DATADIR}"/cmdline.sh $1/usr/lib/dracut/modules.d/95miso/cmdline.sh
+        install -Dm755 "${DATADIR}"/parse-miso.sh $1/usr/lib/dracut/modules.d/95miso/parse-miso.sh
         install -Dm755 "${DATADIR}"/miso.sh $1/usr/lib/dracut/modules.d/95miso/miso.sh
         install -Dm755 "${DATADIR}"/module-setup.sh $1/usr/lib/dracut/modules.d/95miso/module-setup.sh
     else

@@ -72,7 +72,7 @@ SHARED_ISO = \
 	data/profile.conf.example \
 	data/dracut/miso.sh \
 	data/dracut/module-setup.sh \
-	data/dracut/cmdline.sh
+	data/dracut/parse-miso.sh
 
 CPIOHOOKS = \
 	$(wildcard initcpio/hooks/*)
