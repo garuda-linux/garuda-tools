@@ -44,7 +44,6 @@ _mnt_overlayfs() {
 }
 
 misobasedir=$(getarg misobasedir=)
-misodevice=$(getarg misodevice=)
 overlay_root_size=$(getarg overlay_root_size=)
 
 [[ -z "${misobasedir}" ]] && misobasedir="garuda"
@@ -53,7 +52,7 @@ overlay_root_size=$(getarg overlay_root_size=)
 
 mount_miso_root() {
     if ! mountpoint -q "/run/miso/bootmnt"; then
-        _mnt_dev "${misodevice}" "/run/miso/bootmnt" "-r" "defaults"
+        _mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
     fi
 
     mkdir -p /run/miso/overlay_root
@@ -72,5 +71,6 @@ mount_miso_root() {
 
     _mnt_overlayfs "${lower_dir}" "${NEWROOT}" "/"
 }
-
-mount_miso_root
+if [ -n "$root" -a -z "${root%%miso:*}" ]; then
+    mount_miso_root
+fi
