@@ -3,7 +3,7 @@
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
 # args: device, mountpoint, flags, opts
-_mnt_dev() {
+miso_mnt_dev() {
     local dev="${1}"
     local mnt="${2}"
     local flg="${3}"
@@ -20,18 +20,27 @@ _mnt_dev() {
     fi
 }
 
-_mnt_sfs() {
+miso_mnt_sfs() {
     local img="${1}"
     local mnt="${2}"
     local img_fullname="${img##*/}"
     local sfs_dev
 
+    if [[ "${copytoram}" == "y" ]]; then
+        echo ":: Copying $img_fullname squashfs image to RAM..."
+        if ! cp "${img}" "/run/miso/copytoram/${img_fullname}" ; then
+            die "Failed to copy '${img}' to '/run/miso/copytoram/${img_fullname}'"
+            return 1
+        fi
+        img="/run/miso/copytoram/${img_fullname}"
+    fi
+
     sfs_dev=$(losetup --find --show --read-only "${img}")
-    _mnt_dev "${sfs_dev}" "${mnt}" "-r" "defaults"
+    miso_mnt_dev "${sfs_dev}" "${mnt}" "-r" "defaults"
 }
 
 # args: source, newroot, mountpoint
-_mnt_overlayfs() {
+miso_mnt_overlayfs() {
     local src="${1}"
     local newroot="${2}"
     local mnt="${3}"
@@ -43,16 +52,54 @@ _mnt_overlayfs() {
     mount -t overlay overlay -o lowerdir="${src}",upperdir="${upper_dir}",workdir="${work_dir}" "${newroot}${mnt}"
 }
 
-misobasedir=$(getarg misobasedir=)
-overlay_root_size=$(getarg overlay_root_size=)
+miso_verify_checksum() {
+    local _status
+    pushd "/run/miso/bootmnt/${misobasedir}/${arch}" >/dev/null
+    md5sum -c $1.md5 > /tmp/checksum.log 2>&1
+    _status=$?
+    popd >/dev/null
+    return ${_status}
+}
 
-[[ -z "${misobasedir}" ]] && misobasedir="garuda"
-[[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
-[[ -z "${arch}" ]] && arch="$(uname -m)"
+miso_mount_root() {
+    local misobasedir=$(getarg misobasedir=)
+    local overlay_root_size=$(getarg overlay_root_size=)
+    local arch="$(uname -m)"
+    local copytoram="$(getarg copytoram=)"
+    local copytoram_size=$(getarg overlay_root_size=)
+    local checksum="$(getarg checksum=)"
 
-mount_miso_root() {
+    [[ -z "${misobasedir}" ]] && misobasedir="garuda"
+    [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
+    [[ -z "${copytoram_size}" ]] && copytoram_size="75%"
+
     if ! mountpoint -q "/run/miso/bootmnt"; then
-        _mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
+        miso_mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
+    fi
+
+    if [[ "${checksum}" == "y" ]]; then
+        echo ":: Self-test requested, please wait..."
+        for fs in rootfs desktopfs mhwdfs livefs; do
+            echo "Testing ${fs}..."
+            if [[ -f "/run/miso/bootmnt/${misobasedir}/${arch}/${fs}.sfs" ]]; then
+                if [[ -f "/run/miso/bootmnt/${misobasedir}/${arch}/${fs}.md5" ]]; then
+                    if ! miso_verify_checksum "${fs}"; then
+                        die "one or more files are corrupted. See /tmp/checksum.log for details"
+                        return 1
+                    fi
+                else
+                    die "checksum=y option specified but ${misobasedir}/${arch}/${fs}.md5 not found"
+                    return 1
+                fi
+            fi
+        done
+        echo ":: Checksum is OK, continuing boot process"
+    fi
+
+    if [[ "${copytoram}" == "y" ]]; then
+        echo ":: Mounting /run/miso/copytoram (tmpfs) filesystem, size=${copytoram_size}"
+        mkdir -p /run/miso/copytoram
+        mount -t tmpfs -o "size=${copytoram_size}",mode=0755 copytoram /run/miso/copytoram
     fi
 
     mkdir -p /run/miso/overlay_root
@@ -64,13 +111,19 @@ mount_miso_root() {
 
     for sfs in livefs mhwdfs desktopfs rootfs; do
         if [[ -f "${src}/${sfs}.sfs" ]]; then
-            _mnt_sfs "${src}/${sfs}.sfs" "${dest_sfs}/${sfs}"
+            miso_mnt_sfs "${src}/${sfs}.sfs" "${dest_sfs}/${sfs}"
             lower_dir=${lower_dir:-}${lower_dir:+:}"${dest_sfs}/${sfs}"
         fi
     done
 
-    _mnt_overlayfs "${lower_dir}" "${NEWROOT}" "/"
+    miso_mnt_overlayfs "${lower_dir}" "${NEWROOT}" "/"
+
+    if [[ "${copytoram}" == "y" ]]; then
+        umount -d /run/miso/bootmnt
+        mkdir -p /run/miso/bootmnt/${misobasedir}/${arch}
+        mount -o bind /run/miso/copytoram /run/miso/bootmnt/${misobasedir}/${arch}
+    fi
 }
 if [ -n "$root" -a -z "${root%%miso:*}" ]; then
-    mount_miso_root
+    miso_mount_root
 fi

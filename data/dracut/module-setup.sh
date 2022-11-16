@@ -14,6 +14,7 @@ depends() {
 install() {
     inst losetup
     inst mountpoint
+    inst md5sum
     inst /usr/lib/udev/rules.d/60-cdrom_id.rules
 
     hostonly='' instmods overlay
