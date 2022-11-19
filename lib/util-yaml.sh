@@ -356,12 +356,13 @@ write_settings_conf(){
         echo "        - keyboard" >> "$conf"
         echo "        - localecfg" >> "$conf"
     fi
-    echo "        - luksopenswaphookcfg" >> "$conf"
     echo "        - luksbootkeyfile" >> "$conf"
     echo "        - plymouthcfg" >> "$conf" && write_plymouthcfg_conf
     if ${use_dracut}; then
+        echo "        - dracutlukscfg" >> "$conf"
         echo "        - dracut" >> "$conf" && write_dracut_conf
     else
+        echo "        - luksopenswaphookcfg" >> "$conf"
         echo "        - initcpiocfg" >> "$conf"
         echo "        - initcpio" >> "$conf" && write_initcpio_conf
     fi
