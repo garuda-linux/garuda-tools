@@ -501,11 +501,11 @@ make_image_boot() {
             mount_fs_net "${path}"
         fi
 
+        prepare_boot_extras "${path}" "${boot}"
         prepare_initcpio "${path}"
         prepare_initramfs "${path}"
 
         cp ${path}/boot/initramfs.img ${boot}/initramfs-${target_arch}.img
-        prepare_boot_extras "${path}" "${boot}"
 
         umount_fs
 
@@ -516,8 +516,12 @@ make_image_boot() {
 }
 
 configure_grub(){
-    local default_args="misobasedir=${iso_name} misolabel=${iso_label}" \
-        boot_args=('quiet' 'systemd.show_status=1' 'ibt=off' ${custom_boot_args} ${apparmor_boot_args})
+    local boot_args=('quiet' 'systemd.show_status=1' 'ibt=off' ${custom_boot_args} ${apparmor_boot_args})
+    if ${use_dracut}; then
+        local default_args="misobasedir=${iso_name} root=miso:LABEL=${iso_label}"
+    else
+        local default_args="misobasedir=${iso_name} misolabel=${iso_label}"
+    fi
 
     sed -e "s|@DIST_NAME@|${dist_name}|g" \
         -e "s|@ARCH@|${target_arch}|g" \

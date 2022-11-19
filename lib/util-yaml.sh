@@ -62,41 +62,28 @@ write_bootloader_conf(){
     echo 'installEFIFallback: true' >> "$conf"
 }
 
-write_servicescfg_conf(){
-    local conf="${modules_dir}/servicescfg.conf"
-    msg2 "Writing %s ..." "${conf##*/}"
-    echo '---' >  "$conf"
-    echo '' >> "$conf"
-    echo 'services:' >> "$conf"
-    echo '    enabled:' >> "$conf"
-}
-
 write_services_conf(){
-    local conf="${modules_dir}/services.conf"
+    local conf="${modules_dir}/services-systemd.conf"
     msg2 "Writing %s ..." "${conf##*/}"
     echo '---' >  "$conf"
-    echo '' >> "$conf"
-    echo 'services:' > "$conf"
+    echo 'units:' > "$conf"
     for s in ${enable_systemd[@]}; do
         echo "    - name: $s" >> "$conf"
-        echo '      mandatory: false' >> "$conf"
-        echo '' >> "$conf"
+        echo '      action: "enable"' >> "$conf"
     done
-    echo 'targets:' >> "$conf"
     echo '    - name: "graphical"' >> "$conf"
-    echo '      mandatory: true' >> "$conf"
+    echo '      action: "set-default"' >> "$conf"
     if ${zfs_used}; then
     echo '    - name: "zfs"' >> "$conf"
     echo '      mandatory: true' >> "$conf"
+    echo '      action: "enable"' >> "$conf"
     echo '    - name: "zfs-import"' >> "$conf"
     echo '      mandatory: true' >> "$conf"
+    echo '      action: "enable"' >> "$conf"
     fi
-    echo '' >> "$conf"
-    echo 'disable:' >> "$conf"
     for s in ${disable_systemd[@]}; do
         echo "    - name: $s" >> "$conf"
-        echo '      mandatory: false' >> "$conf"
-        echo '' >> "$conf"
+        echo '      action: "disable"' >> "$conf"
     done
 }
 
@@ -120,6 +107,13 @@ write_initcpio_conf(){
     msg2 "Writing %s ..." "${conf##*/}"
     echo "---" > "$conf"
     echo "kernel: ${kernel}" >> "$conf"
+}
+
+write_dracut_conf(){
+    local conf="${modules_dir}/dracut.conf"
+    msg2 "Writing %s ..." "${conf##*/}"
+    echo "---" > "$conf"
+    echo "initramfsName: /boot/initramfs-${kernel}.img" >> "$conf"
 }
 
 write_unpack_conf(){
@@ -362,11 +356,16 @@ write_settings_conf(){
         echo "        - keyboard" >> "$conf"
         echo "        - localecfg" >> "$conf"
     fi
-    echo "        - luksopenswaphookcfg" >> "$conf"
     echo "        - luksbootkeyfile" >> "$conf"
     echo "        - plymouthcfg" >> "$conf" && write_plymouthcfg_conf
-    echo "        - initcpiocfg" >> "$conf"
-    echo "        - initcpio" >> "$conf" && write_initcpio_conf
+    if ${use_dracut}; then
+        echo "        - dracutlukscfg" >> "$conf"
+        echo "        - dracut" >> "$conf" && write_dracut_conf
+    else
+        echo "        - luksopenswaphookcfg" >> "$conf"
+        echo "        - initcpiocfg" >> "$conf"
+        echo "        - initcpio" >> "$conf" && write_initcpio_conf
+    fi
     if ${oem_used}; then
         msg2 "Skipping to set users module."
     else
@@ -379,7 +378,7 @@ write_settings_conf(){
         msg2 "Skipping to set mhwdcfg module."
     fi
     echo "        - hwclock" >> "$conf"
-    echo "        - services" >> "$conf" && write_services_conf
+    echo "        - services-systemd" >> "$conf" && write_services_conf
     echo "        - grubcfg" >> "$conf"
     echo "        - bootloader" >> "$conf" && write_bootloader_conf
     if ${oem_used}; then
