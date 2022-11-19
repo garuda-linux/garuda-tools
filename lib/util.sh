@@ -849,12 +849,12 @@ create_chksums() {
 init_profiles() {	
 	_workdir='/var/cache/garuda-tools'
 	if [[ -d ${_workdir}/iso-profiles ]]; then
-		rm -Rf ${_workdir}/iso-profiles ]]
+		rm -Rf ${_workdir}/iso-profiles
 	fi
 	git clone -q --depth 1 -b ${branch} https://gitlab.com/garuda-linux/tools/iso-profiles.git ${_workdir}/iso-profiles/
 	
 	#Check if git clone is done
-	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/garuda-wm ]]; then
+	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/community ]]; then
 	
 		for i in ${_workdir}/iso-profiles/.gitignore ${_workdir}/iso-profiles/README.md; do
 		rm -f $i
