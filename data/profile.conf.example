@@ -80,3 +80,6 @@
 # enable_systemd_live=('garuda-live' 'mhwd-live' 'pacman-init' 'mirrors-live')
 
 # disable_systemd_live=()
+
+# use dracut
+# use_dracut="false"
