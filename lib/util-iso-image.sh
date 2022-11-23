@@ -201,10 +201,10 @@ slideshowAPI: 1
 #  - sidebarSelect is the text color of the selected step.
 #
 style:
-   sidebarBackground:    "\"${sidebarbackground}"\"
-   sidebarText:          "\"${sidebartext}"\"
-   sidebarTextSelect:    "\"${sidebartextselect}"\"
-   sidebarTextHighlight: "\"${sidebartexthighlight}"\"" > $1/usr/share/calamares/branding/garuda/branding.desc
+   SidebarBackground:    "\"${sidebarbackground}"\"
+   SidebarText:          "\"${sidebartext}"\"
+   SidebarTextCurrent:    "\"${sidebartextcurrent}"\"
+   SidebarBackgroundCurrent: "\"${sidebarbackgroundcurrent}"\"" > $1/usr/share/calamares/branding/garuda/branding.desc
 }
 
 configure_polkit_user_rules(){

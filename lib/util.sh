@@ -357,9 +357,9 @@ init_calamares(){
 	
 	[[ -z ${sidebartext} ]] &&  sidebartext=#efefef
 	
-	[[ -z ${sidebartextselect} ]] && sidebartextselect=#22214d
+	[[ -z ${sidebartextcurrent} ]] && sidebartextcurrent=#efefef
 	
-	[[ -z ${sidebartexthighlight} ]] && sidebartexthighlight=#5900b3
+	[[ -z ${sidebarbackgroundcurrent} ]] && sidebarbackgroundcurrent=#5900b3
 }
 	
 
