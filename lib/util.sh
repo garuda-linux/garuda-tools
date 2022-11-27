@@ -428,7 +428,7 @@ load_profile_config(){
 
     [[ -z ${username} ]] && username="garuda"
 
-    [[ -z ${use_dracut} ]] && use_dracut="false"
+    [[ -z ${use_dracut} ]] && use_dracut="true"
 
     [[ -z ${plymouth_theme} ]] && plymouth_theme="garuda"
 
