@@ -354,7 +354,7 @@ init_calamares(){
 	[[ -z ${windowplacement} ]] && windowplacement="center"
 
 	[[ -z ${sidebarbackground} ]] && sidebarbackground=#003e73
-	garuda-tools
+
 	[[ -z ${sidebartext} ]] &&  sidebartext=#efefef
 
 	[[ -z ${sidebartextcurrent} ]] && sidebartextcurrent=#efefef
