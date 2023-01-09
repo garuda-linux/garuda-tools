@@ -163,11 +163,11 @@ check_root() {
 copy_mirrorlist(){
     cp -a /etc/pacman.d/mirrorlist "$1/etc/pacman.d/"
     cp -a /etc/pacman.d/chaotic-mirrorlist "$1/etc/pacman.d/"
-    
+
     if [[ -d /etc/pacman.d/blackarch-mirrorlist ]] && [[ ! -d $1/etc/pacman.d/blackarch-mirrorlist ]]; then
         cp -a /etc/pacman.d/blackarch-mirrorlist "$1/etc/pacman.d/"
     fi
-    
+
 }
 
 copy_keyring(){
@@ -324,9 +324,9 @@ init_buildiso(){
     [[ -z ${iso_compression} ]] && iso_compression='xz'
 
     [[ -z ${kernel} ]] && kernel="linux-zen"
-    
+
     load_run_dir "${profile_repo}"
-    
+
     if [[ -d ${run_dir}/.git ]]; then
     	current_path=$(pwd)
     	cd ${run_dir}
@@ -342,26 +342,26 @@ init_buildiso(){
 }
 
 init_calamares(){
-	
+
 	[[ -z ${welcomestyle} ]] && welcomestyle=false
-	
+
 	[[ -z ${welcomelogo} ]] && welcomelogo=true
-	
+
 	[[ -z ${windowexp} ]] && windowexp=noexpand
-	
-	[[ -z ${windowsize} ]] && windowsize="900px,600px"
+
+	[[ -z ${windowsize} ]] && windowsize="1000px,500px"
 
 	[[ -z ${windowplacement} ]] && windowplacement="center"
-	
-	[[ -z ${sidebarbackground} ]] && sidebarbackground=#3c003c
-	
+
+	[[ -z ${sidebarbackground} ]] && sidebarbackground=#003e73
+	garuda-tools
 	[[ -z ${sidebartext} ]] &&  sidebartext=#efefef
-	
+
 	[[ -z ${sidebartextcurrent} ]] && sidebartextcurrent=#efefef
-	
-	[[ -z ${sidebarbackgroundcurrent} ]] && sidebarbackgroundcurrent=#5900b3
+
+	[[ -z ${sidebarbackgroundcurrent} ]] && sidebarbackgroundcurrent=#0062b8
 }
-	
+
 
 init_deployiso(){
 
@@ -394,8 +394,8 @@ load_config(){
 
     init_buildiso
 
-    init_calamares	
-	
+    init_calamares
+
     init_deployiso
 
     return 0
@@ -417,7 +417,7 @@ load_profile_config(){
     [[ -z ${snap_channel} ]] && snap_channel="stable"
 
     [[ -z ${multilib} ]] && multilib="true"
-    
+
     [[ -z ${plymouth_boot} ]] && plymouth_boot="true"
 
     [[ -z ${nonfree_mhwd} ]] && nonfree_mhwd="true"
@@ -433,7 +433,7 @@ load_profile_config(){
     [[ -z ${plymouth_theme} ]] && plymouth_theme="garuda"
 
     [[ -z ${password} ]] && password="garuda"
-    
+
     [[ -z ${user_shell} ]] && user_shell='/bin/zsh'
 
     [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
@@ -635,7 +635,7 @@ load_pkgs(){
             fi
         ;;
     esac
-    
+
 # We can reuse this code
     local _edition _edition_rm
     case "${edition}" in
@@ -846,20 +846,20 @@ create_chksums() {
     sha256sum $1 > $1.sha256
 }
 
-init_profiles() {	
+init_profiles() {
 	_workdir='/var/cache/garuda-tools'
 	if [[ -d ${_workdir}/iso-profiles ]]; then
 		rm -Rf ${_workdir}/iso-profiles
 	fi
 	git clone -q --depth 1 -b ${branch} https://gitlab.com/garuda-linux/tools/iso-profiles.git ${_workdir}/iso-profiles/
-	
+
 	#Check if git clone is done
 	if [[ -d ${_workdir}/iso-profiles/garuda ]] || [[ -d ${_workdir}/iso-profiles/community ]]; then
-	
+
 		for i in ${_workdir}/iso-profiles/.gitignore ${_workdir}/iso-profiles/README.md; do
 		rm -f $i
 		done
-		
+
 		for i in ${_workdir}/iso-profiles/.git ${_workdir}/iso-profiles/sonar; do
 			rm -Rf $i
 		done
