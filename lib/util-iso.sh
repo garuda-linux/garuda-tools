@@ -373,6 +373,7 @@ make_image_root() {
             echo 'MHWD64_IS_LIB32="'${multilib}'"' > "${path}/etc/mhwd-x86_64.conf"
         fi
 
+        echo -e "TIMESTAMP=${dist_timestamp}\nCODENAME=${dist_codename}" >> "${path}/usr/lib/garuda/garuda-release"
         copy_overlay "${profile_dir}/root-overlay" "${path}"
 
         reset_pac_conf "${path}"
