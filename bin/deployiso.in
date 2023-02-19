@@ -96,7 +96,7 @@ usage() {
     exit 1
 }
 
-opts='SdFRt:hv'
+opts='SOdFRt:hv'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
