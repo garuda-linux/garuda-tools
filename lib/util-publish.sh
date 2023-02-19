@@ -17,11 +17,15 @@ connect_fosshost(){
     echo "garuda@$1.mirrors.fossho.st:/iso/"
 }
 
+connect_osdn(){
+    echo "garuda-team@storage.osdn.net:/storage/groups/g/ga/garuda-linux/"
+}
+
 sync_sourceforge(){
     local count=1
     local max_count=3
     local delete=""
-    [ "$sourceforge_remove" == true ] && delete="--delete-after --delete-excluded"
+    [ "$filehost_remove" == true ] && delete="--delete-after --delete-excluded"
 
     msg "Start upload [%s] to [sourceforge] ..." "$dist_timestamp"
 
@@ -42,6 +46,37 @@ sync_sourceforge(){
             sleep 2
         else
             msg "Done upload [sourceforge]"
+            show_elapsed_time "${FUNCNAME}" "${timer_start}"
+            break
+        fi
+    done
+}
+
+sync_osdn(){
+    local count=1
+    local max_count=3
+    local delete=""
+    [ "$filehost_remove" == true ] && delete="--delete-after --delete-excluded"
+
+    msg "Start upload [%s] to [osdn] ..." "$dist_timestamp"
+
+    while [[ $count -le $max_count ]]; do
+        rsync --exclude 'latest' --exclude 'logs' --exclude 'unmaintained' --exclude='*.iso.zsync' \
+            --include='/'                         \
+            --include='/*/'                       \
+            --include='/*/*/'                     \
+            --include="/*/*/${dist_timestamp}/"   \
+            --include="/*/*/${dist_timestamp}/**" \
+            --exclude='*' \
+            ${rsync_args[*]} \
+            --max-size=5G $delete -e "ssh -o StrictHostKeyChecking=no" \
+            "${run_dir}/" "$(connect_osdn)"
+        if [[ $? != 0 ]]; then
+            count=$(($count + 1))
+            msg "Upload failed. retrying (%s/%s) ..." "$count" "$max_count"
+            sleep 2
+        else
+            msg "Done upload [osdn]"
             show_elapsed_time "${FUNCNAME}" "${timer_start}"
             break
         fi
@@ -112,5 +147,6 @@ sync_dir(){
     [ "$release_symlinks" == true ] && update_release_symlinks "${dist_timestamp}"
 
     [ "$sourceforge" == true ] && sync_sourceforge
+    [ "$osdn" == true ] && sync_osdn
     [ "$fosshost" == true ] && sync_fosshost us && sync_fosshost uk
 }

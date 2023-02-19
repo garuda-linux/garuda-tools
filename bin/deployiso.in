@@ -73,7 +73,8 @@ run_dir=${cache_dir_iso}
 #pretend=false
 verbose=false
 sourceforge=false
-sourceforge_remove=false
+osdn=false
+filehost_remove=false
 fosshost=false
 release_symlinks=false
 
@@ -82,7 +83,8 @@ rsync_args=(--safe-links -rtlvH --partial)
 usage() {
     echo "Usage: ${0##*/} [options]"
     echo '    -S                 Sync to sourceforge'
-    echo '    -d                 Pass --delete-ignored and --delete to sourceforge'
+    echo '    -O                 Sync to osdn'
+    echo '    -d                 Pass --delete-ignored and --delete to sourceforge/osdn'
     echo '    -F                 Sync to fosshost'
     echo '    -R                 Update the latest release symlink'
     echo "    -t                 Override timestamp [default: ${dist_timestamp}]"
@@ -101,7 +103,8 @@ while getopts "${opts}" arg; do
 #        q) pretend=true; rsync_args+=(-n) ;;
         v) verbose=true; rsync_args+=(--progress) ;;
         S) sourceforge=true ;;
-        d) sourceforge_remove=true ;;
+        O) osdn=true ;;
+        d) filehost_remove=true ;;
         F) fosshost=true ;;
         R) release_symlinks=true ;;
         t) dist_timestamp="$OPTARG" ;;
