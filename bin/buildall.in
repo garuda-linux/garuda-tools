@@ -33,6 +33,7 @@ source /var/cache/garuda-tools/garuda-builds/.env
 for edition in "${TO_BUILD[@]}"; do
     if [ "$edition" = xfce ]; then
         build_edition_lts garuda "$edition"
-    build_edition garuda "$edition"
+    else
+        build_edition garuda "$edition"
     fi
 done
