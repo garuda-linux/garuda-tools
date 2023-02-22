@@ -2,20 +2,13 @@
 # shellcheck disable=SC1091
 TO_BUILD=(dr460nized dr460nized-gaming xfce gnome kde-lite kde-git lxqt-kwin cinnamon mate i3 wayfire sway qtile)
 
+if [[ -v SKIP_MIRRORLIST ]]; then
+    BUILDALL_TIMESTAMP="$(date +%y%m%d)"
+fi
+
 build_edition() {
-    if ! test -f /var/cache/garuda-tools/garuda-builds/iso/"$1"/"$2"/"$(date +%y%m%d)"/*.iso; then
-        if ! buildiso -p "$2"; then
-            echo "$2 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO build failed!"
-            echo "$2" >> /var/cache/garuda-tools/rebuild_needed.log
-        fi
-    fi
-
-    rm -rf --one-file-system /var/cache/garuda-tools/garuda-chroots/buildiso/*
-}
-
-build_edition_lts() {
-    if ! test -f /var/cache/garuda-tools/garuda-builds/iso/"$1"/"$2"/"$(date +%y%m%d)"/*.iso; then
-        if ! buildiso -p "$2" -k linux-lts; then
+    if ! test -f /var/cache/garuda-tools/garuda-builds/iso/"$1"/"$2"/"$BUILDALL_TIMESTAMP"/*.iso; then
+        if ! buildiso -p "$2" -T "$BUILDALL_TIMESTAMP"; then
             echo "$2 ISO building failed. Manual intervention required!" | apprise -vv "${TELEGRAM}" -t "ISO build failed!"
             echo "$2" >> /var/cache/garuda-tools/rebuild_needed.log
         fi
@@ -31,9 +24,5 @@ source /var/cache/garuda-tools/garuda-builds/.env
 
 # Build our ISO's 
 for edition in "${TO_BUILD[@]}"; do
-    if [ "$edition" = xfce ]; then
-        build_edition_lts garuda "$edition"
-    else
-        build_edition garuda "$edition"
-    fi
+    build_edition garuda "$edition"
 done
