@@ -85,7 +85,6 @@ usage() {
     echo '    -S                 Sync to sourceforge'
     echo '    -O                 Sync to osdn'
     echo '    -d                 Pass --delete-ignored and --delete to sourceforge/osdn'
-    echo '    -F                 Sync to fosshost'
     echo '    -R                 Update the latest release symlink'
     echo "    -t                 Override timestamp [default: ${dist_timestamp}]"
     echo '    -h                 This help'
@@ -96,7 +95,7 @@ usage() {
     exit 1
 }
 
-opts='SOdFRt:hv'
+opts='SOdRt:hv'
 
 while getopts "${opts}" arg; do
     case "${arg}" in
@@ -105,7 +104,6 @@ while getopts "${opts}" arg; do
         S) sourceforge=true ;;
         O) osdn=true ;;
         d) filehost_remove=true ;;
-        F) fosshost=true ;;
         R) release_symlinks=true ;;
         t) dist_timestamp="$OPTARG" ;;
         h|?) usage 0 ;;

@@ -69,7 +69,7 @@ sync_osdn(){
             --include="/*/*/${dist_timestamp}/**" \
             --exclude='*' \
             ${rsync_args[*]} \
-            --max-size=5G $delete -e "ssh -o StrictHostKeyChecking=no" \
+            --size-only $delete -e "ssh -o StrictHostKeyChecking=no" \
             "${run_dir}/" "$(connect_osdn)"
         if [[ $? != 0 ]]; then
             count=$(($count + 1))
