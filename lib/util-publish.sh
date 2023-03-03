@@ -113,6 +113,30 @@ sync_fosshost(){
     done
 }
 
+sync_r2(){
+    local count=1
+    local max_count=3
+    local delete=""
+    [ "$filehost_remove" == true ] && delete="--delete-after --delete-excluded"
+
+    msg "Start upload [%s] to [r2] ..." "$dist_timestamp"
+
+    while [[ $count -le $max_count ]]; do
+        rclone sync /srv/http/iso r2:/mirror/iso --s3-upload-cutoff 5G --s3-chunk-size 4G --fast-list --s3-no-head --s3-no-check-bucket \
+            --ignore-checksum --s3-disable-checksum -u $delete --use-server-modtime $extra_rclone_args \
+            --exclude '/latest' --exclude '/logs' --exclude '/unmaintained' --include="/*/*/${dist_timestamp}/**.iso"
+        if [[ $? != 0 ]]; then
+            count=$(($count + 1))
+            msg "Upload failed. retrying (%s/%s) ..." "$count" "$max_count"
+            sleep 2
+        else
+            msg "Done upload [r2]"
+            show_elapsed_time "${FUNCNAME}" "${timer_start}"
+            break
+        fi
+    done
+}
+
 update_release_symlinks(){
     msg "Updating release ISO profiles to ${1}"
     # Delete any existing invalid entries. We don't want to just delete the entire folder, since old links that may not yet exist for our current $1 may still be perfectly valid.
@@ -149,4 +173,5 @@ sync_dir(){
     [ "$sourceforge" == true ] && sync_sourceforge
     [ "$osdn" == true ] && sync_osdn
     [ "$fosshost" == true ] && sync_fosshost us && sync_fosshost uk
+    [ "$cloudflare" == true ] && sync_r2
 }
