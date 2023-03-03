@@ -122,7 +122,7 @@ sync_r2(){
     msg "Start upload [%s] to [r2] ..." "$dist_timestamp"
 
     while [[ $count -le $max_count ]]; do
-        rclone sync /srv/http/iso r2:/mirror/iso --s3-upload-cutoff 5G --s3-chunk-size 4G --fast-list --s3-no-head --s3-no-check-bucket \
+        rclone sync "${run_dir}/" r2:/mirror/iso --s3-upload-cutoff 5G --s3-chunk-size 4G --fast-list --s3-no-head --s3-no-check-bucket \
             --ignore-checksum --s3-disable-checksum -u $delete --use-server-modtime $extra_rclone_args \
             --exclude '/latest' --exclude '/logs' --exclude '/unmaintained' --include="/*/*/${dist_timestamp}/**.iso"
         if [[ $? != 0 ]]; then
