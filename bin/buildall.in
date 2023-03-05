@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 TO_BUILD=(dr460nized dr460nized-gaming xfce gnome kde-lite kde-git lxqt-kwin cinnamon mate i3 wayfire sway qtile)
 
-if [[ ! -v SKIP_MIRRORLIST ]]; then
+if [[ ! -v BUILDALL_TIMESTAMP ]]; then
     BUILDALL_TIMESTAMP="$(date +%y%m%d)"
 fi
 
