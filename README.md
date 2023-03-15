@@ -164,7 +164,7 @@ overriding
 ### 2. buildpkg
 
 buildpkg is the chroot build script of garuda-tools.
-It it run in a abs/pkgbuilds directory which contains directories with PKGBUILD.
+It runs in an abs/pkgbuilds directory, which contains directories with PKGBUILD.
 
 ###### garuda-tools.conf supports the makepkg.conf variables
 
