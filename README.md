@@ -1,28 +1,48 @@
-garuda-tools
-=============
+# Garuda Linux tools
 
-garuda-tools-0.15
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-User manual
+## Found any issue?
+
+- If any packaging issues occur, don't hesitate to report them via our issues section of our PKGBUILD repo. You can click [here](https://gitlab.com/garuda-linux/pkgbuilds/-/issues/new) to create a new one.
+- If issues concerning the configurations and settings occur, please open a new issue on this repository. Click [here](https://gitlab.com/garuda-linux/tools/garuda-tools/-/issues/new) to start the process.
+
+## How to contribute?
+
+We highly appreciate contributions of any sort! 😊 To do so, please follow these steps:
+
+- [Create a fork of this repository](https://gitlab.com/garuda-linux/tools/garuda-tools/-/forks/new).
+- Clone your fork locally ([short git tutorial](https://rogerdudler.github.io/git-guide/)).
+- Add the desired changes to PKGBUILDs or source code.
+- Commit using a [conventional commit message](https://www.conventionalcommits.org/en/v1.0.0/#summary) and push any changes back to your fork. This is crucial as it allows our CI to generate changelogs easily.
+  - The [commitizen](https://github.com/commitizen-tools/commitizen) application helps with creating a fitting commit message.
+  - You can install it via [pip](https://pip.pypa.io/) as there is currently no package in Arch repos: `pip install --user -U Commitizen`.
+  - Then proceed by running `cz commit` in the cloned folder.
+- [Create a new merge request at our main repository](https://gitlab.com/garuda-linux/tools/garuda-tools/-/merge_requests/new).
+- Check if any of the pipeline runs fail and apply eventual suggestions.
+
+We will then review the changes and eventually merge them.
+
+## How to use the repo?
 
 ### 1. garuda-tools.conf
 
 garuda-tools.conf is the central configuration file for garuda-tools.
 By default, the config is installed in
 
-~~~
+~~~sh
 /etc/garuda-tools/garuda-tools.conf
 ~~~
 
 A user garuda-tools.conf can be placed in
 
-~~~
+~~~sh
 $HOME/.config/garuda-tools/garuda-tools.conf
 ~~~
 
 If the userconfig is present, garuda-tools will load the userconfig values, however, if variables have been set in the systemwide
 
-~~~
+~~~sh
 /etc/garuda-tools/garuda-tools.conf
 ~~~
 
@@ -35,20 +55,19 @@ Specifying args will override garuda-tools.conf settings.
 
 User build lists(eg 'my-super-build.list') can be placed in
 
-~~~
+~~~sh
 $HOME/.config/garuda-tools/pkg.list.d
 $HOME/.config/garuda-tools/iso.list.d
 ~~~
 
 overriding
 
-~~~
+~~~sh
 /etc/garuda-tools/pkg.list.d
 /etc/garuda-tools/iso.list.d
 ~~~
 
-
-~~~
+~~~sh
 ######################################################
 ################ garuda-tools.conf ##################
 ######################################################
@@ -170,7 +189,7 @@ It runs in an abs/pkgbuilds directory, which contains directories with PKGBUILD.
 
 #### Arguments
 
-~~~
+~~~sh
 $ buildpkg -h
 Usage: buildpkg [options]
     -a <arch>          Arch [default: auto]
@@ -187,17 +206,17 @@ Usage: buildpkg [options]
     -w                 Clean up cache and sources
 ~~~
 
-###### * build sysvinit package for both arches and branch testing:
+###### * build sysvinit package for both arches and branch testing
 
-* i686(buildsystem is x86_64)
+- i686(buildsystem is x86_64)
 
-~~~
+~~~sh
 buildpkg -p sysvinit -a i686 -b testing -cwsn
 ~~~
 
-* for x86_64
+- for x86_64
 
-~~~
+~~~sh
 buildpkg -p sysvinit -b testing -cswn
 ~~~
 
@@ -205,29 +224,34 @@ You can drop the branch arg if you set the branch in garuda-tools.conf
 The arch can also be set in garuda-tools.conf, but under normal conditions, it is better to specify the non native arch by -a parameter.
 
 ###### * -c
-* Removes the chroot dir
-* If the -c parameter is not used, buildpkg will update the existing chroot or create a new one if none is present.
+
+- Removes the chroot dir
+
+- If the -c parameter is not used, buildpkg will update the existing chroot or create a new one if none is present.
 
 ###### * -n
-* Installs the built package in the chroot and runs a namcap check
+
+- Installs the built package in the chroot and runs a namcap check
 
 ###### * -s
-* Signs the package when built
+
+- Signs the package when built
 
 ###### * -w
-* Cleans pkgcache, and logfiles
+
+- Cleans pkgcache, and logfiles
 
 ### 3. buildiso
 
 buildiso is used to build garuda-iso-profiles. It is run insde the profiles folder.
 
-##### Packages for livecd only:
+##### Packages for livecd only
 
-* garuda-livecd-systemd
+- garuda-livecd-systemd
 
 #### Arguments
 
-~~~
+~~~sh
 $ buildiso -h
 Usage: buildiso [options]
     -i                 Initialize iso-profiles repo [default: v17.1]"
@@ -256,23 +280,23 @@ Usage: buildiso [options]
 
 ###### * build xfce iso profile for both arches and branch testing on x86_64 build system
 
-* Remember: if you run buildiso for the first time you need to do:
+- Remember: if you run buildiso for the first time you need to do:
 
-~~~
+~~~sh
 buildiso -i
 ~~~
 
 for download in /usr/share/garuda-tools/iso-profiles our garuda profiles. You can override in garuda-tools.conf what branch use with buildiso: v17.1 or master ( development profiles ). The previous command can be used to refresh the profiles as needed in your local.
 
-* i686 (buildsystem is x86_64)
+- i686 (buildsystem is x86_64)
 
-~~~
+~~~sh
 buildiso -p xfce -a i686 -b testing
 ~~~
 
-* for x86_64
+- for x86_64
 
-~~~
+~~~sh
 buildiso -p xfce -b testing
 ~~~
 
@@ -281,11 +305,14 @@ The branch can be defined also in garuda-tools.conf, but a manual parameter will
 #### Special parameters
 
 ###### * -x
-* Build images only
-* will stop after all packages have been installed. No iso sqfs compression will be executed
+
+- Build images only
+
+- will stop after all packages have been installed. No iso sqfs compression will be executed
 
 ###### * -z
-* Use this to sqfs compress the chroots if you previously used -x.
+
+- Use this to sqfs compress the chroots if you previously used -x.
 
 ### 4. check-yaml
 
@@ -293,7 +320,7 @@ check-yaml can be used to write profile package lists to yaml.
 It is also possible to generate calamares conf file as buildiso would do.
 yaml files are used by calamares netinstall option from a specified url(netgroups).
 
-~~~
+~~~sh
 $ check-yaml -h
 Usage: check-yaml [options]
     -a <arch>          Arch [default: auto]
@@ -305,33 +332,36 @@ Usage: check-yaml [options]
     -q                 Query settings
     -v                 Validate by schema
 ~~~
+
 ###### * build xfce iso profile for both arches and branch testing on x86_64 build system
 
-* i686 (buildsystem is x86_64)
+- i686 (buildsystem is x86_64)
 
-~~~
+~~~sh
 check-yaml -p xfce -a i686 -c
 ~~~
 
-* for x86_64
+- for x86_64
 
-~~~
+~~~sh
 check-yaml -p xfce -c
 ~~~
 
-* for a kdebase pacman group with validation
+- for a kdebase pacman group with validation
 
-~~~
+~~~sh
 check-yaml -p kdebase -gv
 ~~~
 
 #### Special parameters
 
 ###### * -c
-* generate calamares module and settings conf files per profile
+
+- generate calamares module and settings conf files per profile
 
 ###### * -g
-* generate a netgroup for specified pacman group
+
+- generate a netgroup for specified pacman group
 
 ### 5. buildtree
 
@@ -339,7 +369,7 @@ buildtree is a little tools to sync arch abs and garuda PKGBUILD git repos.
 
 #### Arguments
 
-~~~
+~~~sh
 $ buildtree -h
 Usage: buildtree [options]
     -a            Sync arch abs
@@ -351,7 +381,7 @@ Usage: buildtree [options]
 
 ###### * sync arch and garuda trees
 
-~~~
+~~~sh
 buildtree -as
 ~~~
 
@@ -363,7 +393,7 @@ If there is only 1 system installed besides the host system, no list will pop up
 
 #### Arguments
 
-~~~
+~~~sh
 $ garuda-chroot -h
 usage: garuda-chroot -a [or] garuda-chroot chroot-dir [command]
     -a             Automount detected linux system
@@ -378,13 +408,13 @@ usage: garuda-chroot -a [or] garuda-chroot chroot-dir [command]
 
 ###### * automount
 
-~~~
+~~~sh
 garuda-chroot -a
 ~~~
 
 ###### * mount manually
 
-~~~
+~~~sh
 garuda-chroot /mnt /bin/bash
 ~~~
 
@@ -394,7 +424,7 @@ deployiso is a script to upload a specific iso or a buiildset to OSDN.
 
 #### Arguments
 
-~~~
+~~~sh
 $ deployiso -h
 Usage: deployiso [options]
     -d                 Use hidden remote directory
@@ -411,12 +441,12 @@ Usage: deployiso [options]
 
 ###### * upload official build list, ie all built iso defined in a build list
 
-~~~
+~~~sh
 deployiso -p official
 ~~~
 
 ###### * upload sign xfce ISO file, create checksums, create torrent and upload to hidden directory
 
-~~~
+~~~sh
 deployiso -p xfce -std
 ~~~
