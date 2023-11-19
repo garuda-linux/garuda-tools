@@ -1,12 +1,12 @@
 ---
-stages: [check-pr]
+stages: [checks, release]
 
-check-pr:
+check-commitizen:
   # Check the current commit message for compliance with commitizen
-  stage: check-pr
+  stage: checks
   image: alpine:latest
-  inherit:
-    variables: false
+  variables:
+    GIT_STRATEGY: none
   script:
     - apk add --no-cache --upgrade py3-pip
     - pip install -U commitizen
@@ -15,3 +15,19 @@ check-pr:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+tag-to-release:
+  stage: release
+  # https://gitlab.com/gitlab-org/release-cli/-/blob/master/Dockerfile
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - apk add --no-cache --upgrade git py3-pip
+    - pip install -U commitizen
+    - git clone "$CI_PROJECT_URL.git"
+    - cd "$CI_PROJECT_NAME"
+    - CHANGELOG=$(cz changelog "$CI_COMMIT_TAG" --dry-run | sed /^Invalid/d)
+    - release-cli create --name "$CI_COMMIT_TAG" --description "$CHANGELOG" --tag-name "$CI_COMMIT_TAG"
+  rules:
+    - if: $CI_COMMIT_TAG != null

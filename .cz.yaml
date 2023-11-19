@@ -1,0 +1,6 @@
+---
+commitizen:
+  name: cz_conventional_commits
+  tag_format: $version
+  version_provider: scm
+  version_scheme: semver
