@@ -512,7 +512,7 @@ make_image_boot() {
 }
 
 configure_grub(){
-    local boot_args=('quiet' 'systemd.show_status=1' 'ibt=off' ${custom_boot_args} ${apparmor_boot_args})
+    local boot_args=('quiet' 'systemd.show_status=1' 'checksum=y' ${custom_boot_args} ${apparmor_boot_args})
     if ${use_dracut}; then
         local default_args="misobasedir=${iso_name} root=miso:LABEL=${iso_label}"
     else
