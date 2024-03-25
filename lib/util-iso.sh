@@ -406,7 +406,8 @@ make_image_desktop() {
 
         echo "Enable os-prober"
         sed -i -r 's,^(#|)GRUB_DISABLE_OS_PROBER=.*,GRUB_DISABLE_OS_PROBER=false,' "${path}/etc/default/grub"
-        
+        echo "GRUB_EARLY_INITRD_LINUX_STOCK=''" >> "${path}/etc/default/grub"
+
         umount_fs
         clean_up_image "${path}"
         : > ${work_dir}/build.${FUNCNAME}
