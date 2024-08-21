@@ -74,7 +74,11 @@ miso_mount_root() {
     [[ -z "${copytoram_size}" ]] && copytoram_size="75%"
 
     if ! mountpoint -q "/run/miso/bootmnt"; then
-        miso_mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
+        if mountpoint -q "${NEWROOT}"; then
+            die "Dracut seems to be happy with the root it has found at ${NEWROOT}. This makes no sense. Please contact the Garuda Linux developers."
+            return 1
+        fi
+        miso_mnt_dev "${root#block:}" "/run/miso/bootmnt" "-r" "defaults"
     fi
 
     if [[ "${checksum}" == "y" ]]; then
@@ -124,6 +128,6 @@ miso_mount_root() {
         mount -o bind /run/miso/copytoram /run/miso/bootmnt/${misobasedir}/${arch}
     fi
 }
-if [ -n "$root" -a -z "${root%%miso:*}" ]; then
+if [ -n "$root" -a -z "${root%%block:*}" ]; then
     miso_mount_root
 fi

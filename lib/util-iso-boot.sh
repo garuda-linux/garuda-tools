@@ -26,7 +26,7 @@ prepare_initramfs(){
     local _kernver=$(ls $1/usr/lib/modules/ | awk '{print $1}')
     if ${use_dracut}; then
         chroot-run $1 \
-            /usr/bin/dracut /boot/initramfs.img ${_kernver} --force -o "systemd rootfs-block" -a miso --no-hostonly
+            /usr/bin/dracut /boot/initramfs.img ${_kernver} --force -o "network" -a miso --no-hostonly
     else
         cp ${DATADIR}/mkinitcpio.conf $1/etc/mkinitcpio-${iso_name}.conf
         if [[ -n ${gpgkey} ]]; then
