@@ -348,7 +348,6 @@ write_settings_conf(){
         echo "        - networkcfg" >> "$conf"
     fi
     echo "        - machineid" >> "$conf" && write_machineid_conf
-    echo "        - fstab" >> "$conf"
     if ${oem_used}; then
         msg2 "Skipping to set locale, keyboard and localecfg modules."
     else
@@ -357,6 +356,7 @@ write_settings_conf(){
         echo "        - localecfg" >> "$conf"
     fi
     echo "        - luksbootkeyfile" >> "$conf"
+    echo "        - fstab" >> "$conf"
     echo "        - plymouthcfg" >> "$conf" && write_plymouthcfg_conf
     if ${use_dracut}; then
         echo "        - dracutlukscfg" >> "$conf"
