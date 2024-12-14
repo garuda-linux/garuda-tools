@@ -4,16 +4,11 @@ stages: [checks, release]
 check-commitizen:
   # Check the current commit message for compliance with commitizen
   stage: checks
-  image: alpine:latest
+  image: nixpkgs/nix-flakes:latest
   variables:
     GIT_STRATEGY: none
   script:
-    - apk add --no-cache --upgrade py3-pip
-    # Pass --break-system-packages since since this containers sole purpose is
-    # running 2 applications. If we get to advance this, implement a proper venv
-    - pip install --break-system-packages commitizen
-    - cz check --message "$CI_COMMIT_MESSAGE" >/tmp/cz_check || true # why does it return 1 if its actually 0?
-    - grep "successful" /tmp/cz_check # ugly hack to workaround the above issue
+    - nix run nixpkgs#commitizen -- check --message "$CI_COMMIT_TITLE"
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
