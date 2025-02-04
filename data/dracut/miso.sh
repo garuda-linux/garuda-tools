@@ -73,9 +73,6 @@ miso_mount_root() {
     [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
     [[ -z "${copytoram_size}" ]] && copytoram_size="75%"
 
-    # If copytoram not defined and using ventoy, then default to copytoram=y
-    [[ -z "${copytoram}" ]] && [[ -e "/dev/mapper/ventoy" ]] && copytoram="y"
-
     if ! mountpoint -q "/run/miso/bootmnt"; then
         miso_mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
     fi
@@ -119,6 +116,7 @@ miso_mount_root() {
         fi
     done
 
+    mkdir -p /run/miso/root
     miso_mnt_overlayfs "${lower_dir}" "/run/miso/root" "/"
 
     if [[ "${copytoram}" == "y" ]]; then

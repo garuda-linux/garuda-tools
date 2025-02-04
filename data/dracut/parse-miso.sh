@@ -10,3 +10,5 @@ case "${root#miso:}" in
         rootok=1
         ;;
 esac
+
+[ "${root%%:*}" = "miso" ] && wait_for_dev "${root#miso:}"
