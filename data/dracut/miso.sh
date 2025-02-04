@@ -73,6 +73,9 @@ miso_mount_root() {
     [[ -z "${overlay_root_size}" ]] && overlay_root_size="75%"
     [[ -z "${copytoram_size}" ]] && copytoram_size="75%"
 
+    # If copytoram not defined and using ventoy, then default to copytoram=y
+    [[ -z "${copytoram}" ]] && [[ -e "/dev/mapper/ventoy" ]] && copytoram="y"
+
     if ! mountpoint -q "/run/miso/bootmnt"; then
         if mountpoint -q "${NEWROOT}"; then
             die "Dracut seems to be happy with the root it has found at ${NEWROOT}. This makes no sense. Please contact the Garuda Linux developers."
