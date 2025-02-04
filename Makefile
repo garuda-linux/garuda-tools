@@ -71,6 +71,8 @@ SHARED_ISO = \
 	data/mkinitcpio.conf \
 	data/profile.conf.example \
 	data/dracut/miso.sh \
+	data/dracut/parse-miso.sh \
+	data/dracut/miso-generator.sh \
 	data/dracut/module-setup.sh
 
 CPIOHOOKS = \

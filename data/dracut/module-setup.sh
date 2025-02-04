@@ -20,5 +20,8 @@ install() {
     hostonly='' instmods overlay
     hostonly='' instmods loop
     hostonly='' instmods cdrom
-    inst_hook mount 000 "$moddir/miso.sh"
+
+    inst_hook cmdline 15 "$moddir/parse-miso.sh"
+    inst_hook pre-mount 000 "$moddir/miso.sh"
+    inst_script "$moddir/miso-generator.sh" "$systemdutildir"/system-generators/dracut-miso-generator
 }

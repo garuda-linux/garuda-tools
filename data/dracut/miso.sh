@@ -77,11 +77,7 @@ miso_mount_root() {
     [[ -z "${copytoram}" ]] && [[ -e "/dev/mapper/ventoy" ]] && copytoram="y"
 
     if ! mountpoint -q "/run/miso/bootmnt"; then
-        if mountpoint -q "${NEWROOT}"; then
-            die "Dracut seems to be happy with the root it has found at ${NEWROOT}. This makes no sense. Please contact the Garuda Linux developers."
-            return 1
-        fi
-        miso_mnt_dev "${root#block:}" "/run/miso/bootmnt" "-r" "defaults"
+        miso_mnt_dev "${root#miso:}" "/run/miso/bootmnt" "-r" "defaults"
     fi
 
     if [[ "${checksum}" == "y" ]]; then
@@ -123,7 +119,7 @@ miso_mount_root() {
         fi
     done
 
-    miso_mnt_overlayfs "${lower_dir}" "${NEWROOT}" "/"
+    miso_mnt_overlayfs "${lower_dir}" "/run/miso/root" "/"
 
     if [[ "${copytoram}" == "y" ]]; then
         umount -d /run/miso/bootmnt
@@ -131,6 +127,6 @@ miso_mount_root() {
         mount -o bind /run/miso/copytoram /run/miso/bootmnt/${misobasedir}/${arch}
     fi
 }
-if [ -n "$root" -a -z "${root%%block:*}" ]; then
+if [ -n "$root" -a -z "${root%%miso:*}" ]; then
     miso_mount_root
 fi
