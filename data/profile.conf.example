@@ -77,7 +77,7 @@
 # unset defaults to given values
 # names must match systemd service names
 # services in enable_systemd array don't need to be listed here
-# enable_systemd_live=('garuda-live' 'mhwd-live' 'pacman-init' 'mirrors-live')
+# enable_systemd_live=('garuda-live' 'ght-live' 'pacman-init' 'mirrors-live')
 
 # disable_systemd_live=()
 
