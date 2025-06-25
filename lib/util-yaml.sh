@@ -204,7 +204,7 @@ write_welcome_conf(){
 }
 
 write_mhwdcfg_conf(){
-    local conf="${modules_dir}/mhwdcfg.conf"
+    local conf="${modules_dir}/ghtcfg.conf"
     msg2 "Writing %s ..." "${conf##*/}"
     echo "---" > "$conf"
     echo "bus:" >> "$conf"
@@ -373,7 +373,7 @@ write_settings_conf(){
     fi
     echo "        - displaymanager" >> "$conf" && write_displaymanager_conf
     if ${mhwd_used}; then
-        echo "        - mhwdcfg" >> "$conf" && write_mhwdcfg_conf
+        echo "        - ghtcfg" >> "$conf" && write_mhwdcfg_conf
     else
         msg2 "Skipping to set mhwdcfg module."
     fi
