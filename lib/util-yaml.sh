@@ -203,33 +203,6 @@ write_welcome_conf(){
     fi
 }
 
-write_mhwdcfg_conf(){
-    local conf="${modules_dir}/mhwdcfg.conf"
-    msg2 "Writing %s ..." "${conf##*/}"
-    echo "---" > "$conf"
-    echo "bus:" >> "$conf"
-    echo "    - pci" >> "$conf"
-    echo '' >> "$conf"
-    echo "identifier:" >> "$conf"
-    echo "    net:" >> "$conf"
-    echo "      - 200" >> "$conf"
-    echo "      - 280" >> "$conf"
-    echo "    video:" >> "$conf"
-    echo "      - 300" >> "$conf"
-    echo "      - 302" >> "$conf"
-    echo "      - 380" >> "$conf"
-    echo '' >> "$conf"
-    local drv="free"
-    ${nonfree_mhwd} && drv="nonfree"
-    echo "driver: ${drv}" >> "$conf"
-    echo '' >> "$conf"
-    local switch='true'
-    ${netinstall} && switch='false'
-    echo "local: ${switch}" >> "$conf"
-    echo '' >> "$conf"
-    echo 'repo: /opt/mhwd/pacman-mhwd.conf' >> "$conf"
-}
-
 write_postcfg_conf(){
     local conf="${modules_dir}/postcfg.conf"
     if [[ -n ${smb_workgroup} ]]; then

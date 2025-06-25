@@ -55,50 +55,6 @@ set_xdm(){
     fi
 }
 
-lslist_contains_package(){
-    if [[ $1 =~ .*$2-.*\.pkg ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-configure_mhwd_drivers_delete(){
-    [ -d "$1" ] && rm -r "$1" || true
-}
-
-configure_mhwd_drivers(){
-    local path=$1${mhwd_repo}/ \
-        drv_path=$1/var/lib/mhwd/db/pci/graphic_drivers
-    info "Configuring mhwd db ..."
-    local packagelist="$(ls $path)"
-    
-    if ! lslist_contains_package "$packagelist" nvidia-utils; then
-        msg2 "Disabling nvidia-dkms driver"
-        configure_mhwd_drivers_delete $drv_path/nvidia-dkms/
-        msg2 "Disabling nvidia-prime-render-offload driver"
-        configure_mhwd_drivers_delete $drv_path/nvidia-prime-render-offload
-        msg2 "Disabling optimus-manager driver"
-        configure_mhwd_drivers_delete $drv_path/optimus-manager
-    fi
-    
-    if ! lslist_contains_package "$packagelist" garuda-virtualmachine-guest-config; then
-        msg2 "Disabling video-virtualmachine driver"
-        configure_mhwd_drivers_delete $drv_path/video-virtualmachine
-    fi
-    
-    
-    local drv_path=$1/var/lib/mhwd/db/pci/network_drivers
-    if ! lslist_contains_package "$packagelist" r8168-dkms; then
-        msg2 "Disabling r8168 driver"
-        configure_mhwd_drivers_delete $drv_path/r8168/
-    fi
-    if ! lslist_contains_package "$packagelist" broadcom-wl-dkms; then
-        msg2 "Disabling broadcom-wl driver"
-        configure_mhwd_drivers_delete $drv_path/broadcom-wl/
-    fi
-}
-
 configure_branding(){
     msg2 "Configuring branding"
     echo "---
@@ -341,7 +297,7 @@ configure_live_image(){
 }
 
 make_repo(){
-    repo-add $1${mhwd_repo}/mhwd.db.tar.gz $1${mhwd_repo}/*pkg.tar*
+    repo-add $1${mhwd_repo}/ght.db.tar.gz $1${mhwd_repo}/*pkg.tar*
 }
 
 copy_from_cache(){

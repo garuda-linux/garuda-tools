@@ -469,9 +469,8 @@ make_image_mhwd() {
                 rm ${path}${mhwd_repo}/${mhwd_clean}
             done
         fi
-        cp ${DATADIR}/pacman-mhwd.conf ${path}/opt/mhwd
+        cp ${DATADIR}/pacman-ght.conf ${path}/opt/ght
         make_repo "${path}"
-        configure_mhwd_drivers "${path}"
 
         umount_fs
         clean_up_image "${path}"

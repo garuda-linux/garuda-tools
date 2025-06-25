@@ -67,7 +67,7 @@ LIBS_ISO = \
 	lib/util-publish.sh
 
 SHARED_ISO = \
-	data/pacman-mhwd.conf \
+	data/pacman-ght.conf \
 	data/mkinitcpio.conf \
 	data/profile.conf.example \
 	data/dracut/miso.sh \
