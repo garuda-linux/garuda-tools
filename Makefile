@@ -118,7 +118,7 @@ edit = sed -e "s|@datadir[@]|$(DESTDIR)$(PREFIX)/share/garuda-tools|g" \
 
 doc:
 	mkdir -p man
-	$(foreach var,$(MAN_XML),xsltproc /usr/share/docbook2X/xslt/man/docbook.xsl docbook/$(var) | db2x_manxml --output-dir man ;)
+	$(foreach var,$(MAN_XML),xsltproc --nonet /usr/share/docbook2X/xslt/man/docbook.xsl docbook/$(var) | db2x_manxml --output-dir man ;)
 
 clean:
 	rm -f $(BIN_BASE) ${BIN_PKG} ${BIN_ISO}

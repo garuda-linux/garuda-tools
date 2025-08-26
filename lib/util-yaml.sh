@@ -181,6 +181,7 @@ write_welcome_conf(){
     echo "      - power" >> "$conf"
     echo "      - internet" >> "$conf"
     echo "      - root" >> "$conf"
+    echo "      - efi" >> "$conf"
     echo "    required:" >> "$conf"
     echo "      - storage" >> "$conf"
     echo "      - ram" >> "$conf"
