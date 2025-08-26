@@ -40,7 +40,7 @@ miso_pxe_http_mount_handler () {
 
     local _src=${miso_http_srv}${misobasedir}/${arch}
 
-    for sfs in livefs mhwdfs desktopfs rootfs; do
+    for sfs in livefs ghtfs desktopfs rootfs; do
         if [[ ! -z "$( curl -L -s --head "${_src}/${sfs}.sfs" | grep "OK" )" ]]; then
             _curl_get "${_src}/${sfs}.sfs" "/${arch}"
 

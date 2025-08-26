@@ -337,7 +337,7 @@ chroot_clean(){
     for image in "$1"/*fs; do
         [[ -d ${image} ]] || continue
         local name=${image##*/}
-        if [[ $name != "mhwdfs" ]]; then
+        if [[ $name != "ghtfs" ]]; then
             msg2 "Deleting chroot [%s] (%s) ..." "$name" "${1##*/}"
             lock 9 "${image}.lock" "Locking chroot '${image}'"
             if [[ "$(stat -f -c %T "${image}")" == btrfs ]]; then
@@ -354,7 +354,7 @@ clean_up_image(){
     msg2 "Cleaning [%s]" "${1##*/}"
 
     local path
-    if [[ ${1##*/} == 'mhwdfs' ]]; then
+    if [[ ${1##*/} == 'ghtfs' ]]; then
         path=$1/var
         if [[ -d $path/lib/mhwd ]]; then
             mv $path/lib/mhwd $1 &> /dev/null

@@ -79,7 +79,7 @@ miso_mount_root() {
 
     if [[ "${checksum}" == "y" ]]; then
         echo ":: Self-test requested, please wait..."
-        for fs in rootfs desktopfs mhwdfs livefs; do
+        for fs in rootfs desktopfs ghtfs livefs; do
             echo "Testing ${fs}..."
             if [[ -f "/run/miso/bootmnt/${misobasedir}/${arch}/${fs}.sfs" ]]; then
                 if [[ -f "/run/miso/bootmnt/${misobasedir}/${arch}/${fs}.md5" ]]; then
@@ -109,7 +109,7 @@ miso_mount_root() {
     local dest_sfs="/run/miso/sfs" dest_img="/run/miso/img"
     local lower_dir
 
-    for sfs in livefs mhwdfs desktopfs rootfs; do
+    for sfs in livefs ghtfs desktopfs rootfs; do
         if [[ -f "${src}/${sfs}.sfs" ]]; then
             miso_mnt_sfs "${src}/${sfs}.sfs" "${dest_sfs}/${sfs}"
             lower_dir=${lower_dir:-}${lower_dir:+:}"${dest_sfs}/${sfs}"

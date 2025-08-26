@@ -47,19 +47,12 @@ write_bootloader_conf(){
     source "$(get_preset)"
     echo '---' > "$conf"
     echo "efiBootLoader: \"${efi_boot_loader}\"" >> "$conf"
-    echo "kernel: \"${ALL_kver#*/boot}\"" >> "$conf"
-    echo "img: \"${default_image#*/boot}\"" >> "$conf"
-    echo "fallback: \"${fallback_image#*/boot}\"" >> "$conf"
-    echo 'timeout: "10"' >> "$conf"
-    echo "kernelLine: \", with ${kernel}\"" >> "$conf"
-    echo "fallbackKernelLine: \", with ${kernel} (fallback initramfs)\"" >> "$conf"
     echo 'grubInstall: "grub-install"' >> "$conf"
     echo 'grubMkconfig: "grub-mkconfig"' >> "$conf"
     echo 'grubCfg: "/boot/grub/grub.cfg"' >> "$conf"
     echo 'grubProbe: "grub-probe"' >> "$conf"
     echo 'efiBootMgr: "efibootmgr"' >> "$conf"
-    echo '#efiBootloaderId: "dirname"' >> "$conf"
-    echo 'installEFIFallback: true' >> "$conf"
+    echo 'installEFIFallback: false' >> "$conf"
 }
 
 write_services_conf(){
@@ -358,14 +351,6 @@ write_settings_conf(){
     echo "        - luksbootkeyfile" >> "$conf"
     echo "        - fstab" >> "$conf"
     echo "        - plymouthcfg" >> "$conf" && write_plymouthcfg_conf
-    if ${use_dracut}; then
-        echo "        - dracutlukscfg" >> "$conf"
-        echo "        - dracut" >> "$conf" && write_dracut_conf
-    else
-        echo "        - luksopenswaphookcfg" >> "$conf"
-        echo "        - initcpiocfg" >> "$conf"
-        echo "        - initcpio" >> "$conf" && write_initcpio_conf
-    fi
     if ${oem_used}; then
         msg2 "Skipping to set users module."
     else
@@ -379,7 +364,14 @@ write_settings_conf(){
     fi
     echo "        - hwclock" >> "$conf"
     echo "        - services-systemd" >> "$conf" && write_services_conf
-    echo "        - grubcfg" >> "$conf"
+    if ${use_dracut}; then
+        echo "        - dracutlukscfg" >> "$conf"
+        echo "        - dracut" >> "$conf" && write_dracut_conf
+    else
+        echo "        - luksopenswaphookcfg" >> "$conf"
+        echo "        - initcpiocfg" >> "$conf"
+        echo "        - initcpio" >> "$conf" && write_initcpio_conf
+    fi
     echo "        - bootloader" >> "$conf" && write_bootloader_conf
     if ${oem_used}; then
         msg2 "Skipping to set postcfg module."

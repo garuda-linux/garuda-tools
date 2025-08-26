@@ -363,12 +363,13 @@ make_image_root() {
 
         chroot_create "${path}" "${packages}" || die
 
-        # profide multilib usage to mhwd-script
-        if [[ ! -z ${multilib} ]]; then
-            echo 'MHWD64_IS_LIB32="'${multilib}'"' > "${path}/etc/mhwd-x86_64.conf"
+        echo -e "TIMESTAMP=${dist_timestamp}\nCODENAME=${dist_codename}" >> "${path}/usr/lib/garuda/garuda-release"
+
+        # /build/grub needs to exist if grub is in use, otherwise grub-mkconfig will fail on calamares in BIOS mode
+        if [[ "${efi_boot_loader}" == "grub" ]]; then
+            mkdir -p "${path}/boot/grub"
         fi
 
-        echo -e "TIMESTAMP=${dist_timestamp}\nCODENAME=${dist_codename}" >> "${path}/usr/lib/garuda/garuda-release"
         copy_overlay "${profile_dir}/root-overlay" "${path}"
 
         reset_pac_conf "${path}"
@@ -454,8 +455,8 @@ make_image_live() {
 
 make_image_mhwd() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        msg "Prepare [drivers repository] (mhwdfs)"
-        local path="${work_dir}/mhwdfs"
+        msg "Prepare [drivers repository] (ghtfs)"
+        local path="${work_dir}/ghtfs"
         mkdir -p ${path}${mhwd_repo}
 
         mount_fs_select "${path}"
@@ -475,7 +476,7 @@ make_image_mhwd() {
         umount_fs
         clean_up_image "${path}"
         : > ${work_dir}/build.${FUNCNAME}
-        msg "Done [drivers repository] (mhwdfs)"
+        msg "Done [drivers repository] (ghtfs)"
     fi
 }
 
