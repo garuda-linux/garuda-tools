@@ -373,6 +373,7 @@ write_settings_conf(){
         echo "        - initcpiocfg" >> "$conf"
         echo "        - initcpio" >> "$conf" && write_initcpio_conf
     fi
+    echo "        - grubcfg" >> "$conf"
     echo "        - bootloader" >> "$conf" && write_bootloader_conf
     if ${oem_used}; then
         msg2 "Skipping to set postcfg module."
