@@ -201,18 +201,6 @@ write_mhwdcfg_conf(){
     local conf="${modules_dir}/ghtcfg.conf"
     msg2 "Writing %s ..." "${conf##*/}"
     echo "---" > "$conf"
-    echo "bus:" >> "$conf"
-    echo "    - pci" >> "$conf"
-    echo '' >> "$conf"
-    echo "identifier:" >> "$conf"
-    echo "    net:" >> "$conf"
-    echo "      - 200" >> "$conf"
-    echo "      - 280" >> "$conf"
-    echo "    video:" >> "$conf"
-    echo "      - 300" >> "$conf"
-    echo "      - 302" >> "$conf"
-    echo "      - 380" >> "$conf"
-    echo '' >> "$conf"
     local drv="free"
     ${nonfree_mhwd} && drv="nonfree"
     echo "driver: ${drv}" >> "$conf"
@@ -286,6 +274,77 @@ write_locale_conf(){
     fi
 }
 
+write_partition_conf(){
+    local conf="${modules_dir}/partition.conf"
+    msg2 "Writing %s ..." "${conf##*/}"
+    echo "---" > "$conf"
+    echo 'efiSystemPartition: "/boot/efi"' >> "$conf"
+    echo 'drawNestedPartitions: false' >> "$conf"
+    echo 'alwaysShowPartitionLabels: true' >> "$conf"
+    echo "efi:" >> "$conf"
+    echo "    minimumSize: 260MiB" >> "$conf"
+    echo "userSwapChoices:" >> "$conf"
+    echo "    - none" >> "$conf"
+    echo "    - suspend" >> "$conf"
+    echo "defaultFileSystemType: btrfs" >> "$conf"
+    echo "directoryFilesystemRestrictions:" >> "$conf"
+    echo '    - directory: "/"' >> "$conf"
+    echo '      allowedFilesystemTypes: ["btrfs"]' >> "$conf"
+    echo '    - directory: "efi"' >> "$conf"
+    echo '      allowedFilesystemTypes: ["fat32"]' >> "$conf"
+    echo '      onlyWhenMountpoint: true' >> "$conf"
+}
+
+write_mount_conf(){
+    local conf="${modules_dir}/mount.conf"
+    msg2 "Writing %s ..." "${conf##*/}"
+    echo "---" > "$conf"
+    echo "btrfsSubvolumes:" >> "$conf"
+    echo "    - mountPoint: /" >> "$conf"
+    echo "      subvolume: /@" >> "$conf"
+    echo "    - mountPoint: /home" >> "$conf"
+    echo "      subvolume: /@home" >> "$conf"
+    echo "    - mountPoint: /root" >> "$conf"
+    echo "      subvolume: /@root" >> "$conf"
+    echo "    - mountPoint: /srv" >> "$conf"
+    echo "      subvolume: /@srv" >> "$conf"
+    echo "    - mountPoint: /var/cache" >> "$conf"
+    echo "      subvolume: /@cache" >> "$conf"
+    echo "    - mountPoint: /var/log" >> "$conf"
+    echo "      subvolume: /@log" >> "$conf"
+    echo "    - mountPoint: /var/tmp" >> "$conf"
+    echo "      subvolume: /@tmp" >> "$conf"
+    echo "mountOptions:" >> "$conf"
+    echo "    - filesystem: default" >> "$conf"
+    echo "      options: [ defaults ]" >> "$conf"
+    echo "    - filesystem: efi" >> "$conf"
+    echo "      options: [ defaults, umask=0077 ]" >> "$conf"
+    echo "    - filesystem: btrfs" >> "$conf"
+    echo "      options: [ defaults, noatime, compress=zstd ]" >> "$conf"
+    echo "    - filesystem: btrfs_swap" >> "$conf"
+    echo "      options: [ defaults, noatime ]" >> "$conf"
+    echo "extraMounts:" >> "$conf"
+    echo "    - device: proc" >> "$conf"
+    echo "      fs: proc" >> "$conf"
+    echo "      mountPoint: /proc" >> "$conf"
+    echo "    - device: sys" >> "$conf"
+    echo "      fs: sysfs" >> "$conf"
+    echo "      mountPoint: /sys" >> "$conf"
+    echo "    - device: /dev" >> "$conf"
+    echo "      mountPoint: /dev" >> "$conf"
+    echo "      options: [ bind ]" >> "$conf"
+    echo "    - device: tmpfs" >> "$conf"
+    echo "      fs: tmpfs" >> "$conf"
+    echo "      mountPoint: /run" >> "$conf"
+    echo "    - device: /run/udev" >> "$conf"
+    echo "      mountPoint: /run/udev" >> "$conf"
+    echo "      options: [ bind ]" >> "$conf"
+    echo "    - device: efivarfs" >> "$conf"
+    echo "      fs: efivarfs" >> "$conf"
+    echo "      mountPoint: /sys/firmware/efi/efivars" >> "$conf"
+    echo "      efi: true" >> "$conf"
+}
+
 write_settings_conf(){
     local conf="$1/etc/calamares/settings.conf"
     msg2 "Writing %s ..." "${conf##*/}"
@@ -301,7 +360,7 @@ write_settings_conf(){
         echo "        - locale" >> "$conf" && write_locale_conf
         echo "        - keyboard" >> "$conf"
     fi
-    echo "        - partition" >> "$conf"
+    echo "        - partition" >> "$conf" && write_partition_conf
     if ${oem_used}; then
         msg2 "Skipping to show users module."
     else
@@ -327,7 +386,7 @@ write_settings_conf(){
     else
         msg2 "Skipping to set zfs module."
     fi
-    echo "        - mount" >> "$conf"
+    echo "        - mount" >> "$conf" && write_mount_conf
     if ${netinstall}; then
         if ${chrootcfg}; then
             echo "        - chrootcfg" >> "$conf"
@@ -367,19 +426,14 @@ write_settings_conf(){
     echo "        - services-systemd" >> "$conf" && write_services_conf
     if ${use_dracut}; then
         echo "        - dracutlukscfg" >> "$conf"
-        echo "        - dracut" >> "$conf" && write_dracut_conf
     else
         echo "        - luksopenswaphookcfg" >> "$conf"
         echo "        - initcpiocfg" >> "$conf"
         echo "        - initcpio" >> "$conf" && write_initcpio_conf
     fi
+    echo "        - postcfg" >> "$conf" && write_postcfg_conf
     echo "        - grubcfg" >> "$conf"
     echo "        - bootloader" >> "$conf" && write_bootloader_conf
-    if ${oem_used}; then
-        msg2 "Skipping to set postcfg module."
-    else
-        echo "        - postcfg" >> "$conf" && write_postcfg_conf
-    fi
     echo "        - umount" >> "$conf"
     echo "    - show:" >> "$conf"
     echo "        - finished" >> "$conf" && write_finished_conf
