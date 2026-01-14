@@ -322,6 +322,14 @@ reset_pac_conf(){
         -i "$1/etc/pacman.conf"
 }
 
+# Mark config files as original (for garuda-config-agent)
+function mark_configs_original() {
+    local path="/usr/share/libalpm/scripts/garuda-config-agent"
+    if [[ -x "${1}${path}" ]]; then
+        chroot "$1" "${path}" markoriginal
+    fi
+}
+
 # Base installation (rootfs)
 make_image_root() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
@@ -341,6 +349,8 @@ make_image_root() {
         copy_overlay "${profile_dir}/root-overlay" "${path}"
 
         reset_pac_conf "${path}"
+
+        mark_configs_original "${path}"
 
         clean_up_image "${path}"
         : > ${work_dir}/build.${FUNCNAME}
@@ -369,8 +379,7 @@ make_image_desktop() {
         
         reset_pac_conf "${path}"
 
-        echo "Enable os-prober"
-        sed -i -r 's,^(#|)GRUB_DISABLE_OS_PROBER=.*,GRUB_DISABLE_OS_PROBER=false,' "${path}/etc/default/grub"
+        mark_configs_original "${path}"
 
         umount_fs
         clean_up_image "${path}"
