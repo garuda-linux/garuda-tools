@@ -322,38 +322,6 @@ reset_pac_conf(){
         -i "$1/etc/pacman.conf"
 }
 
-# Snap support
-function seed_snaps() {
-    local SEED_DIR="/var/lib/snapd/seed"
-    local SEED_CHANNEL="${snap_channel}"
-    local SEED_SNAPS="${strict_snaps} ${classic_snaps}"
-
-    if [[ -n "${strict_snaps}" ]] || [[ -n "${classic_snaps}" ]]; then
-        msg2 "Configuring snaps"
-        # Preseeded snaps should be downloaded from a versioned channel
-        rm -rfv "$1/${SEED_DIR}"
-        mkdir -p "$1/${SEED_DIR}/snaps"
-        mkdir -p "$1/${SEED_DIR}/assertions"
-        SEED_LIST=()
-
-        # Update SEED_LIST
-        for SEED_SNAP in ${SEED_SNAPS}; do
-            if [[ "${SEED_SNAP}" == "core" ]] || [[ "${SEED_SNAP}" == "core16" ]] || [[ "${SEED_SNAP}" == "core18" ]]; then
-                SEED_LIST+=(--snap=${SEED_SNAP}=stable)
-            else
-                SEED_LIST+=(--snap=${SEED_SNAP}=${SEED_CHANNEL})
-            fi
-        done
-
-        # Create model and account assertions
-        # Runs outside the container.
-        snap known model > /tmp/generic.model
-        snap prepare-image --arch amd64 --classic /tmp/generic.model "${SEED_LIST[@]}" "$1"
-    else
-        msg2 "No snaps found in profile. Skipping adding snaps"
-    fi
-}
-
 # Base installation (rootfs)
 make_image_root() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
@@ -400,8 +368,6 @@ make_image_desktop() {
         fi
         
         reset_pac_conf "${path}"
-
-        seed_snaps ${path}
 
         echo "Enable os-prober"
         sed -i -r 's,^(#|)GRUB_DISABLE_OS_PROBER=.*,GRUB_DISABLE_OS_PROBER=false,' "${path}/etc/default/grub"
