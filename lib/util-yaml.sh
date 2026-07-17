@@ -91,6 +91,7 @@ write_displaymanager_conf(){
     echo "  - sddm" >> "$conf"
     echo "  - lxdm" >> "$conf"
     echo "  - slim" >> "$conf"
+    echo "  - plasmalogin" >> "$conf"
     echo '' >> "$conf"
     echo "basicSetup: false" >> "$conf"
 }

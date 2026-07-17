@@ -11,7 +11,7 @@
 ################ install ################
 
 # default displaymanager: none
-# supported; lightdm, sddm, gdm, lxdm, mdm
+# supported; lightdm, sddm, gdm, lxdm, mdm, plasmalogin
 # displaymanager="none"
 
 # add strict snaps: strict_snaps="core18 snap-store"

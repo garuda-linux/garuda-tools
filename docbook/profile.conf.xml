@@ -76,7 +76,8 @@ along with systemd; If not, see <http://www.gnu.org/licenses/>.
                 <option>sddm</option>,
                 <option>gdm</option>,
                 <option>mdm</option>,
-                <option>lxdm</option>. Defaults to "none" value,
+                <option>lxdm</option>,
+                <option>plasmalogin</option>. Defaults to "none" value,
                 which won't configure any display manager.
                 </para></listitem>
             </varlistentry>
@@ -223,5 +224,3 @@ along with systemd; If not, see <http://www.gnu.org/licenses/>.
     </refsect1>
 
 </refentry>
-
-
