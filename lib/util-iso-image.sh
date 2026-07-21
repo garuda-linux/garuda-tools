@@ -341,9 +341,14 @@ chroot_clean(){
             msg2 "Deleting chroot [%s] (%s) ..." "$name" "${1##*/}"
             lock 9 "${image}.lock" "Locking chroot '${image}'"
             if [[ "$(stat -f -c %T "${image}")" == btrfs ]]; then
-                { type -P btrfs && btrfs subvolume delete "${image}"; } #&> /dev/null
+                if type -P btrfs &>/dev/null; then
+                    for subvol in $(btrfs subvolume list -o "${image}" 2>/dev/null | awk '{print $NF}' | sort -r); do
+                        btrfs subvolume delete "/${subvol}" 2>/dev/null || btrfs subvolume delete "${image}/${subvol}" 2>/dev/null
+                    done
+                    btrfs subvolume delete "${image}" &>/dev/null
+                fi
             fi
-        rm -rf --one-file-system "${image}"
+            rm -rf --one-file-system "${image}"
         fi
     done
     exec 9>&-
