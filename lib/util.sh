@@ -323,7 +323,7 @@ init_buildiso(){
 
     [[ -z ${iso_compression} ]] && iso_compression='xz'
 
-    [[ -z ${kernel} ]] && kernel="linux-zen"
+    [[ -z ${kernel} ]] && kernel="linux-garuda"
 
     load_run_dir "${profile_repo}"
 
