@@ -20,6 +20,7 @@ install() {
     hostonly='' instmods overlay
     hostonly='' instmods loop
     hostonly='' instmods cdrom
+    hostonly='' instmods isofs
 
     inst_hook cmdline 15 "$moddir/parse-miso.sh"
     inst_hook pre-mount 000 "$moddir/miso.sh"
