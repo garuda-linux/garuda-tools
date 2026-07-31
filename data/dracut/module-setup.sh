@@ -21,6 +21,7 @@ install() {
     hostonly='' instmods loop
     hostonly='' instmods cdrom
     hostonly='' instmods isofs
+    hostonly='' instmods squashfs
 
     inst_hook cmdline 15 "$moddir/parse-miso.sh"
     inst_hook pre-mount 000 "$moddir/miso.sh"
