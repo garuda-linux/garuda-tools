@@ -330,6 +330,17 @@ function mark_configs_original() {
     fi
 }
 
+# Fix permissions in the desktop image
+function desktop_fix_permissions() {
+    local root="$1"
+
+    local plasma_login_manager="${root}/var/lib/plasmalogin/.config"
+    if [[ -d "${plasma_login_manager}" ]]; then
+        chmod -R u=rwX,g=rX,o=rX "${plasma_login_manager}"
+        chroot "$root" chown -R plasmalogin:plasmalogin "${plasma_login_manager}"
+    fi
+}
+
 # Base installation (rootfs)
 make_image_root() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
@@ -376,7 +387,9 @@ make_image_desktop() {
             configure_branding "${path}"
             msg "Done [Distribution: Release ${dist_release} Codename ${dist_codename}]"
         fi
-        
+
+        desktop_fix_permissions "${path}"
+
         reset_pac_conf "${path}"
 
         mark_configs_original "${path}"
