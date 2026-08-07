@@ -337,7 +337,7 @@ function desktop_fix_permissions() {
     local plasma_login_manager="${root}/var/lib/plasmalogin/.config"
     if [[ -d "${plasma_login_manager}" ]]; then
         chmod -R u=rwX,g=rX,o=rX "${plasma_login_manager}"
-        chroot "$root" chown -R plasmalogin:plasmalogin "${plasma_login_manager}"
+        chroot "$root" chown -R plasmalogin:plasmalogin "/var/lib/plasmalogin/.config"
     fi
 }
 
