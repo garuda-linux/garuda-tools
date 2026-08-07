@@ -334,10 +334,10 @@ function mark_configs_original() {
 function desktop_fix_permissions() {
     local root="$1"
 
-    local plasma_login_manager="${root}/var/lib/plasmalogin/.config"
-    if [[ -d "${plasma_login_manager}" ]]; then
+    local plasma_login_manager="/var/lib/plasmalogin/.config"
+    if [[ -d "${root}${plasma_login_manager}" ]]; then
         chmod -R u=rwX,g=rX,o=rX "${plasma_login_manager}"
-        chroot "$root" chown -R plasmalogin:plasmalogin "/var/lib/plasmalogin/.config"
+        chroot "$root" chown -R plasmalogin:plasmalogin "${plasma_login_manager}"
     fi
 }
 
