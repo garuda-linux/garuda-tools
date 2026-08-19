@@ -82,7 +82,7 @@ copy_hostconf () {
     [[ -n $mirrors_conf ]] && cp ${mirrors_conf} "$1/etc/pacman-mirrors.conf"
 
     if [[ -n ${build_mirror} ]]; then
-        build_mirror=${build_mirror}'/$repo/os/$arch'
+        build_mirror=${build_mirror%/}'/$repo/os/$arch'
         if ${keep_mirrors}; then
             set_branch "$1" "$(get_branch $1)"
         else

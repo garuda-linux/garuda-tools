@@ -91,7 +91,7 @@ fi
 
 # Workaround when creating a chroot in a branch different of the host
 if [[ -n $pac_conf ]] && [[ -n $mirrors_conf ]] && [[ -n ${build_mirror} ]]; then
-    url=${build_mirror}'/$repo/os/$arch'
+    url=${build_mirror%/}'/$repo/os/$arch'
     [[ ${build_mirror} = *ftp*repo.garuda.org* ]] && show_mirror=repo.garuda.org'/$repo/$arch' || show_mirror=$url
     info "mirror: %s" "$show_mirror"
     pac_base="$working_dir/pacman-basestrap.conf"
