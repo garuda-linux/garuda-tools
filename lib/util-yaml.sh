@@ -192,9 +192,9 @@ write_welcome_conf(){
     fi
     if ${geoip}; then
         echo 'geoip:' >> "$conf"
-        echo '    style:  "json"' >> "$conf"
-        echo '    url:    "https://ipapi.co/json"' >> "$conf"
-        echo '    selector: "country"' >> "$conf"
+        echo '    style:  "xml"' >> "$conf"
+        echo '    url:    "https://geoip.kde.org/v1/ubiquity"' >> "$conf"
+        echo '    selector: "CountryCode"' >> "$conf"
     fi
 }
 
@@ -267,8 +267,8 @@ write_locale_conf(){
     if ${geoip}; then
         echo 'geoip:' >> "$conf"
         echo '    style:  "json"' >> "$conf"
-        echo '    url:    "https://ipapi.co/json"' >> "$conf"
-        echo '    selector: "timezone"' >> "$conf"
+        echo '    url:    "https://geoip.kde.org/v1/calamares"' >> "$conf"
+        echo '    selector: ""' >> "$conf"
     else
         echo "region: America" >> "$conf"
         echo "zone: New_York" >> "$conf"
