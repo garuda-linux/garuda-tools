@@ -353,11 +353,11 @@ init_calamares(){
 
 	[[ -z ${windowplacement} ]] && windowplacement="center"
 
-	[[ -z ${sidebarbackground} ]] && sidebarbackground=#5c0285
+	[[ -z ${sidebarbackground} ]] && sidebarbackground=#1e1e2e
 
-	[[ -z ${sidebartext} ]] &&  sidebartext=#efefef
+	[[ -z ${sidebartext} ]] &&  sidebartext=#1e1e2e
 
-	[[ -z ${sidebartextcurrent} ]] && sidebartextcurrent=#efefef
+	[[ -z ${sidebartextcurrent} ]] && sidebartextcurrent=#1e1e2e
 
 	[[ -z ${sidebarbackgroundcurrent} ]] && sidebarbackgroundcurrent=#7f03b8
 }
@@ -434,9 +434,9 @@ load_profile_config(){
 
     [[ -z ${password} ]] && password="garuda"
 
-    [[ -z ${user_shell} ]] && user_shell='/bin/zsh'
+    [[ -z ${user_shell} ]] && user_shell='/bin/bash'
 
-    [[ -z ${login_shell} ]] && login_shell='/bin/zsh'
+    [[ -z ${login_shell} ]] && login_shell='/bin/bash'
 
     if [[ -z ${addgroups} ]]; then
         addgroups="lp,network,power,sys,wheel"

@@ -49,10 +49,10 @@ windowPlacement: ${windowplacement}
 strings:
     productName:         ${dist_name} Linux
     shortProductName:    ${dist_name}
-    version:             ${dist_release}
-    shortVersion:        ${dist_release}
-    versionedName:       ${dist_name} Linux ${dist_release}
-    shortVersionedName:  ${dist_name} ${dist_release}
+    version:             ${dist_codename}
+    shortVersion:        ${dist_codename}
+    versionedName:       ${dist_name} Linux ${dist_codename}
+    shortVersionedName:  ${dist_name} ${dist_codename}
     bootloaderEntryName: ${dist_name}
 
 # These images are loaded from the branding module directory.
