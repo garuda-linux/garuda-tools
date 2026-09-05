@@ -350,7 +350,7 @@ make_image_root() {
 
         chroot_create "${path}" "${packages}" || die
 
-        echo -e "TIMESTAMP=${dist_timestamp}\nCODENAME=${dist_codename}" >> "${path}/usr/lib/garuda/garuda-release"
+        echo -e "TIMESTAMP=${dist_timestamp}\nCODENAME=${dist_codename}\nEDITION=${profile}" >> "${path}/usr/lib/garuda/garuda-release"
 
         # /build/grub needs to exist if grub is in use, otherwise grub-mkconfig will fail on calamares in BIOS mode
         if [[ "${efi_boot_loader}" == "grub" ]]; then
